@@ -17,7 +17,7 @@ See Also
 * [fix2json](https://github.com/SunGard-Labs/fix2json)
 * [MongoDB](https://www.mongodb.com/community)
 
-More Info
+License and Contributors
 ----------
 
 **fixtools** © 2016, Chicago, Illinois.<br> 
