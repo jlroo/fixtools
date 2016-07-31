@@ -1,11 +1,40 @@
 # fixtools
 
-This tool kit was created to make it easier to work and analyze FIX/FAST - FIX 5.0 SP2 financial data from the CME group. Some of its features will help you identify most trdaded securities ( futures,options ), break large week FIX bianary files into its corresponding trading days and create an order book for a giving security. In conjuction with the nodejs fix2json package from SunGard-Labs you cant insert the processed FIX records into JSON-conformant NoSQL repositories, such as MongoDB.
+This tool kit was created to make it easier to work and analyze FIX/FAST - FIX 5.0 SP2 financial data from the CME group. Some of its features will help you identify most trdaded securities ( futures,options ), break large week FIX bianary files into its corresponding trading days by reading a gzip files containing the FIX file or a binary FIX data file also you can create an order book for a giving security. Finally in conjuction with the nodejs fix2json package from SunGard-Labs you can insert the processed FIX records into JSON-conformant NoSQL repositories, such as MongoDB.
 
 Installation
 ------------
 
-    $ npm install -g hicat
+    $ python setup.py install
+
+
+Examples
+------------
+
+# Weekly FIX files to daily files
+
+    > import fixtools as fx
+    > path_gzip =  "XCME_ES_20130103_20130111.gz"
+    > days = fx.periods(path_gzip)
+    > fixdata = fx.read_fix(path)
+    > fx.to_day(fixdata,days)
+
+# Number of contracts and volume 
+
+    > import fixtools as fx
+    > path_gzip =  "XCME_ES_20130103_20130111.gz"
+    > fixdata = fx.read_fix(path)
+    > records = fx.contracts(fixdata)
+    > records = records.report
+
+# Group by security ID number
+
+    > import fixtools as fx
+    > path_gzip =  "XCME_ES_20130103_20130111.gz"
+    > fixdata = fx.read_fix(path)
+    > security_id = "222858"
+    > records = fx.group_by(fixdata,security_id)
+    > records = records.report
 
 
 See Also
