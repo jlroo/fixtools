@@ -1,6 +1,6 @@
 # fixtools
 
-This tool kit was created to make it easier to work and analyze FIX/FAST - FIX 5.0 SP2 financial data from the CME group. Some of its features will help you identify most trdaded securities ( futures,options ), break large week FIX bianary files into its corresponding trading days and create an order book for a giving security. In conjuction with the fix2json package from sungard labs ( LINK ) and MongoDB ( LINK ) you can setup
+This tool kit was created to make it easier to work and analyze FIX/FAST - FIX 5.0 SP2 financial data from the CME group. Some of its features will help you identify most trdaded securities ( futures,options ), break large week FIX bianary files into its corresponding trading days and create an order book for a giving security. In conjuction with the nodejs fix2json package from SunGard-Labs you cant insert the processed FIX records into JSON-conformant NoSQL repositories, such as MongoDB.
 
 Installation
 ------------
