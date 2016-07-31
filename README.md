@@ -20,7 +20,8 @@ See Also
 More Info
 ----------
 
-**fixtools** © 2016, Chicago, Illinois. Released under the [MIT License].<br>
+**fixtools** © 2016, Chicago, Illinois.<br> 
+Released under the [MIT License].<br>
 Authored and maintained by Jose Luis Rodriguez.
 
 > [jlroo.com](http://jlroo.com) &nbsp;&middot;&nbsp;
