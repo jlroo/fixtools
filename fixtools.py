@@ -51,9 +51,10 @@ def to_day(path,periods):
 
 def group_by(fixfile,sec):
     data_out = "ID"+sec+".gz"
+    sec = sec.encode()
     with __gzip.open(data_out,'wb') as fixsec:
         for line in fixfile:
-            if b"\x0148="+sec.decode() in line:
+            if b"\x0148="+sec in line:
                 header = line.split(b'\x01279')[0]
                 msgtype = __re.search(b'(\x0135=)(.*)(\x01)',header).group(2)
                 msgtype = msgtype.split(b'\x01')[0]
@@ -65,7 +66,7 @@ def group_by(fixfile,sec):
                     body = [b'\x01279'+ entry for entry in body]
                     end = b'\x0110' + line.split(b'\x0110')[-1]
                     for entry in body:
-                        if b'\x0148='+sec.decode() in entry:
+                        if b'\x0148='+sec in entry:
                             header += entry
                         else:
                             pass
