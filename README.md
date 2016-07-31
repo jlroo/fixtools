@@ -11,7 +11,7 @@ Installation
 Examples
 ------------
 
-# Weekly FIX files to daily files
+Weekly FIX files to daily files
 
     > import fixtools as fx
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
@@ -19,7 +19,7 @@ Examples
     > fixdata = fx.read_fix(path)
     > fx.to_day(fixdata,days)
 
-# Number of contracts and volume 
+Number of contracts and volume
 
     > import fixtools as fx
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
@@ -27,7 +27,7 @@ Examples
     > records = fx.contracts(fixdata)
     > records = records.report
 
-# Group by security ID number
+Group by security ID number
 
     > import fixtools as fx
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
@@ -35,7 +35,6 @@ Examples
     > security_id = "222858"
     > records = fx.group_by(fixdata,security_id)
     > records = records.report
-
 
 See Also
 ------------
