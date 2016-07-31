@@ -33,7 +33,7 @@ Group by security ID number
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
     > fixdata = fx.read_fix(path)
     > security_id = "222858"
-    fx.group_by(fixdata,security_id)
+    > fx.group_by(fixdata,security_id)
 
 See Also
 ------------
