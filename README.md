@@ -10,13 +10,11 @@ The Quinlan School of Business at Loyola University Chicago acquired a couple of
 
 FIX data format layout
 --------------------------
-Messages fields are delimited by the ASCII <start of header> character in binary (000 0001), hex (\x01) or the caret (^A) notation often used to represent control characters on a terminal/text editor. Fix messages are composed of a header, a body, and a footer/tail.<br>
+Messages fields are delimited by the ASCII <start of header> character in binary (000 0001), hex (\x01) or the caret (^A) notation often used to represent control characters on a terminal/text editor. Fix messages are composed of a header, a body, and a tail.<br>
 
 For the FIX 5.0 SP2 protocol, the header contains standard mandatory fields and some optional field that are placed in a predetermine order, for example: 8 (BeginString), 9 (BodyLength), 35 (MsgType), 49 (SenderCompID), 56 (TargetCompID) and 1128 (ApplVerID). <br>
 
-In the header of the FIX message the (tag 35, MsgType) message type at teh beggining of the message. The last field of the FIX message is tag 10, which gives the Checksum as a three-digit number (e.g. 10=002).
-
-    Header+Body+Trailer : FIX Content
+In the header of the FIX message the (tag 35, MsgType) message type at teh beggining of the message. The last field of the FIX message is tag 10, which gives the Checksum as a three-digit number (e.g. 10=002). Hence Header+Body+Tail give us the FIX message content.
 
 *Example of a FIX message as String object:*
 
@@ -30,7 +28,6 @@ Installation
 ------------
 
     $ python setup.py install
-
 
 Examples
 ------------
