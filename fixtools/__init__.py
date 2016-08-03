@@ -1,7 +1,5 @@
-# pylint: disable-msg=W0614,W0401,W0611,W0622
 
-# flake8: noqa
-
+__all__ = ['contracts', 'group_by', 'periods', 'read_fix', 'to_day']
 __docformat__ = 'restructuredtext'
 
 # Let users know if they're missing any of our hard dependencies
@@ -19,5 +17,3 @@ if missing_dependencies:
 del hard_dependencies, dependency, missing_dependencies
 
 from fixtools.tools import *
-
-__all__ = ['contracts', 'group_by', 'periods', 'read_fix', 'to_day']
