@@ -1,6 +1,5 @@
 __all__ = ['fixtools']
 __docformat__ = 'restructuredtext'
-import fixtools
 
 hard_dependencies = ("gzip", "re")
 missing_dependencies = []
