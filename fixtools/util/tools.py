@@ -4,15 +4,15 @@ Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
 """
 
-import re as __re
-import gzip as __gzip
+import re
+import gzip
 
 ############################################
 #               def trade day
 ############################################
 
 def periods(filename):    
-    d = __re.search("(\d.*)(\D)(.*\d)",filename)
+    d = re.search("(\d.*)(\D)(.*\d)",filename)
     if d is None:
         raise ValueError("Invalid filename format, expected format: YYYYMMDD_YYYYMMDD" )
     periods = list(range(int(d.group(1)),int(d.group(3))+1,1))
@@ -27,7 +27,7 @@ def read_fix(filename):
     if filename[-3:] != ".gz":
         f = open(filename, "rb")
     else:
-        f = __gzip.open(filename,'rb')
+        f = gzip.open(filename,'rb')
     return f
 
 ############################################
@@ -36,12 +36,12 @@ def read_fix(filename):
 
 def to_day(fixfile,dates):
     if type(dates) is not list:
-        raise ValueError("Invalid dates type. Argument dates must be a list of dates")
+        raise ValueError("Invalid dates type, to_day function takes a fixfile and a list of dates. Argument dates must be a list.")
     for day in dates:
         if type(day) is not bytes:
             day = day.encode()
         fixfile = read_fix(fixfile)
-        with __gzip.open(day.decode()+".gz",'wb') as fixday:
+        with gzip.open(day.decode()+".gz",'wb') as fixday:
             for line in fixfile:
                 if b"\x0175="+day in line:
                     fixday.write(line)
@@ -56,11 +56,11 @@ def to_day(fixfile,dates):
 def group_by(fixfile,sec):
     data_out = "ID"+sec+".gz"
     sec = sec.encode()
-    with __gzip.open(data_out,'wb') as fixsec:
+    with gzip.open(data_out,'wb') as fixsec:
         for line in fixfile:
             if b"\x0148="+sec in line:
                 header = line.split(b'\x01279')[0]
-                msgtype = __re.search(b'(\x0135=)(.*)(\x01)',header).group(2)
+                msgtype = re.search(b'(\x0135=)(.*)(\x01)',header).group(2)
                 msgtype = msgtype.split(b'\x01')[0]
                 if b'X' != msgtype:
                     fixsec.write(line)
@@ -91,13 +91,13 @@ class contracts:
     def __init__(self,fixfile):
         contr = {}
         for line in fixfile:
-            sec = __re.search(b'(\x0148\=)(.*)(\x01)',line)
+            sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
             sec = sec.group(2)
             sec = int(sec.split(b'\x01')[0])
-            secdes = __re.search(b'(\x01107\=)(.*)(\x01)',line)
+            secdes = re.search(b'(\x01107\=)(.*)(\x01)',line)
             secdes = secdes.group(2)
             secdes = secdes.split(b'\x01')[0].decode()
-            secprc = __re.search('(^E.*)(\s)(P|C)(\d*)',secdes)
+            secprc = re.search('(^E.*)(\s)(P|C)(\d*)',secdes)
             
             if sec not in contr.keys():
                 contr[sec] = {'num':1,'desc':secdes,'type':'','price':0}
