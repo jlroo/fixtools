@@ -18,6 +18,4 @@ if missing_dependencies:
     raise ImportError("Missing required dependencies {0}".format(missing_dependencies))
 del hard_dependencies, dependency, missing_dependencies
 
-import re
-import gzip
 from fixtools.tools import *

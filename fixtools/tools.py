@@ -4,8 +4,8 @@ Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
 """
 
-#import re
-#import gzip
+import re
+import gzip
 
 ############################################
 #               def trade day
