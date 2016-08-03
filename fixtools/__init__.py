@@ -20,4 +20,4 @@ del hard_dependencies, dependency, missing_dependencies
 
 import re
 import gzip
-from fixtools.util.tools import *
+from fixtools.tools import *
