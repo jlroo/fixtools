@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
