@@ -17,5 +17,6 @@ setup(
     author_email='jrodriguezorjuela@luc.edu',
     url='https://github.com/jlroo/fixtools',
     license=license,
+    py_modules=["fixtools"],
     packages=find_packages(exclude=('tests', 'docs'))
 )
