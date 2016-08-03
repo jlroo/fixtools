@@ -114,7 +114,7 @@ class contracts:
         for secid,sec in contr.items():            
             self.report.append({'SecurityID':secid,
                                    'SecurityDesc':sec['desc'],
-                                   'MsgCnt':sec['num'],
+                                   'Volume':sec['num'],
                                     'Type':sec['type'],
                                     'Price':sec['price']})
                 
