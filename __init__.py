@@ -1,6 +1,6 @@
+__all__ = ['fixtools']
 __docformat__ = 'restructuredtext'
 
-# Let users know if they're missing any of our hard dependencies
 hard_dependencies = ("gzip", "re")
 missing_dependencies = []
 
