@@ -36,7 +36,7 @@ def read_fix(filename):
 
 def to_day(fixfile,dates):
     if type(dates) is not list:
-        raise("Not a list as dates. Argument dates must be a list of dates")
+        raise ValueError("Invalid dates type. Argument dates must be a list of dates")
     for day in dates:
         if type(day) is not bytes:
             day = day.encode()
