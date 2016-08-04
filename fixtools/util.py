@@ -24,10 +24,13 @@ def periods(filename):
 ############################################
 
 def to_day(path,dates):
-    if type(dates) is not list:
+    
+    if type(dates) != list:
         raise ValueError("Invalid data type, argument dates must be a list.")
-    if type(dates[0]) != str or  type(dates[0]) != bytes:
-        raise ValueError("Invalid data type, argument dates must be a lsit of string or bytes.")
+        
+    if type(dates[0]) == int or type(dates[0]) == str:
+        raise ValueError("Invalid data type, argument dates must be a lsit of bytes variable")
+
     for day in dates:
         if path[-3:] != ".gz":
             fixfile = open(path, "rb")
@@ -41,6 +44,7 @@ def to_day(path,dates):
                 else:
                     pass
         fixfile.close()
+
 
 ############################################
 #               def security
