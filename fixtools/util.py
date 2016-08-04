@@ -33,7 +33,8 @@ def to_day(path,dates):
             fixfile = gzip.open(path,'rb')
         if type(day) is not bytes:
             day = day.encode()
-        with gzip.open(day.decode()+".gz",'wb') as fixday:
+        path_out = path[-3:]+"_DAY_"+day.decode()+".gz"
+        with gzip.open(path_out,'wb') as fixday:
             for line in fixfile:
                 if b"\x0175="+day in line:
                     fixday.write(line)
