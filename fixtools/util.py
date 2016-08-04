@@ -51,7 +51,7 @@ def group_by(path,sec):
         fixfile = open(path, "rb")
     else:
         fixfile = gzip.open(path,'rb')
-    data_out = "ID"+sec+".gz"
+    data_out = path[-3:]+"_ID"+sec+".gz"
     sec = sec.encode()
     with gzip.open(data_out,'wb') as fixsec:
         for line in fixfile:
