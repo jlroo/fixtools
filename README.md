@@ -37,24 +37,21 @@ Weekly FIX files to daily files
     > import fixtools as fx
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
     > days = fx.periods(path_gzip)
-    > fixdata = fx.read_fix(path)
-    > fx.to_day(fixdata,days)
+    > fx.to_day(path_gzip,days)
 
 Number of contracts and volume
 
     > import fixtools as fx
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
-    > fixdata = fx.read_fix(path)
-    > records = fx.contracts(fixdata)
+    > records = fx.contracts(path_gzip)
     > records = records.report
 
 Group by security ID number
 
     > import fixtools as fx
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
-    > fixdata = fx.read_fix(path)
     > security_id = "222858"
-    > fx.group_by(fixdata,security_id)
+    > fx.group_by(path_gzip,security_id)
 
 See Also
 ------------
