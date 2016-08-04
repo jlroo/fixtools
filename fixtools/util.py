@@ -20,30 +20,19 @@ def periods(filename):
     return periods
 
 ############################################
-#               def read fix
-############################################
-
-def read_fix(filename):
-    if type(filename) is str:        
-        if filename[-3:] != ".gz":
-            f = open(filename, "rb")
-        else:
-            f = gzip.open(filename,'rb')
-    else:
-        f = gzip.open(filename,'rb')
-    return f
-
-############################################
 #               def write out
 ############################################
 
-def to_day(fixfile,dates):
+def to_day(path,dates):
     if type(dates) is not list:
         raise ValueError("Invalid dates type, to_day function takes a fixfile and a list of dates. Argument dates must be a list.")
     for day in dates:
+        if path[-3:] != ".gz":
+            fixfile = open(path, "rb")
+        else:
+            fixfile = gzip.open(path,'rb')
         if type(day) is not bytes:
             day = day.encode()
-        fixfile = read_fix(fixfile)
         with gzip.open(day.decode()+".gz",'wb') as fixday:
             for line in fixfile:
                 if b"\x0175="+day in line:
@@ -56,7 +45,11 @@ def to_day(fixfile,dates):
 #               def security
 ############################################
 
-def group_by(fixfile,sec):
+def group_by(path,sec):
+    if path[-3:] != ".gz":
+        fixfile = open(path, "rb")
+    else:
+        fixfile = gzip.open(path,'rb')
     data_out = "ID"+sec+".gz"
     sec = sec.encode()
     with gzip.open(data_out,'wb') as fixsec:
@@ -91,8 +84,14 @@ class contracts:
     
     report = []
     
-    def __init__(self,fixfile):
+    def __init__(self,path):
+        
+        if path[-3:] != ".gz":
+            fixfile = open(path, "rb")
+        else:
+            fixfile = gzip.open(path,'rb')
         contr = {}
+
         for line in fixfile:
             sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
             sec = sec.group(2)
