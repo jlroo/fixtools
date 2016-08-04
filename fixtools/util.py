@@ -25,16 +25,16 @@ def periods(filename):
 
 def to_day(path,dates):
     if type(dates) is not list:
-        raise ValueError("Invalid dates type, to_day function takes a fixfile and a list of dates. Argument dates must be a list.")
+        raise ValueError("Invalid data type, argument dates must be a list.")
+    if type(dates[0]) != str or  type(dates[0]) != bytes:
+        raise ValueError("Invalid data type, argument dates must be a lsit of string or bytes.")
     for day in dates:
         if path[-3:] != ".gz":
             fixfile = open(path, "rb")
         else:
             fixfile = gzip.open(path,'rb')
-        if type(day) is not bytes:
-            day = day.encode()
-        path_out = path[-3:]+"_DAY_"+day.decode()+".gz"
-        with gzip.open(path_out,'wb') as fixday:
+        path_out = path[:-3]+"_DAY_"+day.decode()+".gz"
+        with open(path_out,'wb') as fixday:
             for line in fixfile:
                 if b"\x0175="+day in line:
                     fixday.write(line)
