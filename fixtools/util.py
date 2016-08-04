@@ -24,8 +24,11 @@ def periods(filename):
 ############################################
 
 def read_fix(filename):
-    if filename[-3:] != ".gz":
-        f = open(filename, "rb")
+    if type(filename) is str:        
+        if filename[-3:] != ".gz":
+            f = open(filename, "rb")
+        else:
+            f = gzip.open(filename,'rb')
     else:
         f = gzip.open(filename,'rb')
     return f
