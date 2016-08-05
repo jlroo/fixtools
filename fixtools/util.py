@@ -7,14 +7,23 @@ Created on Fri Jul 22 17:33:13 2016
 import re
 import gzip
 
-"""
-               def trade day
-
-This function returns the number trading days
-present in the data and the assciate number of messages.
 
 """
-def periods(path):
+               def periods
+
+This function returns the number of trading days in the 
+the fix data and its associate number of messages.
+
+returns a dictionaty
+
+{DAY: VOLUME}
+
+"""
+
+def trade_days(path):
+    
+    periods = []
+
     if path[-3:] != ".gz":
         fixfile = open(path, "rb")
     else:
@@ -28,14 +37,27 @@ def periods(path):
             week[int(date)] = 1
         else:
             week[int(date)] +=1
-    return week
+    
+    for day,cnt in week.items():
+        periods.append({'TradeDay':day,'Volume':cnt})
+    
+    return periods
 
 
-############################################
-#               def write out
-############################################
+"""
+                    def week_to_day
 
-def to_day(path,dates):
+The week to day function take a path to the fix file
+and a list with days corresponding to the trading of
+that week and breaks the Fix week file into its 
+associate trading days.
+
+This functions creates a new gzip file located in
+the same path as the weekly data.
+        
+"""
+
+def week_to_day(path,dates):
     
     if type(dates) != list:
         raise ValueError("Invalid data type, argument dates must be a list.")
@@ -58,20 +80,25 @@ def to_day(path,dates):
         fixfile.close()
 
 
-############################################
-#               def security
-############################################
+"""
+                def group_by
 
-def group_by(path,sec):
+This function takes a path to a fix file and
+a security id in order to create a new fix file
+with just the messages from that security.                
+
+"""
+
+def group_by(path,security):
     if path[-3:] != ".gz":
         fixfile = open(path, "rb")
     else:
         fixfile = gzip.open(path,'rb')
-    data_out = path[:-3]+"_ID"+sec+".gz"
-    sec = sec.encode()
+    data_out = path[:-3]+"_ID"+security+".gz"
+    security = b"\x0148="+security.encode()
     with gzip.open(data_out,'wb') as fixsec:
         for line in fixfile:
-            if b"\x0148="+sec in line:
+            if security in line:
                 header = line.split(b'\x01279')[0]
                 msgtype = re.search(b'(\x0135=)(.*)(\x01)',header).group(2)
                 msgtype = msgtype.split(b'\x01')[0]
@@ -83,7 +110,7 @@ def group_by(path,sec):
                     body = [b'\x01279'+ entry for entry in body]
                     end = b'\x0110' + line.split(b'\x0110')[-1]
                     for entry in body:
-                        if b'\x0148='+sec in entry:
+                        if security in entry:
                             header += entry
                         else:
                             pass
@@ -93,14 +120,17 @@ def group_by(path,sec):
                 pass
     fixfile.close()
 
-#####################################################################
-#                       NUMBER OF CONTRACTS                    
-#####################################################################
+"""
+                    Def FixData
+
+This class returns that number a report of the fix data
+contracts and volume.
+
+"""
 
 class FixData:
     
     stats = []
-    periods = []
     
     def __init__(self,path):
         
@@ -149,6 +179,4 @@ class FixData:
                                    'Volume':sec['num'],
                                     'Type':sec['type'],
                                     'Price':sec['price']})
-        for day,cnt in contr.items():
-            self.periods.append({'TradeDay':day,'Volume':cnt})
                 
