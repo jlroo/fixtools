@@ -16,4 +16,4 @@ if missing_dependencies:
     raise ImportError("Missing required dependencies {0}".format(missing_dependencies))
 del hard_dependencies, dependency, missing_dependencies
 
-from fixtools.util import (contracts,group_by,periods,to_day)
+from fixtools.util import (FixData,group_by,periods,to_day)
