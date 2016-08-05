@@ -139,16 +139,9 @@ class FixData:
         else:
             fixfile = gzip.open(path,'rb')
         contr = {}
-        week = {}
     
         for line in fixfile:
-            
-            date = int(re.search(b'(\x0152=)(\d\d\d\d\d\d\d\d)',line).group(2))
-            if date not in week.keys():
-                week[int(date)] = 1
-            else:
-                week[int(date)] +=1            
-            
+                                
             sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
             sec = sec.group(2)
             sec = int(sec.split(b'\x01')[0])
