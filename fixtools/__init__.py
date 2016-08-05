@@ -1,5 +1,5 @@
 
-__all__ = ['contracts', 'group_by', 'periods', 'to_day']
+__all__ = ['FixData', 'group_by', 'periods', 'to_day']
 __docformat__ = 'restructuredtext'
 
 # Let users know if they're missing any of our hard dependencies
