@@ -7,17 +7,29 @@ Created on Fri Jul 22 17:33:13 2016
 import re
 import gzip
 
-############################################
-#               def trade day
-############################################
+"""
+               def trade day
 
-def periods(filename):    
-    d = re.search("(\d.*)(\D)(.*\d)",filename)
-    if d is None:
-        raise ValueError("Invalid filename format, expected format: YYYYMMDD_YYYYMMDD" )
-    periods = list(range(int(d.group(1)),int(d.group(3))+1,1))
-    periods = [str(d).encode() for d in periods]
-    return periods
+This function returns the number trading days
+present in the data and the assciate number of messages.
+
+"""
+def periods(path):
+    if path[-3:] != ".gz":
+        fixfile = open(path, "rb")
+    else:
+        fixfile = gzip.open(path,'rb')
+    
+    week = {}
+
+    for line in fixfile:
+        date = int(re.search(b'(\x0152=)(\d\d\d\d\d\d\d\d)',line).group(2))
+        if date not in week.keys():
+            week[int(date)] = 1
+        else:
+            week[int(date)] +=1
+    return week
+
 
 ############################################
 #               def write out
@@ -85,9 +97,10 @@ def group_by(path,sec):
 #                       NUMBER OF CONTRACTS                    
 #####################################################################
 
-class contracts:
+class FixData:
     
-    report = []
+    stats = []
+    periods = []
     
     def __init__(self,path):
         
@@ -96,8 +109,16 @@ class contracts:
         else:
             fixfile = gzip.open(path,'rb')
         contr = {}
-
+        week = {}
+    
         for line in fixfile:
+            
+            date = int(re.search(b'(\x0152=)(\d\d\d\d\d\d\d\d)',line).group(2))
+            if date not in week.keys():
+                week[int(date)] = 1
+            else:
+                week[int(date)] +=1            
+            
             sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
             sec = sec.group(2)
             sec = int(sec.split(b'\x01')[0])
@@ -123,9 +144,11 @@ class contracts:
         fixfile.close()
                        
         for secid,sec in contr.items():            
-            self.report.append({'SecurityID':secid,
+            self.stats.append({'SecurityID':secid,
                                    'SecurityDesc':sec['desc'],
                                    'Volume':sec['num'],
                                     'Type':sec['type'],
                                     'Price':sec['price']})
+        for day,cnt in contr.items():
+            self.periods.append({'TradeDay':day,'Volume':cnt})
                 
