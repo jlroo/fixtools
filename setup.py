@@ -11,7 +11,7 @@ with open('LICENSE') as f:
 setup(
     name='fixtools',
     version='0.1',
-    description='Package to work and analyze FIX 5.0 SP2 financial data.',
+    description='Package to analyze FIX 5.0 SP2 financial data.',
     long_description=readme,
     author='Jose Luis Rodriguez',
     author_email='jrodriguezorjuela@luc.edu',

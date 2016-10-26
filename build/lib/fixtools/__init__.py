@@ -3,7 +3,7 @@ __all__ = ['FixData', 'openFix']
 __docformat__ = 'restructuredtext'
 
 # Let users know if they're missing any of our hard dependencies
-hard_dependencies = ("gzip","bz2")
+hard_dependencies = ("gzip","bz2", "re")
 missing_dependencies = []
 
 for dependency in hard_dependencies:
