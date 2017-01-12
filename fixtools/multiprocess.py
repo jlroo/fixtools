@@ -1,159 +1,79 @@
+#!/opt/anaconda3/bin/python
 
 """
-Created on Fri Jul 22 17:33:13 2016
+Created on Mon Aug  8 11:56:15 2016
+
 @author: jlroo
 """
-
+import argparse
+import bz2
 import re
-import gzip
+import pandas as pd
+from collections import Counter
+import multiprocessing as mp
 
+def process(line):
 
-"""
-               def trade_days
-
-This function returns the number of trading days in the 
-the fix data and its associate number of messages.
-
-returns a dictionaty
-
-{DAY: VOLUME}
-
-"""
-
-def trade_days(line):
+    # GET SECURITY ID
+    sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
+    sec = int(sec.group(2).split(b'\x01')[0])
     
-    week = {}
-    date = int(re.search(b'(\x0152=)(\d\d\d\d\d\d\d\d)',line).group(2))
-    if date not in week.keys():
-        week[int(date)] = 1
-    else:
-        week[int(date)] +=1
-       
-    return week
-
-
-"""
-                    def week_to_day
-
-The week to day function take a path to the fix file
-and a list with days corresponding to the trading of
-that week and breaks the Fix week file into its 
-associate trading days.
-
-This functions creates a new gzip file located in
-the same path as the weekly data.
-        
-"""
-
-def week_to_day(line,dates):
+    # GET SECURITY DESCRIPTION
+    secdes = re.search(b'(\x01107\=)(.*)(\x01)',line)
+    secdes = secdes.group(2).split(b'\x01')[0].decode()
     
-    if type(dates) != list:
-        raise ValueError("Invalid data type, argument dates must be a list.")
-        
-    if type(dates[0]) == str:
-        raise ValueError("Invalid data type, argument dates must be a list of int variables")
+    # GET SENDING DATE TAG 52
+    day = line[line.find(b'\x0152=')+4:line.find(b'\x0152=')+12].decode()
     
-    for day in dates:
-        if type(day)==str or type(day)==bytes:
-            continue
-        else:
-            day = str(day).encode()
-        if b"\x0175="+day in line:
-            return line
-        else:
-            pass
+    secinfo = {'desc':secdes,'sday':day}
+    info = (sec,secinfo)
 
+    return info
 
-"""
-                def group_by
+def report(result):
+    volume = Counter(elem[0] for elem in result).most_common(10)
+    info = []
+    secinfo = dict((key, value) for (key, value) in result)
+    
+    for sec in volume:
+        info.append({'SendingDate':secinfo[sec[0]]['sday'],
+                         'SecurityID':str(sec[0]),
+                         'SecurityDesc':secinfo[sec[0]]['desc'],
+                         'Volume':sec[1]})
+    return info
 
-This function takes a path to a fix file and
-a security id in order to create a new fix file
-with just the messages from that security.                
+def main():
+    parser = argparse.ArgumentParser(description="This scripts creates a report about the securities in the Fix data.")
+    parser.add_argument("-p","--path", help="Path fix data.")    
 
-"""
-
-def group_by(path,security):
-    if path[-3:] != ".gz":
-        fixfile = open(path, "rb")
-    else:
-        fixfile = gzip.open(path,'rb')
-    data_out = path[:-3]+"_ID"+security+".gz"
-    security = b"\x0148="+security.encode()
-    with gzip.open(data_out,'wb') as fixsec:
-        for line in fixfile:
-            if security in line:
-                header = line.split(b'\x01279')[0]
-                msgtype = re.search(b'(\x0135=)(.*)(\x01)',header).group(2)
-                msgtype = msgtype.split(b'\x01')[0]
-                if b'X' != msgtype:
-                    fixsec.write(line)
-                else:
-                    body = line.split(b'\x0110=')[0]
-                    body = body.split(b'\x01279')[1:]
-                    body = [b'\x01279'+ entry for entry in body]
-                    end = b'\x0110' + line.split(b'\x0110')[-1]
-                    for entry in body:
-                        if security in entry:
-                            header += entry
-                        else:
-                            pass
-                    msg = header+end
-                    fixsec.write(msg)
-            else:
-                pass
+    args = parser.parse_args()
+    path = args.path
+    
+    fixfile = bz2.BZ2File(path,'rb')
+    result = []
+    pool = mp.Pool()
+    for rmap in pool.imap_unordered(process, fixfile,chunksize=120000):
+        result.append(rmap)
     fixfile.close()
-
+    
+    wk = report(result)
+    wk_report = pd.DataFrame(wk)
+    wk_report.to_csv(path[:-3])
+    
 """
-                    Def FixData
-
-This class returns that number a report of the fix data
-contracts and volume.
-
+    fix_files = []
+    for (dirpath, dirnames, filenames) in walk(path):
+        fix_files.extend(filenames)
+               
+    for f in fix_files:            
+        with gzip.open(path+"/"+f,'rb') as fixfile:
+            fixfile = fixfile.readlines()
+            pool = mp.Pool(4)
+            result = pool.map(process,fixfile)                
+            pool.close()
+            info = pd.DataFrame(report(result))
+            info.to_csv(path+"/"+f[:-3]+".csv")
 """
 
-class FixData:
-    
-    stats = []
-    
-    def __init__(self,path):
-        
-        if path[-3:] != ".gz":
-            fixfile = open(path, "rb")
-        else:
-            fixfile = gzip.open(path,'rb')
-        contr = {}
-    
-        for line in fixfile:
-                                
-            sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
-            sec = sec.group(2)
-            sec = int(sec.split(b'\x01')[0])
-            secdes = re.search(b'(\x01107\=)(.*)(\x01)',line)
-            secdes = secdes.group(2)
-            secdes = secdes.split(b'\x01')[0].decode()
-            secprc = re.search('(^E.*)(\s)(P|C)(\d*)',secdes)
-            
-            if sec not in contr.keys():
-                contr[sec] = {'num':1,'desc':secdes,'type':'','price':0}
-                if secprc is not None:
-                    if 'C' in secprc.group(0):
-                        contr[sec]['type'] = 'C'
-                        contr[sec]['price'] = int(secprc.group(4))
-                    else:
-                        contr[sec]['type'] = 'P'
-                        contr[sec]['price'] = int(secprc.group(4))
-                else:
-                    continue
-            else:
-                contr[sec]['num']+=1
-                        
-        fixfile.close()
-                       
-        for secid,sec in contr.items():            
-            self.stats.append({'SecurityID':secid,
-                                   'SecurityDesc':sec['desc'],
-                                   'Volume':sec['num'],
-                                    'Type':sec['type'],
-                                    'Price':sec['price']})
-                
+if __name__ == "__main__":
+    main()
