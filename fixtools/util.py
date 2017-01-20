@@ -193,110 +193,70 @@ class FixData:
             book0 = self.initBook(SecDescription)
         else:
             book0 = self.book0
-        TradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6]
-        EntryType = lambda line: True if b'\x0135=X\x01' in line and TradeType(line) in b'0|1'else None
+        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] # BID or OFFER
+        msgType = lambda line: True if b'\x0135=X\x01' in line and tradeType(line) in b'0|1'else None # UPDATE Msg
         secDesc = b'\x01107='+SecDescription.encode()+b'\x01'
         books = []
-        
-################ BOOK ####################
-
-header0 = book0.split(b'\x01279')[0]
-end0 = b'\x0110' + book0.split(b'\x0110')[-1]
-body0 = book0.split(b'\x0110=')[0]
-body0 = body0.split(b'\x01279')[1:]
-body0 = [b'\x01279'+ entry for entry in body0]
-
-################ BOOK ####################
-
-len(body0)
-body0[9]
-
+        books.append(book0)
         if fileOut==False:
-            messages = iter(filter(EntryType,self.data))
+            messages = iter(filter(msgType,self.data))
             next(messages) # Start from second msg first is the initial book
-            books.append(book0)
-            msg = next(messages)
             for msg in messages:
-                if secDesc in msg:
-                    header = msg.split(b'\x01279')[0]
-                    end = b'\x0110' + msg.split(b'\x0110')[-1]
-                    body = msg.split(b'\x0110=')[0]
-                    body = body.split(b'\x01279')[1:]
-                    body = [b'\x01279'+ entry for entry in body]
-                    
-################### CHANGE, NEW  & DELETE ####################
-                    
-                for entry in body:
-                    if entry["type"] == "BID":
-                        if entry["action"] == "CHANGE":
-                            bk_update["entries"][entry["level"]-1] = entry
-                        elif entry["action"] == "NEW":
-                            if entry["level"] == 10:
-                                bk_update["entries"][9] = entry
-                            else:
-                                for i in reversed(range(entry["level"],10)):
-                                    bk_update["entries"][i] = bk_update["entries"].pop(i-1)
-                                bk_update["entries"][entry["level"]-1] = entry
-                        else:
-                            if entry["level"] == 10:
-                                bk_update["entries"][9] = {}
-                            else:
-                                for i in range(entry["level"],10):
-                                    bk_update["entries"][i-1] = bk_update["entries"].pop(i)
-                                bk_update["entries"][9] = {}                    
-                    else:
-                        ## OFFER 1
-                    
-                    header += b''.join([e if secDesc in e else b'' for e in body])
-                    book.append(header+end)
-                
-        with open("book.json", 'wb') as f:
-            for msg in updates: 
-                bk_update = book
-                f.write(json.dumps(bk_update))
-                bk_update["bkseq"] = cnt
-                bk_update["seqnum"] = msg["seqnum"]
-                bk_update["time"] = msg["_id"]
-                if len(msg["entries"])>3:                    
-                    dic = dict((x["rptseq"], x) for x in msg["entries"])
-                    entries = OrderedDict(sorted(dic.items(), key=lambda t: t[0]))
-                    msg["entries"] = entries.values()
-                for entry in msg["entries"]:
-                    if entry["type"] == "BID":
-                        if entry["action"] == "CHANGE":
-                            bk_update["entries"][entry["level"]-1] = entry
-                        elif entry["action"] == "NEW":
-                            if entry["level"] == 10:
-                                bk_update["entries"][9] = entry
-                            else:
-                                for i in reversed(range(entry["level"],10)):
-                                    bk_update["entries"][i] = bk_update["entries"].pop(i-1)
-                                bk_update["entries"][entry["level"]-1] = entry
-                        else:
-                            if entry["level"] == 10:
-                                bk_update["entries"][9] = {}
-                            else:
-                                for i in range(entry["level"],10):
-                                    bk_update["entries"][i-1] = bk_update["entries"].pop(i)
-                                bk_update["entries"][9] = {}
-                    else:
-                        if entry["action"] == "CHANGE":
-                            bk_update["entries"][entry["level"]+9] = entry
-                        elif entry["action"] == "NEW":
-                            if entry["level"] == 10:
-                                bk_update["entries"][19] = entry
-                            else:
-                                for i in reversed(range(entry["level"],10)):
-                                    bk_update["entries"][i+10] = bk_update["entries"].pop(i+9)
-                                bk_update["entries"][entry["level"]+9] = entry
-                        else:
-                            if entry["level"] == 10:
-                                bk_update["entries"][19] = {}
-                            else:
-                                for i in range(entry["level"],10):
-                                    bk_update["entries"][i+9] = bk_update["entries"].pop(i+10)
-                                bk_update["entries"][19] = {}
-                book.update(bk_update)
-                del bk_update 
-                cnt+=1
-        print("Done!")
+                ########################### PRIVOUS BOOK ############################
+                book_body = books[-1].split(b'\x0110=')[0]
+                book_body = book_body.split(b'\x01279')[1:]
+                book_body = [b'\x01279'+ entry for entry in book_body]
+                #####################################################################
+                if secDesc in msg: # Check if msg containts security description
+                    book_header = msg.split(b'\x01279')[0]
+                    book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+                    msg_body = msg.split(b'\x0110=')[0]
+                    msg_body = msg_body.split(b'\x01279')[1:]
+                    msg_body = [b'\x01279'+ entry for entry in msg_body]
+                    msg_body = [e if secDesc in e else None for e in msg_body]
+                ############################ BOOK UPDATE  #############################
+                    for entry in msg_body:
+                        priceLevel = entry.split(b'\x011023=')[0]
+                        entryType = entry[entry.find(b'\x01269=')+5:entry.find(b'\x01269=')+6]
+                        actionType = entry[entry.find(b'\x01279=')+5:entry.find(b'\x01279=')+6]
+                        deleted = entry.split(b'\x01270=')[0]+ b'\x01270=000000'
+                        deleted = deleted + b'\x01271'+entry.split(b'\x01270=')[1].split(b'\x01271')[1]
+                        if entryType == b'0': # BID tag 269=0
+                            if actionType == b'1': # CHANGE 279=1
+                                book_body[priceLevel-1] = entry
+                            elif actionType == b'0': # NEW tag 279=0
+                                if priceLevel == b'10':
+                                    book_body[9] = entry
+                                else:
+                                    for i in reversed(range(priceLevel,10)):
+                                        book_body[i] = book_body.pop(i-1)
+                                    book_body[priceLevel-1] = entry
+                            else:  # b'\x01279=2' DELETE
+                                if priceLevel == b'10':
+                                    book_body[9] = deleted
+                                else:
+                                    for i in range(priceLevel+1,10):
+                                        book_body[i-1] = book_body.pop(i)
+                                    book_body[9] = deleted
+                        else: # OFFER tag 269=1
+                            if actionType == b'1': # CHANGE 279=1
+                                book_body[priceLevel+10] = entry
+                            elif actionType == b'0': # NEW tag 279=0
+                                if priceLevel == b'10':
+                                    book_body[19] = entry
+                                else:
+                                    for i in reversed(range(priceLevel,10)):
+                                        book_body[i] = book_body.pop(i-1)
+                                    book_body[priceLevel+10] = entry
+                            else:  # b'\x01279=2' DELETE
+                                if priceLevel == b'10':
+                                    book_body[19] = deleted
+                                else:
+                                    for i in range(priceLevel+1,10):
+                                        book_body[i+10] = book_body.pop(i)
+                                    book_body[19] = deleted
+
+                    book_header += b''.join([e for e in book_body])
+                    book = book_header + book_end
+                    books.append(book)
+        return books
