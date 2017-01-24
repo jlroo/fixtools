@@ -5,10 +5,11 @@ Created on Fri Jul 22 17:33:13 2016
 """
 
 from collections import Counter
-from functools import partial
 import gzip
 import bz2
 import multiprocessing as mp
+
+
 """
                     Def FixData
 
@@ -198,18 +199,19 @@ class FixData:
         return self.book0
     
     def buildbook(self,SecDescription,fileOut=False):
+        from functools import partial
         if self.book0==b'':
             self.book0 = self.initBook(SecDescription)
         secDesc = b'\x01107='+SecDescription.encode()+b'\x01'        
-        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
+        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6]
         self.books.append(self.book0)
         if fileOut==False:
             func = partial(msgFilter,secDesc)
             with mp.Pool() as pool:
                 msg = pool.map(func,self.data)
-            MsgSeqNum = lambda i:int(i.split(b'\x0134=')[1].split(b'\x01')[0])
-            updates = lambda e: e is not None and MsgSeqNum(e)>MsgSeqNum(self.book0)
-            messages = iter(filter(updates,msg))
+            messages = iter(filter(None,msg))
+            # Start from second msg first is the initial book
+            next(messages)
             for msg in messages:
             ########################## PRIVOUS BOOK #############################
                 book_body = self.books[-1].split(b'\x0110=')[0]
@@ -221,7 +223,7 @@ class FixData:
                 book_end = b'\x0110' + msg.split(b'\x0110')[-1]
                 msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
                 msg_body = [b'\x01279'+ e if secDesc in e and b'\x01276' not in e else None for e in msg_body]
-                msg_body = iter(filter(lambda e: e is not None and tradeType(e),msg_body))
+                msg_body = iter(filter(lambda e: e is not None and tradeType(e) in b'0|1',msg_body))
             ############################ BOOK UPDATE  ###########################
                 for entry in msg_body:
                     priceLevel = int(entry.split(b'\x011023=')[1])
@@ -239,7 +241,9 @@ class FixData:
                                     bids[i] = bids[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
                                 bids.pop()
                         else:  # b'\x01279=2' DELETE
-                            delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
+                            delete = entry.split(b'\x01270=')[0]+ b'\x01270=000000'
+                            delete = delete + b'\x01271'+entry.split(b'\x01270=')[1].split(b'\x01271')[1]
+                            delete = delete.split(b'\x011023=')[0]+b'\x011023=10'
                             if priceLevel == 10:
                                 bids[9] = delete
                             else:
@@ -259,7 +263,9 @@ class FixData:
                                     offers[i] = offers[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
                                 offers.pop()
                         else:  # b'\x01279=2' DELETE
-                            delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
+                            delete = entry.split(b'\x01270=')[0]+ b'\x01270=000000'
+                            delete = delete + b'\x01271'+entry.split(b'\x01270=')[1].split(b'\x01271')[1]
+                            delete = delete.split(b'\x011023=')[0]+b'\x011023=10'
                             if priceLevel == 10:
                                 offers[9] = delete
                             else:
