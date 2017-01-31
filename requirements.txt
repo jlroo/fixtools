@@ -2,4 +2,3 @@
 gzip
 bz2
 multiprocessing
-functools

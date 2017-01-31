@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: fixtools
-Version: 0.2
+Version: 0.5
 Summary: Package to analyze FIX 5.0 SP2 financial data.
 Home-page: https://github.com/jlroo/fixtools
 Author: Jose Luis Rodriguez
