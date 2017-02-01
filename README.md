@@ -71,7 +71,7 @@ Released under the [MIT License].<br>
 Authored and maintained by Jose Luis Rodriguez.
 
 > [jlroo.com](http://jlroo.com) &nbsp;&middot;&nbsp;
-> GitHub [@jl_roo](https://github.com/jl_roo) &nbsp;&middot;&nbsp;
+> GitHub [@jlroo](https://github.com/jl_roo) &nbsp;&middot;&nbsp;
 > Twitter [@jl_roo](https://twitter.com/jl_roo)
 
 [MIT License]: http://mit-license.org/

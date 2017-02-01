@@ -8,6 +8,7 @@ from collections import Counter
 import gzip
 import bz2
 import multiprocessing as mp
+
 """
                     Def FixData
 
@@ -31,18 +32,17 @@ def openFix(path,period="weekly",compression=True):
         elif path[-4:] == ".bz2":
             fixfile = bz2.BZ2File(path,'rb')
         else:
-            raise ValueError("Supported compressions gzip and bz2. \
-                              For uncompressed files change compression \
-                              flag to False.")
+            raise ValueError("Supported files gzip,bz2, uncompress bytes file. \
+                              For uncompressed files change compression flag to False.")
     return FixData(fixfile,src)
 
 SecurityDescription = ""
 
 def __secFilter__(line):
     global SecurityDescription
-    secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
-    mkRefresh = line[line.find(b'\x0135=')+4:line.find(b'\x0135=')+5] in b'\x0135=X\x01'
-    if mkRefresh and secDesc in line:
+    secDesc = b'107='+SecurityDescription.encode()+b'\x01' in line
+    mkRefresh = b'35=X\x01' in line
+    if mkRefresh and secDesc:
         return line
 
 fixDate = ""
@@ -57,11 +57,11 @@ def __tradeDay__(line):
     return line.split(b'\x0175=')[1].split(b'\x01')[0]
 
 class FixData:
-    dates = []
+    books,dates = [],[]
     volume = {}
     book = b''
-    BookSeqNum = None
-          
+    bookSeqNum = 0
+
     def __init__(self,fixfile,src):
         self.data = fixfile
         self.path = src["path"]
@@ -176,7 +176,7 @@ class FixData:
         EntryType = lambda line: True if b'\x0135=X\x01' in line and TradeType(line) in b'0|1'else None
         secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
         book0 = next(filter(EntryType,self.data), None)
-        header = book0.split(b'\x01279')[0]
+        header = book0.split(b'\x01279=')[0]
         end = b'\x0110' + book0.split(b'\x0110')[-1]
         body = book0.split(b'\x0110=')[0]
         body = body.split(b'\x01279')[1:]
@@ -185,74 +185,74 @@ class FixData:
         self.book = header+end
         self.data.seek(0)
         return self.book
-
+        
     def updateBook(self,book_body,msg_body):
-        bids,offers = book_body[0:10],book_body[10:]
+        topOrder = len(book_body)//2        
+        bids,offers = book_body[0:topOrder],book_body[topOrder:]
         for entry in msg_body:
             priceLevel = int(entry.split(b'\x011023=')[1])
             entryType = int(entry[entry.find(b'\x01269=')+5:entry.find(b'\x01269=')+6])
             actionType = int(entry[entry.find(b'\x01279=')+5:entry.find(b'\x01279=')+6])
-            if entryType == 0: # BID tag 269=0
+            if entryType == 0: # BID tag 269= esh9[1]
                 if actionType == 1: # CHANGE 279=1
                     bids[priceLevel-1] = entry
                 elif actionType == 0: # NEW tag 279=0
-                    if priceLevel == 10:
-                        bids[9] = entry
+                    if priceLevel == topOrder:
+                        bids[topOrder-1] = entry
                     else:
                         bids.insert(priceLevel-1,entry)
-                        for i in range(priceLevel,10):
+                        for i in range(priceLevel,topOrder):
                             bids[i] = bids[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
                         bids.pop()
                 else:  # b'\x01279=2' DELETE
                     delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
-                    if priceLevel == 10:
-                        bids[9] = delete
+                    if priceLevel == topOrder:
+                        bids[topOrder-1] = delete
                     else:
                         bids.pop(priceLevel-1)
-                        for i in range(priceLevel,10):
+                        for i in range(priceLevel,topOrder):
                             bids[i-1] = bids[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
                         bids.append(delete)
             else: # OFFER tag 269=1
                 if actionType == 1: # CHANGE 279=1
                     offers[priceLevel-1] = entry
                 elif actionType == 0: # NEW tag 279=0
-                    if priceLevel == 10:
-                        offers[9] = entry
+                    if priceLevel == topOrder:
+                        offers[topOrder-1] = entry
                     else:
                         offers.insert(priceLevel-1,entry)
-                        for i in range(priceLevel,10):
+                        for i in range(priceLevel,topOrder):
                             offers[i] = offers[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
                         offers.pop()
                 else:  # b'\x01279=2' DELETE
                     delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
-                    if priceLevel == 10:
-                        offers[9] = delete
+                    if priceLevel == topOrder:
+                        offers[topOrder-1] = delete
                     else:
                         offers.pop(priceLevel-1)
-                        for i in range(priceLevel,10):
+                        for i in range(priceLevel,topOrder):
                             offers[i-1] = offers[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
                         offers.append(delete)
         return bids,offers
-
+            
     def buildbook(self,SecurityDesc):
         global SecurityDescription
         SecurityDescription = SecurityDesc
-        if self.book==b'' or self.BookSeqNum==None:
-            self.book = self.initBook(SecurityDescription)
-            BookSeqNum = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
         secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
-        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'     
+        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
+        MsgSeqNum = lambda line:int(line.split(b'\x0134=')[1].split(b'\x01')[0])
+        if self.book==b'':
+            self.book = self.initBook(SecurityDescription)
+            self.bookSeqNum = int(self.book0.split(b'\x0134=')[1].split(b'\x01')[0])
+        updates = lambda e: e is not None and MsgSeqNum(e)>self.bookSeqNum
         with mp.Pool() as pool:
             msgMap = pool.map(__secFilter__,self.data)
-        MsgSeqNum = lambda i:int(i.split(b'\x0134=')[1].split(b'\x01')[0])
-        updates = lambda e: e is not None and MsgSeqNum(e)>BookSeqNum
         messages = iter(filter(updates,msgMap))
         for msg in messages:
         ########################## PRIVOUS BOOK #############################
             book_body = self.book.split(b'\x0110=')[0]
             book_body = book_body.split(b'\x01279')[1:]
             book_body = [b'\x01279'+ entry for entry in book_body]
-            #bids,offers = book_body[0:10],book_body[10:]
         #####################################################################
             book_header = msg.split(b'\x01279')[0]
             book_end = b'\x0110' + msg.split(b'\x0110')[-1]
@@ -260,9 +260,9 @@ class FixData:
             msg_body = [b'\x01279'+ e if secDesc in e and b'\x01276' not in e else None for e in msg_body]
             msg_body = iter(filter(lambda e: e is not None and tradeType(e),msg_body))
         ############################ BOOK UPDATE  ###########################
-            bids,offers=self.updateBook(book_body,msg_body)
+            bids,offers = self.updateBook(book_body,msg_body)
             book_body = bids+offers
             book_header += b''.join([e for e in book_body])
-            self.book = book_header + book_end
-            return self.book
+            self.book= book_header + book_end
+            yield self.book
         self.data.seek(0)
