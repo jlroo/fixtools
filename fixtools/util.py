@@ -4,7 +4,6 @@ Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
 """
 
-from collections import Counter
 import gzip
 import bz2
 import multiprocessing as mp
@@ -53,8 +52,8 @@ def __dayFilter__(line):
     if filterDate in line:
         return line
         
-def __tradeDay__(line):
-    return line.split(b'\x0175=')[1].split(b'\x01')[0]
+def __msgTime__(line):
+    return line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
 
 class FixData:
     books,dates = [],[]
@@ -80,17 +79,21 @@ class FixData:
         This function returns the number of messages
         sent in a particular date.
         
-        returns a dictionary ( counter type )
+        returns a dictionary
         
         {DAY: VOLUME}
     """
              
-    def msgVolume(self):
+    def msgVolume(self,chunksize=10**4):
         with mp.Pool() as pool:
-            dates = pool.map(__tradeDay__,self.data)
-            self.volume = Counter(entry.split(b',')[0] for entry in dates)
+            datesMap = pool.imap(__msgTime__,self.data,chunksize)
+            for date in datesMap:
+                if int(date) not in self.volume.keys():
+                    self.volume[int(date)]=1
+                else:
+                    self.volume[int(date)]+=1
         self.data.seek(0)
-        return self.volume 
+        return self.volume
 
     """
                         def splitBy
@@ -105,20 +108,21 @@ class FixData:
         
     """
 
-    def splitBy(self,dates,fileOut=False):
+    def splitBy(self,dates,chunksize=10**4,fileOut=False):
         for day in dates:
             global fixDate
             fixDate = str(day).encode()
             path_out = self.path[:-4]+"_"+str(day)+".bz2"
             with mp.Pool() as pool:
-                    msgDay = pool.map(__dayFilter__,self.data)                                 
-            if fileOut==True:                    
-                with bz2.open(path_out,'w') as f:
-                    for entry in msgDay:
-                        f.write(entry)
-            else:
-                self.data.seek(0)
-                return msgDay
+                    msgDay = pool.imap(__dayFilter__,self.data,chunksize) 
+                    if fileOut==True:
+                        with bz2.open(path_out,'ab') as f:
+                            for entry in msgDay:
+                                f.write(entry)
+                    else:
+                        for entry in msgDay:
+                            return msgDay
+            self.data.seek(0)
 
     """
                         def filterBy
@@ -172,10 +176,11 @@ class FixData:
     def initBook(self,SecurityDesc):
         global SecurityDescription
         SecurityDescription = SecurityDesc
-        TradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6]
-        EntryType = lambda line: True if b'\x0135=X\x01' in line and TradeType(line) in b'0|1'else None
         secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
-        book0 = next(filter(EntryType,self.data), None)
+        msgType = lambda line: b'35=X\x01' in line and secDesc in line
+        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
+        msgOpen = lambda line: True if msgType(line) and tradeType(line) else None
+        book0 = next(filter(msgOpen,self.data), None)
         header = book0.split(b'\x01279=')[0]
         end = b'\x0110' + book0.split(b'\x0110')[-1]
         body = book0.split(b'\x0110=')[0]
@@ -234,8 +239,8 @@ class FixData:
                             offers[i-1] = offers[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
                         offers.append(delete)
         return bids,offers
-            
-    def buildbook(self,SecurityDesc):
+
+    def buildbook(self,SecurityDesc,chunksize=10**4):
         global SecurityDescription
         SecurityDescription = SecurityDesc
         secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
@@ -246,23 +251,23 @@ class FixData:
             self.bookSeqNum = int(self.book0.split(b'\x0134=')[1].split(b'\x01')[0])
         updates = lambda e: e is not None and MsgSeqNum(e)>self.bookSeqNum
         with mp.Pool() as pool:
-            msgMap = pool.map(__secFilter__,self.data)
-        messages = iter(filter(updates,msgMap))
-        for msg in messages:
-        ########################## PRIVOUS BOOK #############################
-            book_body = self.book.split(b'\x0110=')[0]
-            book_body = book_body.split(b'\x01279')[1:]
-            book_body = [b'\x01279'+ entry for entry in book_body]
-        #####################################################################
-            book_header = msg.split(b'\x01279')[0]
-            book_end = b'\x0110' + msg.split(b'\x0110')[-1]
-            msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
-            msg_body = [b'\x01279'+ e if secDesc in e and b'\x01276' not in e else None for e in msg_body]
-            msg_body = iter(filter(lambda e: e is not None and tradeType(e),msg_body))
-        ############################ BOOK UPDATE  ###########################
-            bids,offers = self.updateBook(book_body,msg_body)
-            book_body = bids+offers
-            book_header += b''.join([e for e in book_body])
-            self.book= book_header + book_end
-            yield self.book
+            msgMap = pool.imap(__secFilter__,self.data,chunksize)
+            messages = iter(filter(updates,msgMap))
+            for msg in messages:
+            ########################## PRIVOUS BOOK #############################
+                book_body = self.book.split(b'\x0110=')[0]
+                book_body = book_body.split(b'\x01279')[1:]
+                book_body = [b'\x01279'+ entry for entry in book_body]
+            #####################################################################
+                book_header = msg.split(b'\x01279')[0]
+                book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+                msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+                msg_body = [b'\x01279'+ e if secDesc in e and b'\x01276' not in e else None for e in msg_body]
+                msg_body = iter(filter(lambda e: e is not None and tradeType(e),msg_body))
+            ############################ BOOK UPDATE  ###########################
+                bids,offers = self.updateBook(book_body,msg_body)
+                book_body = bids+offers
+                book_header += b''.join([e for e in book_body])
+                self.book= book_header + book_end
+                yield self.book
         self.data.seek(0)
