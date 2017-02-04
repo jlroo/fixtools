@@ -54,7 +54,7 @@ def __dayFilter__(line):
     if filterDate in line:
         return line
         
-def __msgStats__(line):
+def __metrics__(line):
     # GET SECURITY ID
     sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
     sec = sec.group(2).split(b'\x01')[0]
@@ -99,7 +99,7 @@ class FixData:
         desc = {}
         table = defaultdict(dict)
         with mp.Pool() as pool:
-            dataMap = pool.imap(__msgStats__,self.data,chunksize)
+            dataMap = pool.imap(__metrics__,self.data,chunksize)
             for entry in dataMap:
                 day = entry.split(b',')[2][0:8].decode()
                 sec = entry.split(b',')[0].decode()
