@@ -2,3 +2,5 @@
 gzip
 bz2
 multiprocessing
+re
+collections

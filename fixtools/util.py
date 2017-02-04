@@ -7,6 +7,8 @@ Created on Fri Jul 22 17:33:13 2016
 import gzip
 import bz2
 import multiprocessing as mp
+import re
+from collections import defaultdict
 
 """
                     Def FixData
@@ -52,12 +54,21 @@ def __dayFilter__(line):
     if filterDate in line:
         return line
         
-def __msgTime__(line):
-    return line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
+def __msgStats__(line):
+    # GET SECURITY ID
+    sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
+    sec = sec.group(2).split(b'\x01')[0]
+    # GET SECURITY DESCRIPTION
+    secdes = re.search(b'(\x01107\=)(.*)(\x01)',line)
+    secdes = secdes.group(2).split(b'\x01')[0]
+    # GET SENDING DATE TAG 52
+    day = line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
+    return b','.join([sec,secdes,day])
+    
 
 class FixData:
     books,dates = [],[]
-    volume = {}
+    stats = {}
     book = b''
     bookSeqNum = 0
 
@@ -83,17 +94,38 @@ class FixData:
         
         {DAY: VOLUME}
     """
-             
-    def msgVolume(self,chunksize=10**4):
+
+    def dataStats(self,chunksize=10**4,fileOut=False):
+        desc = {}
+        table = defaultdict(dict)
         with mp.Pool() as pool:
-            datesMap = pool.imap(__msgTime__,self.data,chunksize)
-            for date in datesMap:
-                if int(date) not in self.volume.keys():
-                    self.volume[int(date)]=1
+            dataMap = pool.imap(__msgStats__,self.data,chunksize)
+            for entry in dataMap:
+                day = entry.split(b',')[2][0:8].decode()
+                sec = entry.split(b',')[0].decode()
+                secdesc = entry.split(b',')[1].decode()
+                desc[sec] = secdesc
+                if sec not in table[day].keys():
+                    table[day][sec]=1
                 else:
-                    self.volume[int(date)]+=1
+                    table[day][sec]+=1
+        if fileOut==False:
+            fixStats = defaultdict(dict)
+            for day in sorted(table.keys()):
+                fixStats[day]=defaultdict(dict)
+                for sec in table[day]:
+                    fixStats[day][sec]["desc"] = desc[sec]
+                    fixStats[day][sec]["vol"] = table[day][sec]
+            return fixStats        
+        else:
+            header = b'SecurityID,SecurityDesc,Volume,SendingDate'+b'\n'
+            for day in sorted(table.keys()):
+                with open("stats_"+day+".csv","wb") as f:
+                    f.write(header)
+                    for sec in table[day]:
+                        f.write(b','.join([sec.encode(),desc[sec].encode(),str(table[day][sec]).encode(),day.encode()])+b'\n')
         self.data.seek(0)
-        return self.volume
+        
 
     """
                         def splitBy
