@@ -123,7 +123,10 @@ class FixData:
                 with open("stats_"+day+".csv","wb") as f:
                     f.write(header)
                     for sec in table[day]:
-                        f.write(b','.join([sec.encode(),desc[sec].encode(),str(table[day][sec]).encode(),day.encode()])+b'\n')
+                        f.write(b','.join([ sec.encode(),
+                                            desc[sec].encode(),
+                                            str(table[day][sec]).encode(),
+                                            day.encode()]) + b'\n')
         self.data.seek(0)
         
 
