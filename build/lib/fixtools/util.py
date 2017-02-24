@@ -9,7 +9,6 @@ import bz2
 import multiprocessing as mp
 import re
 from collections import defaultdict
-from datetime import datetime
 
 """
                     Def FixData
@@ -37,40 +36,6 @@ def openFix(path,period="weekly",compression=True):
             raise ValueError("Supported files gzip,bz2, uncompress bytes file. \
                               For uncompressed files change compression flag to False.")
     return FixData(fixfile,src)
-
-def settlementDay(date,weekNumber,dayOfWeek):
-    days = {'monday':0,'tuesday':1,'wednesday':2,
-            'thursday':3,'friday':4,'saturday':5,
-            'sunday':6}
-    dates = datetime.datetime(int(date[0:4]),int(date[4:6]),int(date[6:8]))
-    if dates.weekday() == days[dayOfWeek.lower()]:
-        if dates.day // 7 == (weekNumber - 1):
-            return True
-    return False
-
-def mostLiquid(wk):
-    date = datetime.datetime(year=int(wk[0][0:4]), month=int(wk[0][4:6]), day=int(wk[0][6:8]))
-    contractID = lambda yr: yr[-2:] if yr[1:3] != "00" else yr[-1:]
-    expWeek = next(filter(lambda d: settlementDay(d,3,'friday'),wk),None)
-    
-    if  date.month <= 3:
-        secDesc = "ESH" + contractID(str(date.year))
-        if expWeek != None:
-            secDesc = secDesc.replace("H","M")
-    elif date.month == 6:
-        secDesc = "ESM" + contractID(str(date.year))
-        if expWeek != None:
-            secDesc = secDesc.replace("M","U")
-    elif date.month == 9:
-        secDesc = "ESU" + contractID(str(date.year))
-        if expWeek != None:
-            secDesc = secDesc.replace("U","Z")
-    elif date.month == 12:
-        secDesc = "ESZ" + contractID(str(date.year))
-        if expWeek != None:
-            secDesc = secDesc.replace("Z","H")
-    return secDesc
-
 
 SecurityDescription = ""
 
@@ -106,7 +71,6 @@ class FixData:
     stats = {}
     book = b''
     bookSeqNum = 0
-    securityDesc = ""
 
     def __init__(self,fixfile,src):
         self.data = fixfile
@@ -115,13 +79,13 @@ class FixData:
         d0 = line0[line0.find(b'\x0152=')+4:line0.find(b'\x0152=')+12]
         if src["period"] == "weekly":
             self.dates = list(range(int(d0.decode()),int(d0.decode())+6))
+        elif src["period"] == "daily":
+            self.dates = list(range(int(d0.decode()),int(d0.decode())+2))
         else:
-            raise ValueError("Supported time period: weekly data to get dates")
-        self.dates = [str(e) for e in self.dates]
-        self.securityDesc = mostLiquid(self.dates)
+            raise ValueError("Supported time period: weekly or daily")         
             
     """
-                       def dataMetrics
+                       def msgVolume
         
         This function returns the number of messages
         sent in a particular date.
@@ -131,7 +95,7 @@ class FixData:
         {DAY: VOLUME}
     """
 
-    def dataMetrics(self,chunksize=10**4,fileOut=False,path=""):
+    def dataStats(self,chunksize=10**4,fileOut=False,path=""):
         desc = {}
         table = defaultdict(dict)
         with mp.Pool() as pool:
@@ -244,9 +208,9 @@ class FixData:
     
     """        
 
-    def initBook(self,securityDesc):
+    def initBook(self,SecurityDesc):
         global SecurityDescription
-        SecurityDescription = securityDesc
+        SecurityDescription = SecurityDesc
         secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
         msgType = lambda line: b'35=X\x01' in line and secDesc in line
         tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
@@ -261,40 +225,6 @@ class FixData:
         self.book = header+end
         self.data.seek(0)
         return self.book
-
-
-    def buildbook(self,securityDesc,chunksize=10**4):
-        global SecurityDescription
-        SecurityDescription = securityDesc
-        secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
-        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
-        MsgSeqNum = lambda line:int(line.split(b'\x0134=')[1].split(b'\x01')[0])
-        if self.book==b'':
-            self.book = self.initBook(SecurityDescription)
-            self.bookSeqNum = int(self.book0.split(b'\x0134=')[1].split(b'\x01')[0])
-        updates = lambda e: e is not None and MsgSeqNum(e)>self.bookSeqNum
-        with mp.Pool() as pool:
-            msgMap = pool.imap(__secFilter__,self.data,chunksize)
-            messages = iter(filter(updates,msgMap))
-            for msg in messages:
-            ########################## PRIVOUS BOOK #############################
-                book_body = self.book.split(b'\x0110=')[0]
-                book_body = book_body.split(b'\x01279')[1:]
-                book_body = [b'\x01279'+ entry for entry in book_body]
-            #####################################################################
-                book_header = msg.split(b'\x01279')[0]
-                book_end = b'\x0110' + msg.split(b'\x0110')[-1]
-                msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
-                msg_body = [b'\x01279'+ e if secDesc in e and b'\x01276' not in e else None for e in msg_body]
-                msg_body = iter(filter(lambda e: e is not None and tradeType(e),msg_body))
-            ############################ BOOK UPDATE  ###########################
-                bids,offers = self.updateBook(book_body,msg_body)
-                book_body = bids+offers
-                book_header += b''.join([e for e in book_body])
-                self.book= book_header + book_end
-                yield self.book
-        self.data.seek(0)
-        
         
     def updateBook(self,book_body,msg_body):
         topOrder = len(book_body)//2        
@@ -344,3 +274,35 @@ class FixData:
                             offers[i-1] = offers[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
                         offers.append(delete)
         return bids,offers
+
+    def buildbook(self,SecurityDesc,chunksize=10**4):
+        global SecurityDescription
+        SecurityDescription = SecurityDesc
+        secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
+        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
+        MsgSeqNum = lambda line:int(line.split(b'\x0134=')[1].split(b'\x01')[0])
+        if self.book==b'':
+            self.book = self.initBook(SecurityDescription)
+            self.bookSeqNum = int(self.book0.split(b'\x0134=')[1].split(b'\x01')[0])
+        updates = lambda e: e is not None and MsgSeqNum(e)>self.bookSeqNum
+        with mp.Pool() as pool:
+            msgMap = pool.imap(__secFilter__,self.data,chunksize)
+            messages = iter(filter(updates,msgMap))
+            for msg in messages:
+            ########################## PRIVOUS BOOK #############################
+                book_body = self.book.split(b'\x0110=')[0]
+                book_body = book_body.split(b'\x01279')[1:]
+                book_body = [b'\x01279'+ entry for entry in book_body]
+            #####################################################################
+                book_header = msg.split(b'\x01279')[0]
+                book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+                msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+                msg_body = [b'\x01279'+ e if secDesc in e and b'\x01276' not in e else None for e in msg_body]
+                msg_body = iter(filter(lambda e: e is not None and tradeType(e),msg_body))
+            ############################ BOOK UPDATE  ###########################
+                bids,offers = self.updateBook(book_body,msg_body)
+                book_body = bids+offers
+                book_header += b''.join([e for e in book_body])
+                self.book= book_header + book_end
+                yield self.book
+        self.data.seek(0)
