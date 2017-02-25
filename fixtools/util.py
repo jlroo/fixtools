@@ -52,25 +52,24 @@ def mostLiquid(wk):
     date = datetime.datetime(year=int(wk[0][0:4]), month=int(wk[0][4:6]), day=int(wk[0][6:8]))
     contractID = lambda yr: yr[-2:] if yr[1:3] != "00" else yr[-1:]
     expWeek = next(filter(lambda d: settlementDay(d,3,'friday'),wk),None)
-    
-    if  date.month <= 3:
+    expired = True if date.month in (3,6,9,12) and date.day>16 else False
+    if date.month <= 3:
         secDesc = "ESH" + contractID(str(date.year))
-        if expWeek != None:
+        if expWeek != None or expired:
             secDesc = secDesc.replace("H","M")
-    elif date.month == 6:
+    elif date.month >= 4 and date.month < 6:
         secDesc = "ESM" + contractID(str(date.year))
-        if expWeek != None:
+        if expWeek != None or expired:
             secDesc = secDesc.replace("M","U")
-    elif date.month == 9:
+    elif date.month >= 6 and date.month < 9:
         secDesc = "ESU" + contractID(str(date.year))
-        if expWeek != None:
+        if expWeek != None or expired:
             secDesc = secDesc.replace("U","Z")
-    elif date.month == 12:
+    elif date.month >= 9:
         secDesc = "ESZ" + contractID(str(date.year))
-        if expWeek != None:
+        if expWeek != None or expired:
             secDesc = secDesc.replace("Z","H")
     return secDesc
-
 
 SecurityDescription = ""
 
