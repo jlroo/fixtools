@@ -42,15 +42,15 @@ def settlementDay(date,weekNumber,dayOfWeek):
     days = {'monday':0,'tuesday':1,'wednesday':2,
             'thursday':3,'friday':4,'saturday':5,
             'sunday':6}
-    dates = datetime.datetime(int(date[0:4]),int(date[4:6]),int(date[6:8]))
+    dates = datetime(int(date[0:4]),int(date[4:6]),int(date[6:8]))
     if dates.weekday() == days[dayOfWeek.lower()]:
         if dates.day // 7 == (weekNumber - 1):
             return True
     return False
 
 def mostLiquid(wk):
-    date = datetime.datetime(year=int(wk[0][0:4]), month=int(wk[0][4:6]), day=int(wk[0][6:8]))
-    contractID = lambda yr: yr[-2:] if yr[1:3] != "00" else yr[-1:]
+    date = datetime(year=int(wk[0][0:4]), month=int(wk[0][4:6]), day=int(wk[0][6:8]))
+    contractID = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
     expWeek = next(filter(lambda d: settlementDay(d,3,'friday'),wk),None)
     expired = True if date.month in (3,6,9,12) and date.day>16 else False
     if date.month <= 3:
