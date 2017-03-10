@@ -8,8 +8,9 @@ import gzip
 import bz2
 import multiprocessing as mp
 import re
+import datetime
 from collections import defaultdict
-from datetime import datetime
+
 
 """
                     Def FixData
@@ -25,7 +26,7 @@ def openFix(path,period="weekly",compression=True):
     src = {"path":path,"period":period.lower()}
     if compression == False:
         if path[-4:].lower in (".zip",".tar"):
-            raise ValueError("Supported compressions gzip, bz2 or bytes data")            
+            raise ValueError("Supported compressions gzip, bz2 or bytes data")
         else:
             fixfile = open(path,'rb')
     else:
@@ -42,16 +43,16 @@ def settlementDay(date,weekNumber,dayOfWeek):
     days = {'monday':0,'tuesday':1,'wednesday':2,
             'thursday':3,'friday':4,'saturday':5,
             'sunday':6}
-    dates = datetime(int(date[0:4]),int(date[4:6]),int(date[6:8]))
+    dates = datetime.datetime(date.year,date.month,date.day)
     if dates.weekday() == days[dayOfWeek.lower()]:
         if dates.day // 7 == (weekNumber - 1):
             return True
     return False
 
 def mostLiquid(wk):
-    date = datetime(year=int(wk[0][0:4]), month=int(wk[0][4:6]), day=int(wk[0][6:8]))
+    date = datetime.datetime(year=wk[0].year, month=wk[0].month, day=wk[0].day)
     contractID = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
-    expWeek = next(filter(lambda d: settlementDay(d,3,'friday'),wk),None)
+    expWeek = next(filter(lambda day: settlementDay(day,3,'friday'),wk),None)
     expired = True if date.month in (3,6,9,12) and date.day>16 else False
     if date.month <= 3:
         secDesc = "ESH" + contractID(str(date.year))
@@ -87,7 +88,7 @@ def __dayFilter__(line):
     filterDate = b'\x0152='+str(fixDate).encode()
     if filterDate in line:
         return line
-        
+
 def __metrics__(line):
     # GET SECURITY ID
     sec = re.search(b'(\x0148\=)(.*)(\x01)',line)
@@ -98,7 +99,7 @@ def __metrics__(line):
     # GET SENDING DATE TAG 52
     day = line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
     return b','.join([sec,secdes,day])
-    
+
 
 class FixData:
     books,dates = [],[]
@@ -112,21 +113,25 @@ class FixData:
         self.path = src["path"]
         line0 = self.data.peek().split(b"\n")[0]
         d0 = line0[line0.find(b'\x0152=')+4:line0.find(b'\x0152=')+12]
+
         if src["period"] == "weekly":
-            self.dates = list(range(int(d0.decode()),int(d0.decode())+6))
+            start = datetime.datetime(  year = int(d0[:4]),
+                                        month = int(d0[4:6]),
+                                        day = int(d0[6:8]))
+            self.dates = [start + datetime.timedelta(days=i) for i in range(6)]
         else:
             raise ValueError("Supported time period: weekly data to get dates")
-        self.dates = [str(e) for e in self.dates]
+
         self.securityDesc = mostLiquid(self.dates)
-            
+
     """
                        def dataMetrics
-        
+
         This function returns the number of messages
         sent in a particular date.
-        
+
         returns a dictionary
-        
+
         {DAY: VOLUME}
     """
 
@@ -151,7 +156,7 @@ class FixData:
                 for sec in table[day]:
                     fixStats[day][sec]["desc"] = desc[sec]
                     fixStats[day][sec]["vol"] = table[day][sec]
-            return fixStats        
+            return fixStats
         else:
             header = b'SecurityID,SecurityDesc,Volume,SendingDate'+b'\n'
             for day in sorted(table.keys()):
@@ -163,19 +168,19 @@ class FixData:
                                             str(table[day][sec]).encode(),
                                             day.encode()]) + b'\n')
         self.data.seek(0)
-        
+
 
     """
                         def splitBy
-        
+
         The week to day function take a path to the fix file
         and a list with days corresponding to the trading of
-        that week and breaks the Fix week file into its 
+        that week and breaks the Fix week file into its
         associate trading days.
-        
+
         This functions creates a new gzip file located in
         the same path as the weekly data.
-        
+
     """
 
     def splitBy(self,dates,chunksize=10**4,fileOut=False):
@@ -184,7 +189,7 @@ class FixData:
             fixDate = str(day).encode()
             path_out = self.path[:-4]+"_"+str(day)+".bz2"
             with mp.Pool() as pool:
-                    msgDay = pool.imap(__dayFilter__,self.data,chunksize) 
+                    msgDay = pool.imap(__dayFilter__,self.data,chunksize)
                     if fileOut==True:
                         with bz2.open(path_out,'ab') as f:
                             for entry in msgDay:
@@ -196,21 +201,21 @@ class FixData:
 
     """
                         def filterBy
-        
+
         This function takes a path to a fix file and
         a security id in order to create a new list or
         fix file with messages from that security.
-    
+
     """
 
-    def filterBy(self,securityID,fileOut=False):     
+    def filterBy(self,securityID,fileOut=False):
         secID = b"\x0148="+securityID.encode()+b"\x01"
         tag = lambda line: True if secID in line else False
         if fileOut==False:
             sec = []
             for line in iter(filter(tag,self.data)):
                 header = line.split(b'\x01279')[0]
-                msgtype = line[line.find(b'35=')+3:line.find(b'35=')+4]    
+                msgtype = line[line.find(b'35=')+3:line.find(b'35=')+4]
                 if b'X' == msgtype:
                     body = line.split(b'\x0110=')[0]
                     body = body.split(b'\x01279')[1:]
@@ -228,20 +233,20 @@ class FixData:
             return sec
         else:
             print("Using default compression bzip")
-            path_out = self.path[:-4]+"_ID"+str(securityID)+".bz2"                
+            path_out = self.path[:-4]+"_ID"+str(securityID)+".bz2"
             with bz2.open(path_out,'wb') as fixsec:
                 filtered = self.filterBy(securityID,fileOut=False)
                 fixsec.writelines(filtered)
         self.data.seek(0)
-            
+
     """
                         def initBook
-        
-        This function finds the first message with 
-        bids & offers (opening book) and returns it as 
+
+        This function finds the first message with
+        bids & offers (opening book) and returns it as
         the initial order book for that trading session
-    
-    """        
+
+    """
 
     def initBook(self,securityDesc):
         global SecurityDescription
@@ -293,10 +298,10 @@ class FixData:
                 self.book= book_header + book_end
                 yield self.book
         self.data.seek(0)
-        
-        
+
+
     def updateBook(self,book_body,msg_body):
-        topOrder = len(book_body)//2        
+        topOrder = len(book_body)//2
         bids,offers = book_body[0:topOrder],book_body[topOrder:]
         for entry in msg_body:
             priceLevel = int(entry.split(b'\x011023=')[1])
