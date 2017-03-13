@@ -275,13 +275,13 @@ class FixData:
         MsgSeqNum = lambda line:int(line.split(b'\x0134=')[1].split(b'\x01')[0])
         if self.book==b'':
             self.book = self.initBook(SecurityDescription)
-            self.bookSeqNum = int(self.book0.split(b'\x0134=')[1].split(b'\x01')[0])
+            self.bookSeqNum = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
         updates = lambda e: e is not None and MsgSeqNum(e)>self.bookSeqNum
         with mp.Pool() as pool:
             msgMap = pool.imap(__secFilter__,self.data,chunksize)
             messages = iter(filter(updates,msgMap))
             for msg in messages:
-            ########################## PRIVOUS BOOK #############################
+            ########################## PRIVIOUS BOOK #############################
                 book_body = self.book.split(b'\x0110=')[0]
                 book_body = book_body.split(b'\x01279')[1:]
                 book_body = [b'\x01279'+ entry for entry in book_body]
