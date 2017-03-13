@@ -302,47 +302,50 @@ class FixData:
         topOrder = len(book_body)//2
         bids,offers = book_body[0:topOrder],book_body[topOrder:]
         for entry in msg_body:
-            priceLevel = int(entry.split(b'\x011023=')[1])
-            entryType = int(entry[entry.find(b'\x01269=')+5:entry.find(b'\x01269=')+6])
-            actionType = int(entry[entry.find(b'\x01279=')+5:entry.find(b'\x01279=')+6])
-            if entryType == 0: # BID tag 269= esh9[1]
-                if actionType == 1: # CHANGE 279=1
-                    bids[priceLevel-1] = entry
-                elif actionType == 0: # NEW tag 279=0
-                    if priceLevel == topOrder:
-                        bids[topOrder-1] = entry
-                    else:
-                        bids.insert(priceLevel-1,entry)
-                        for i in range(priceLevel,topOrder):
-                            bids[i] = bids[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
-                        bids.pop()
-                else:  # b'\x01279=2' DELETE
-                    delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
-                    if priceLevel == topOrder:
-                        bids[topOrder-1] = delete
-                    else:
-                        bids.pop(priceLevel-1)
-                        for i in range(priceLevel,topOrder):
-                            bids[i-1] = bids[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
-                        bids.append(delete)
-            else: # OFFER tag 269=1
-                if actionType == 1: # CHANGE 279=1
-                    offers[priceLevel-1] = entry
-                elif actionType == 0: # NEW tag 279=0
-                    if priceLevel == topOrder:
-                        offers[topOrder-1] = entry
-                    else:
-                        offers.insert(priceLevel-1,entry)
-                        for i in range(priceLevel,topOrder):
-                            offers[i] = offers[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
-                        offers.pop()
-                else:  # b'\x01279=2' DELETE
-                    delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
-                    if priceLevel == topOrder:
-                        offers[topOrder-1] = delete
-                    else:
-                        offers.pop(priceLevel-1)
-                        for i in range(priceLevel,topOrder):
-                            offers[i-1] = offers[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
-                        offers.append(delete)
+            try:
+                priceLevel = int(entry.split(b'\x011023=')[1])
+                entryType = int(entry[entry.find(b'\x01269=')+5:entry.find(b'\x01269=')+6])
+                actionType = int(entry[entry.find(b'\x01279=')+5:entry.find(b'\x01279=')+6])
+                if entryType == 0: # BID tag 269= esh9[1]
+                    if actionType == 1: # CHANGE 279=1
+                        bids[priceLevel-1] = entry
+                    elif actionType == 0: # NEW tag 279=0
+                        if priceLevel == topOrder:
+                            bids[topOrder-1] = entry
+                        else:
+                            bids.insert(priceLevel-1,entry)
+                            for i in range(priceLevel,topOrder):
+                                bids[i] = bids[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
+                            bids.pop()
+                    else:  # b'\x01279=2' DELETE
+                        delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
+                        if priceLevel == topOrder:
+                            bids[topOrder-1] = delete
+                        else:
+                            bids.pop(priceLevel-1)
+                            for i in range(priceLevel,topOrder):
+                                bids[i-1] = bids[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
+                            bids.append(delete)
+                else: # OFFER tag 269=1
+                    if actionType == 1: # CHANGE 279=1
+                        offers[priceLevel-1] = entry
+                    elif actionType == 0: # NEW tag 279=0
+                        if priceLevel == topOrder:
+                            offers[topOrder-1] = entry
+                        else:
+                            offers.insert(priceLevel-1,entry)
+                            for i in range(priceLevel,topOrder):
+                                offers[i] = offers[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
+                            offers.pop()
+                    else:  # b'\x01279=2' DELETE
+                        delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
+                        if priceLevel == topOrder:
+                            offers[topOrder-1] = delete
+                        else:
+                            offers.pop(priceLevel-1)
+                            for i in range(priceLevel,topOrder):
+                                offers[i-1] = offers[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
+                            offers.append(delete)
+            except StopIteration:
+                continue
         return bids,offers
