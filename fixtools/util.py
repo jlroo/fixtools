@@ -105,7 +105,6 @@ class FixData:
     books,dates = [],[]
     stats = {}
     book = b''
-    bookSeqNum = 0
     securityDesc = ""
 
     def __init__(self,fixfile,src):
@@ -273,10 +272,9 @@ class FixData:
         secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
         tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
         MsgSeqNum = lambda line:int(line.split(b'\x0134=')[1].split(b'\x01')[0])
-        if self.book==b'':
-            self.book = self.initBook(SecurityDescription)
-            self.bookSeqNum = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
-        updates = lambda e: e is not None and MsgSeqNum(e)>self.bookSeqNum
+        self.book = self.initBook(securityDesc)
+        bookSeqNum = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
+        updates = lambda entry: entry is not None and MsgSeqNum(entry)>bookSeqNum
         with mp.Pool() as pool:
             msgMap = pool.imap(__secFilter__,self.data,chunksize)
             messages = iter(filter(updates,msgMap))
