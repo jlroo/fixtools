@@ -11,7 +11,6 @@ import re
 import datetime
 from collections import defaultdict
 
-
 """
                     Def FixData
 
@@ -68,17 +67,17 @@ def mostLiquid(dates,instrument="",product=""):
     expWeek = next(filter(lambda day: settlementDay(day,3,'friday'),dates),None)
     expired = True if date.day>16 else False
     secCode = contractCode(date.month)
-    secDesc = instrument + secCode + contractYear(str(date.year))
     if expWeek != None or expired:
         if product.lower() in ("fut","futures"):
                 if date.month%3==0:
-                    secDesc = secDesc.replace(secCode,contractCode(date.month+3))
+                    secCode = contractCode(date.month+3)
                 if date.month%3==1:
-                    secDesc = secDesc.replace(secCode,contractCode(date.month+2))
+                    secCode = contractCode(date.month+2)
                 if date.month%3==2:
-                    secDesc = secDesc.replace(secCode,contractCode(date.month+1))
+                    secCode = contractCode(date.month+1)
         if product.lower() in ("opt","options"):
-            secDesc = instrument + contractCode(date.month+1) + contractYear(str(date.year))
+            secCode = contractCode(date.month+1)
+    secDesc = instrument + secCode + contractYear(str(date.year))
     return secDesc
 
 SecurityDescription = ""
