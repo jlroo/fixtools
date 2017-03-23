@@ -49,27 +49,36 @@ def settlementDay(date,weekNumber,dayOfWeek):
             return True
     return False
 
-def mostLiquid(wk):
-    date = datetime.datetime(year=wk[0].year, month=wk[0].month, day=wk[0].day)
-    contractID = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
-    expWeek = next(filter(lambda day: settlementDay(day,3,'friday'),wk),None)
-    expired = True if date.month in (3,6,9,12) and date.day>16 else False
-    if date.month <= 3:
-        secDesc = "ESH" + contractID(str(date.year))
-        if expWeek != None or expired:
-            secDesc = secDesc.replace("H","M")
-    elif date.month >= 4 and date.month < 6:
-        secDesc = "ESM" + contractID(str(date.year))
-        if expWeek != None or expired:
-            secDesc = secDesc.replace("M","U")
-    elif date.month >= 6 and date.month < 9:
-        secDesc = "ESU" + contractID(str(date.year))
-        if expWeek != None or expired:
-            secDesc = secDesc.replace("U","Z")
-    elif date.month >= 9:
-        secDesc = "ESZ" + contractID(str(date.year))
-        if expWeek != None or expired:
-            secDesc = secDesc.replace("Z","H")
+def contractCode(month,codes="F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"):
+    monthCodes = { k[0]:k[1] for k in enumerate(codes.rsplit(","),1)}
+    codesHash = {}
+    for index in monthCodes:
+        if index%3==0:
+            codesHash[index]=(monthCodes[index],{index-2:monthCodes[index-2],index-1:monthCodes[index-1]})
+    if month%3==0:
+        return codesHash[month][0]
+    if month%3==1:
+        return codesHash[month+2][1][month]
+    if month%3==2:
+        return codesHash[month+1][1][month]
+
+def mostLiquid(dates,instrument="",product=""):
+    date = datetime.datetime(year=dates[0].year, month=dates[0].month, day=dates[0].day)
+    contractYear = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
+    expWeek = next(filter(lambda day: settlementDay(day,3,'friday'),dates),None)
+    expired = True if date.day>16 else False
+    secCode = contractCode(date.month)
+    secDesc = instrument + secCode + contractYear(str(date.year))
+    if expWeek != None or expired:
+        if product.lower() in ("fut","futures"):
+                if date.month%3==0:
+                    secDesc = secDesc.replace(secCode,contractCode(date.month+3))
+                if date.month%3==1:
+                    secDesc = secDesc.replace(secCode,contractCode(date.month+2))
+                if date.month%3==2:
+                    secDesc = secDesc.replace(secCode,contractCode(date.month+1))
+        if product.lower() in ("opt","options"):
+            secDesc = instrument + contractCode(date.month+1) + contractYear(str(date.year))
     return secDesc
 
 SecurityDescription = ""
