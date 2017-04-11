@@ -39,12 +39,12 @@ def openFix(path,period="weekly",compression=True):
     return FixData(fixfile,src)
 
 def settlementDay(date,weekNumber,dayOfWeek):
-    days = {'monday':0,'tuesday':1,'wednesday':2,
-            'thursday':3,'friday':4,'saturday':5,
-            'sunday':6}
-    dates = datetime.datetime(date.year,date.month,date.day)
-    if dates.weekday() == days[dayOfWeek.lower()]:
-        if dates.day // 7 == (weekNumber - 1):
+    weekday = {'monday':0,'tuesday':1,'wednesday':2,
+               'thursday':3,'friday':4,'saturday':5,
+               'sunday':6}
+    date = datetime.datetime(date.year,date.month,date.day)
+    if date.weekday() == weekday[dayOfWeek.lower()]:
+        if date.day // 7 == (weekNumber - 1):
             return True
     return False
 
@@ -80,15 +80,6 @@ def mostLiquid(dates,instrument="",product=""):
     secDesc = instrument + secCode + contractYear(str(date.year))
     return secDesc
 
-SecurityDescription = ""
-
-def __secFilter__(line):
-    global SecurityDescription
-    secDesc = b'107='+SecurityDescription.encode()+b'\x01' in line
-    mkRefresh = b'35=X\x01' in line
-    if mkRefresh and secDesc:
-        return line
-
 fixDate = ""
 
 def __dayFilter__(line):
@@ -110,26 +101,55 @@ def __metrics__(line):
 
 
 class FixData:
-    books,dates = [],[]
+    dates = []
     stats = {}
-    book = b''
-    securityDesc = ""
 
     def __init__(self,fixfile,src):
         self.data = fixfile
         self.path = src["path"]
-        line0 = self.data.peek().split(b"\n")[0]
-        d0 = line0[line0.find(b'\x0152=')+4:line0.find(b'\x0152=')+12]
+
+        peek = self.data.peek().split(b"\n")[0]
+        day0 = peek[peek.find(b'\x0152=')+4:peek.find(b'\x0152=')+12]
 
         if src["period"] == "weekly":
-            start = datetime.datetime(  year = int(d0[:4]),
-                                        month = int(d0[4:6]),
-                                        day = int(d0[6:8]))
+            start = datetime.datetime(  year = int(day0[:4]),
+                                        month = int(day0[4:6]),
+                                        day = int(day0[6:8]))
             self.dates = [start + datetime.timedelta(days=i) for i in range(6)]
         else:
             raise ValueError("Supported time period: weekly data to get dates")
 
-        self.securityDesc = mostLiquid(self.dates)
+
+    """
+                       def securities
+
+        This function returns the securities in the data
+        by the expiration month
+
+        returns a dictionary
+
+        {MONTH: {SEC_ID:SEC_DESC}
+
+    """
+
+    def securities(self):
+        contracts = {k:{"FUT":{},"OPT":{},"SPREAD":{}} for k in "F,G,H,J,K,M,N,Q,U,V,X,Z".split(",")}
+        for line in self.data:
+            desc = line[line.find(b'd\x01'):line.find(b'd\x01')+1]
+            if desc != b'd' : break
+            secID = line.split(b'\x0148=')[1].split(b'\x01')[0]
+            secDesc = line.split(b'\x01107=')[1].split(b'\x01')[0]
+            for month in contracts.keys():
+                if month.encode() in secDesc:
+                    if len(secDesc)< 7:
+                        contracts[month]['FUT'][int(secID)] = secDesc.decode()
+                    if b'P' in secDesc or b'C' in secDesc:
+                        contracts[month]['OPT'][int(secID)] = secDesc.decode()
+                    if b'-' in secDesc:
+                        contracts[month]['SPREAD'][int(secID)] = secDesc.decode()
+        self.data.seek(0)
+        return contracts
+
 
     """
                        def dataMetrics
@@ -245,118 +265,3 @@ class FixData:
                 filtered = self.filterBy(securityID,fileOut=False)
                 fixsec.writelines(filtered)
         self.data.seek(0)
-
-    """
-                        def initBook
-
-        This function finds the first message with
-        bids & offers (opening book) and returns it as
-        the initial order book for that trading session
-
-    """
-
-    def initBook(self,securityDesc):
-        global SecurityDescription
-        SecurityDescription = securityDesc
-        secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
-        msgType = lambda line: b'35=X\x01' in line and secDesc in line
-        tradeType = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in b'0|1'
-        msgOpen = lambda line: True if msgType(line) and tradeType(line) else None
-        book0 = next(filter(msgOpen,self.data), None)
-        header = book0.split(b'\x01279=')[0]
-        end = b'\x0110' + book0.split(b'\x0110')[-1]
-        body = book0.split(b'\x0110=')[0]
-        body = body.split(b'\x01279')[1:]
-        body = [b'\x01279'+ entry for entry in body]
-        header += b''.join([e if secDesc in e else b'' for e in body])
-        self.book = header+end
-        self.data.seek(0)
-        return self.book
-
-
-    def buildbook(self,securityDesc,tradetype,chunksize=10**4):
-        global SecurityDescription
-        SecurityDescription = securityDesc
-        secDesc = b'\x01107='+SecurityDescription.encode()+b'\x01'
-        MsgSeqNum = lambda line:int(line.split(b'\x0134=')[1].split(b'\x01')[0])
-        self.book = self.initBook(securityDesc)
-        bookSeqNum = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
-        updates = lambda entry: entry is not None and MsgSeqNum(entry)>bookSeqNum
-        with mp.Pool() as pool:
-            msgMap = pool.imap(__secFilter__,self.data,chunksize)
-            messages = iter(filter(updates,msgMap))
-            for msg in messages:
-            ########################## PRIVIOUS BOOK #############################
-                prev_body = self.book.split(b'\x0110=')[0]
-                prev_body = prev_body.split(b'\x01279')[1:]
-                prev_body = [b'\x01279'+ entry for entry in prev_body]
-            #####################################################################
-                book_header = msg.split(b'\x01279')[0]
-                book_end = b'\x0110' + msg.split(b'\x0110')[-1]
-                msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
-                msg_body = [b'\x01279'+ e if secDesc in e and b'\x01276' not in e else None for e in msg_body]
-            ############################ BOOK UPDATE  ###########################
-                bids,offers = self.updateBook(prev_body,msg_body,tradetype)
-                book_body = bids+offers
-                if book_body == prev_body:
-                    pass
-                else:
-                    book_header += b''.join([e for e in book_body])
-                    self.book = book_header + book_end
-                    yield self.book
-        self.data.seek(0)
-
-
-    def updateBook(self,book_body,msg_body,tradetype):
-        topOrder = len(book_body)//2
-        bids,offers = book_body[0:topOrder],book_body[topOrder:]
-        trade = lambda line: line[line.find(b'\x01269=')+5:line.find(b'\x01269=')+6] in tradetype
-        msg_body = iter(filter(lambda e: e is not None and trade(e),msg_body))
-        for entry in msg_body:
-            try:
-                priceLevel = int(entry.split(b'\x011023=')[1])
-                entryType = int(entry[entry.find(b'\x01269=')+5:entry.find(b'\x01269=')+6])
-                actionType = int(entry[entry.find(b'\x01279=')+5:entry.find(b'\x01279=')+6])
-                if entryType == 0: # BID tag 269= esh9[1]
-                    if actionType == 1: # CHANGE 279=1
-                        bids[priceLevel-1] = entry
-                    elif actionType == 0: # NEW tag 279=0
-                        if priceLevel == topOrder:
-                            bids[topOrder-1] = entry
-                        else:
-                            bids.insert(priceLevel-1,entry)
-                            for i in range(priceLevel,topOrder):
-                                bids[i] = bids[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
-                            bids.pop()
-                    else:  # b'\x01279=2' DELETE
-                        delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
-                        if priceLevel == topOrder:
-                            bids[topOrder-1] = delete
-                        else:
-                            bids.pop(priceLevel-1)
-                            for i in range(priceLevel,topOrder):
-                                bids[i-1] = bids[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
-                            bids.append(delete)
-                else: # OFFER tag 269=1
-                    if actionType == 1: # CHANGE 279=1
-                        offers[priceLevel-1] = entry
-                    elif actionType == 0: # NEW tag 279=0
-                        if priceLevel == topOrder:
-                            offers[topOrder-1] = entry
-                        else:
-                            offers.insert(priceLevel-1,entry)
-                            for i in range(priceLevel,topOrder):
-                                offers[i] = offers[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
-                            offers.pop()
-                    else:  # b'\x01279=2' DELETE
-                        delete = entry.split(b'\x011023=')[0]+b'\x011023=10'
-                        if priceLevel == topOrder:
-                            offers[topOrder-1] = delete
-                        else:
-                            offers.pop(priceLevel-1)
-                            for i in range(priceLevel,topOrder):
-                                offers[i-1] = offers[i-1].replace(b'\x011023='+str(i+1).encode(),b'\x011023='+str(i).encode())
-                            offers.append(delete)
-            except StopIteration:
-                continue
-        return bids,offers
