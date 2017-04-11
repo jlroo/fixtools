@@ -92,6 +92,7 @@ class orderBook:
         self.data.seek(0)
 
     def __update__(self,book_body,msg_body):
+        secDescID = b'\x0148='+SecurityID.encode()+b'\x01'
         bids,offers = book_body[0:self.top_order],book_body[self.top_order:]
         for entry in msg_body:
             try:
@@ -110,7 +111,8 @@ class orderBook:
                                 bids[i] = bids[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
                             bids.pop()
                     else:  # b'\x01279=2' DELETE
-                        delete = entry.split(b'\x011023=')[0]+b'\x011023=' + str(self.top_order).encode()
+                        temp =  b'\x01279=NA\x0122=NA'+secDescID+b'83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023='
+                        delete = temp + str(self.top_order).encode()
                         if priceLevel == self.top_order:
                             bids[self.top_order-1] = delete
                         else:
@@ -130,7 +132,8 @@ class orderBook:
                                 offers[i] = offers[i].replace(b'\x011023='+str(i).encode(),b'\x011023='+str(i+1).encode())
                             offers.pop()
                     else:  # b'\x01279=2' DELETE
-                        delete = entry.split(b'\x011023=')[0]+b'\x011023='+ str(self.top_order).encode()
+                        temp =  b'\x01279=NA\x0122=NA'+secDescID+b'83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023='
+                        delete = temp + str(self.top_order).encode()
                         if priceLevel == self.top_order:
                             offers[self.top_order-1] = delete
                         else:
