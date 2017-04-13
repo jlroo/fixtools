@@ -15,7 +15,7 @@ setup(
     long_description=readme,
     author='Jose Luis Rodriguez',
     author_email='jrodriguezorjuela@luc.edu',
-    url='https://github.com/jlroo/fixtools',
+    url='https://bitbucket.com/jrodriguezorjuela/fixtools',
     license=license,
     packages=find_packages(exclude=('tests', 'docs'))
 )

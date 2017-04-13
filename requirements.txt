@@ -1,6 +1,6 @@
 ###### Requirements ######
 gzip
-bz2
+bzip2
 multiprocessing
 re
 collections

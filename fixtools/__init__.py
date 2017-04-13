@@ -1,5 +1,5 @@
 
-__all__ = ['mostLiquid', 'openFix','orderBook']
+__all__ = ['most_liquid', 'open_fix', 'OrderBook']
 __docformat__ = 'restructuredtext'
 
 # Let users know if they're missing any of our hard dependencies
@@ -16,5 +16,5 @@ if missing_dependencies:
     raise ImportError("Missing required dependencies {0}".format(missing_dependencies))
 del hard_dependencies, dependency, missing_dependencies
 
-from fixtools.util import (openFix,mostLiquid)
-from fixtools.book import (orderBook)
+from fixtools.util import (open_fix, most_liquid)
+from fixtools.book import (OrderBook)
