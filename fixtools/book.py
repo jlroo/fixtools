@@ -8,6 +8,7 @@ Created on Wed Apr  5 10:17:23 2017
 
 import multiprocessing as mp
 
+
 SecurityID = ""
 
 
@@ -64,6 +65,7 @@ class OrderBook:
         self.data.seek(0)
         return self.book
 
+
     def buildbook(self, chunksize=10 ** 4):
         msg_seq_num = lambda line: int(line.split(b'\x0134=')[1].split(b'\x01')[0])
         book = self.initialbook(SecurityID)
@@ -93,6 +95,8 @@ class OrderBook:
                     self.book = book_header + book_end
                     yield self.book
         self.data.seek(0)
+
+
 
     def __update__(self, book_body, msg_body):
         bids, offers = book_body[0:self.top_order], book_body[self.top_order:]

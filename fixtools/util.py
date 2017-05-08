@@ -51,8 +51,8 @@ def settlement_day(date, week_number, day_of_week):
     return False
 
 
-def contract_code(month, codes=""):
-    if codes == "":
+def contract_code(month, codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"):
+    if codes == None:
         codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
     month_codes = {k[0]: k[1] for k in enumerate(codes.rsplit(","), 1)}
     codes_hash = {}
@@ -139,21 +139,25 @@ class FixData:
     """
 
     def securities(self):
-        contracts = {k: {"FUT": {}, "OPT": {}, "SPREAD": {}} for k in "F,G,H,J,K,M,N,Q,U,V,X,Z".split(",")}
+        contracts = {}
+        months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
         for line in self.data:
             desc = line[line.find(b'd\x01'):line.find(b'd\x01')+1]
             if desc != b'd':
                 break
-            sec_id = line.split(b'\x0148=')[1].split(b'\x01')[0]
-            sec_desc = line.split(b'\x01107=')[1].split(b'\x01')[0]
-            for month in contracts.keys():
-                if month.encode() in sec_desc:
+            sec_id = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
+            sec_desc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
+            sec_key = sec_desc[0:4]
+            if sec_key not in contracts.keys():
+                contracts[sec_key] = {"FUT": {}, "OPT": {}, "SPREAD": {}}
+            for month in months:
+                if month in sec_desc:
                     if len(sec_desc)< 7:
-                        contracts[month]['FUT'][int(sec_id)] = sec_desc.decode()
-                    if b'P' in sec_desc or b'C' in sec_desc:
-                        contracts[month]['OPT'][int(sec_id)] = sec_desc.decode()
-                    if b'-' in sec_desc:
-                        contracts[month]['SPREAD'][int(sec_id)] = sec_desc.decode()
+                        contracts[sec_key]['FUT'][sec_id] = sec_desc
+                    if 'P' in sec_desc or 'C' in sec_desc:
+                        contracts[sec_key]['OPT'][sec_id] = sec_desc
+                    if '-' in sec_desc:
+                        contracts[sec_key]['SPREAD'][sec_id] = sec_desc
         self.data.seek(0)
         return contracts
 
