@@ -5,27 +5,38 @@ Created on Mon Apr 24 12:52:01 2017
 
 @author: jlroo
 """
+
+
 import multiprocessing as mp
-from fixtools import __secfilter__,__update__,initialbook
+from fixtools.book import __update__
+
 
 class Futures:
-    book = ""
-    sec_desc_id = b''
+    book = b''
     product = "futures"
+    top_order = 10
 
     def __init__(self, data, security_id):
         self.data = data
-        self.securitid_id = security_id
+        self.sec_desc_id = b'\x0148=' + security_id.encode() + b'\x01'
+        head = b'1128=NA\x019=NA\x0135=NA\x0149=NA\x0134=0\x0152=00000000000000000\x0175=00000000\x01268=NA'
+        temp_body = b'\x01279=NA\x0122=NA' + self.sec_desc_id + \
+                    b'83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023='
+        body = [temp_body + str(i).encode() for i in range(1, self.top_order + 1)]
+        temp_body = temp_body.replace(b'\x01269=0', b'\x01269=1')
+        body = body + [temp_body + str(i).encode() for i in range(1, self.top_order + 1)]
+        body = b"".join([e for e in body])
+        self.book = head + body + b'\x0110=000\n'
 
-    def buildbook(self, chunksize = 10 ** 4):
+    def buildbook(self, chunksize=10**4):
         msg_seq_num = lambda line: int(line.split(b'\x0134=')[1].split(b'\x01')[0])
-        book = initialbook(self.product,self.securitid_id,self.data)
-        book_seq_num = int(book.split(b'\x0134=')[1].split(b'\x01')[0])
+        #book = initialbook(self.product,self.securitid_id,self.data)
+        book_seq_num = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
         updates = lambda entry: entry is not None and msg_seq_num(entry) > book_seq_num
         trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
         with mp.Pool() as pool:
-            msg_map = pool.imap(__secfilter__, self.data, chunksize)
-            messages = iter(filter(updates, msg_map))
+            #msg_map = pool.imap(__secfilter__, self.data, chunksize)
+            messages = iter(filter(updates, self.data))
             for msg in messages:
                 # PRIVIOUS BOOK
                 prev_body = self.book.split(b'\x0110=')[0]
@@ -37,7 +48,7 @@ class Futures:
                 msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
                 msg_body = iter(filter(lambda e: trade_type(e), msg_body))
                 # BOOK UPDATE
-                bids, offers = __update__(self.product, self.security_id,prev_body, msg_body)
+                bids, offers = __update__(prev_body, msg_body, self.sec_desc_id, self.top_order)
                 book_body = bids + offers
                 if book_body == prev_body:
                     pass
