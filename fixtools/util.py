@@ -283,7 +283,7 @@ class FixData:
 				fix_sec.writelines(filtered)
 		self.data.seek(0)
 
-	def securities_filter(self, contracts, chunksize=10 ** 4):
+	def contracts_filter(self, contracts, chunksize=10 ** 4):
 		global all_contracts
 		all_contracts = contracts
 		with mp.Pool() as pool:
