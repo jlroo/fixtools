@@ -5,10 +5,9 @@ Created on Fri Jul 22 17:33:13 2016
 
 import gzip
 import bz2
-import multiprocessing as mp
 import re
 import datetime
-from collections import defaultdict
+from fixtools.fixfast import FixData
 
 """
                     Def FixData
@@ -107,175 +106,123 @@ def __metrics__(line):
 	day = line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
 	return b','.join([sec, secdes, day])
 
+SecurityID = None
 
-class FixData:
-	dates = []
-	stats = {}
-	contracts = {}
 
-	def __init__(self, fixfile, src):
-		self.data = fixfile
-		self.path = src["path"]
+def __secfilter__(line):
+	global SecurityID
+	sec_desc = b'\x0148=' + SecurityID.encode() + b'\x01' in line
+	mk_refresh = b'35=X\x01' in line
+	if mk_refresh and sec_desc:
+		return line
 
-		peek = self.data.peek().split(b"\n")[0]
-		day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
 
-		if src["period"] == "weekly":
-			start = datetime.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
-			self.dates = [start + datetime.timedelta(days=i) for i in range(6)]
-		else:
-			raise ValueError("Supported time period: weekly data to get dates")
+def initial_book(data, security_id, product):
+	sec_desc_id = b'\x0148=' + security_id.encode() + b'\x01'
+	msg_type = lambda e: e is not None and b'35=X\x01' in e and self.sec_desc_id in e
+	trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
+	open_msg = lambda e: msg_type(e) and trade_type(e)
+	temp = b'\x01279=NA\x0122=NA' + sec_desc_id + \
+	       b"83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023="
+	if product in "opt|options":
+		top_order = 3
+		prev_body = [temp + str(i).encode() for i in range(1, top_order + 1)]
+		temp = temp.replace(b'\x01269=0', b'\x01269=1')
+		prev_body = prev_body + [temp + str(i).encode() for i in range(1, top_order + 1)]
+	if product in "fut|futures":
+		top_order = 10
+		prev_body = [temp + str(i).encode() for i in range(1, top_order + 1)]
+		temp = temp.replace(b'\x01269=0', b'\x01269=1')
+		prev_body = prev_body + [temp + str(i).encode() for i in range(1, top_order + 1)]
+	msg = next(filter(open_msg, data), None)
+	book_header = msg.split(b'\x01279')[0]
+	book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+	msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+	msg_body = [b'\x01279' + e for e in msg_body if sec_desc_id in e and b'\x01276' not in e]
+	msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+	# BOOK UPDATE
+	bids, offers = __update__(prev_body, msg_body, sec_desc_id, top_order)
+	book_body = bids + offers
+	book_header += b''.join([e for e in book_body])
+	book = book_header + book_end
+	return book
 
-	"""
-                       def securities
 
-        This function returns the securities in the data
-        by the expiration month
+def build_book(prev_book, update_msg, security_id, top_order):
+	sec_desc_id = b'\x0148=' + security_id.encode() + b'\x01'
+	trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
+	prev_body = prev_book.split(b'\x0110=')[0]
+	prev_body = prev_body.split(b'\x01279')[1:]
+	prev_body = [b'\x01279' + entry for entry in prev_body]
+	book_header = update_msg.split(b'\x01279')[0]
+	book_end = b'\x0110' + update_msg.split(b'\x0110')[-1]
+	msg_body = update_msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+	msg_body = [b'\x01279' + e for e in msg_body if sec_desc_id in e and b'\x01276' not in e]
+	msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+	# BOOK UPDATE
+	bids, offers = __update__(prev_body, msg_body, sec_desc_id, top_order)
+	book_body = bids + offers
+	if book_body == prev_body:
+		book = None
+	else:
+		book_header += b''.join([e for e in book_body])
+		book = book_header + book_end
+	return book
 
-        returns a dictionary
 
-        {MONTH: {SEC_ID:SEC_DESC}
-
-    """
-
-	def securities(self):
-		months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
-		for line in self.data:
-			desc = line[line.find(b'd\x01'):line.find(b'd\x01') + 1]
-			if desc != b'd':
-				break
-			sec_id = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
-			sec_desc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
-			sec_key = sec_desc[0:4]
-			if sec_key not in self.contracts.keys():
-				self.contracts[sec_key] = {"FUT": {}, "OPT": {}, "SPREAD": {}}
-			for month in months:
-				if month in sec_desc:
-					if len(sec_desc) < 7:
-						self.contracts[sec_key]['FUT'][sec_id] = sec_desc
-					if 'P' in sec_desc or 'C' in sec_desc:
-						self.contracts[sec_key]['OPT'][sec_id] = sec_desc
-					if '-' in sec_desc:
-						self.contracts[sec_key]['SPREAD'][sec_id] = sec_desc
-		self.data.seek(0)
-		return self.contracts
-
-	"""
-                       def data_metrics
-
-        This function returns the number of messages
-        sent in a particular date.
-
-        returns a dictionary
-
-        {DAY: VOLUME}
-    """
-
-	def data_metrics(self, chunksize=10 ** 4, file_out=False, path=""):
-		desc = {}
-		table = defaultdict(dict)
-		with mp.Pool() as pool:
-			data_map = pool.imap(__metrics__, self.data, chunksize)
-			for entry in data_map:
-				day = entry.split(b',')[2][0:8].decode()
-				sec = entry.split(b',')[0].decode()
-				secdesc = entry.split(b',')[1].decode()
-				desc[sec] = secdesc
-				if sec not in table[day].keys():
-					table[day][sec] = 1
-				else:
-					table[day][sec] += 1
-		if file_out is False:
-			fix_stats = defaultdict(dict)
-			for day in sorted(table.keys()):
-				fix_stats[day] = defaultdict(dict)
-				for sec in table[day]:
-					fix_stats[day][sec]["desc"] = desc[sec]
-					fix_stats[day][sec]["vol"] = table[day][sec]
-			return fix_stats
-		else:
-			header = b'SecurityID,SecurityDesc,Volume,SendingDate' + b'\n'
-			for day in sorted(table.keys()):
-				with open(path + "stats_" + day + ".csv", "wb") as f:
-					f.write(header)
-					for sec in table[day]:
-						f.write(b','.join(
-							[sec.encode(), desc[sec].encode(), str(table[day][sec]).encode(), day.encode()]) + b'\n')
-		self.data.seek(0)
-
-	"""
-                        def split_by
-
-        The week to day function take a path to the fix file
-        and a list with days corresponding to the trading of
-        that week and breaks the Fix week file into its
-        associate trading days.
-
-        This functions creates a new gzip file located in
-        the same path as the weekly data.
-
-    """
-
-	def split_by(self, dates, chunksize=10 ** 4, file_out=False):
-		for day in dates:
-			global fixDate
-			fixDate = str(day).encode()
-			path_out = self.path[:-4] + "_" + str(day) + ".bz2"
-			with mp.Pool() as pool:
-				msg_day = pool.imap(__day_filter__, self.data, chunksize)
-				if file_out is True:
-					with bz2.open(path_out, 'ab') as f:
-						for entry in msg_day:
-							f.write(entry)
-				else:
-					for entry in msg_day:
-						return entry
-			self.data.seek(0)
-
-	"""
-                        def filter_by
-
-        This function takes a path to a fix file and
-        a security id in order to create a new list or
-        fix file with messages from that security.
-
-    """
-
-	def filter_by(self, security_id, file_out=False):
-		sec_id = b"\x0148=" + security_id.encode() + b"\x01"
-		tag = lambda e: True if sec_id in e else False
-		if file_out is False:
-			sec = []
-			for line in iter(filter(tag, self.data)):
-				header = line.split(b'\x01279')[0]
-				msg_type = line[line.find(b'35=') + 3:line.find(b'35=') + 4]
-				if b'X' == msg_type:
-					body = line.split(b'\x0110=')[0]
-					body = body.split(b'\x01279')[1:]
-					body = [b'\x01279' + entry for entry in body]
-					end = b'\x0110' + line.split(b'\x0110')[-1]
-					for entry in body:
-						if sec_id in entry:
-							header += entry
-						else:
-							pass
-					msg = header + end
-					sec.append(msg)
-				else:
-					sec.append(line)
-			return sec
-		else:
-			print("Using default compression bzip")
-			path_out = self.path[:-4] + "_ID" + str(security_id) + ".bz2"
-			with bz2.open(path_out, 'wb') as fix_sec:
-				filtered = self.filter_by(security_id, file_out=False)
-				fix_sec.writelines(filtered)
-		self.data.seek(0)
-"""
-	def contracts_filter(self, contracts, chunksize=10 ** 4):
-		global all_contracts
-		all_contracts = contracts
-		with mp.Pool() as pool:
-			filtered = pool.map(__secfilter__, self.data, chunksize)
-		return filtered
-"""
+def __update__(book_body, msg_body, sec_desc_id, top_order):
+	bids, offers = book_body[0:top_order], book_body[top_order:]
+	for entry in msg_body:
+		try:
+			price_level = int(entry.split(b'\x011023=')[1])
+			entry_type = int(entry[entry.find(b'\x01269=') + 5:entry.find(b'\x01269=') + 6])
+			action_type = int(entry[entry.find(b'\x01279=') + 5:entry.find(b'\x01279=') + 6])
+			temp = b'\x01279=NA\x0122=NA' + sec_desc_id + b'83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023='
+			if entry_type == 0:  # BID tag 269= esh9[1]
+				if action_type == 1:  # CHANGE 279=1
+					bids[price_level - 1] = entry
+				elif action_type == 0:  # NEW tag 279=0
+					if price_level == top_order:
+						bids[top_order - 1] = entry
+					else:
+						bids.insert(price_level - 1, entry)
+						for i in range(price_level, top_order):
+							bids[i] = bids[i].replace(b'\x011023=' + str(i).encode(),
+							                          b'\x011023=' + str(i + 1).encode())
+						bids.pop()
+				else:  # b'\x01279=2' DELETE
+					delete = temp + str(top_order).encode()
+					if price_level == top_order:
+						bids[top_order - 1] = delete
+					else:
+						bids.pop(price_level - 1)
+						for i in range(price_level, top_order):
+							bids[i - 1] = bids[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
+							                                  b'\x011023=' + str(i).encode())
+						bids.append(delete)
+			else:  # OFFER tag 269=1
+				if action_type == 1:  # CHANGE 279=1
+					offers[price_level - 1] = entry
+				elif action_type == 0:  # NEW tag 279=0
+					if price_level == top_order:
+						offers[top_order - 1] = entry
+					else:
+						offers.insert(price_level - 1, entry)
+						for i in range(price_level, top_order):
+							offers[i] = offers[i].replace(b'\x011023=' + str(i).encode(),
+							                              b'\x011023=' + str(i + 1).encode())
+						offers.pop()
+				else:  # b'\x01279=2' DELETE
+					temp = temp.replace(b'\x01269=0', b'\x01269=1')
+					delete = temp + str(top_order).encode()
+					if price_level == top_order:
+						offers[top_order - 1] = delete
+					else:
+						offers.pop(price_level - 1)
+						for i in range(price_level, top_order):
+							offers[i - 1] = offers[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
+							                                      b'\x011023=' + str(i).encode())
+						offers.append(delete)
+		except StopIteration:
+			continue
+	return bids, offers
