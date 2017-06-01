@@ -8,7 +8,7 @@ Created on Wed Apr  5 10:17:23 2017
 
 import multiprocessing as mp
 
-SecurityID = ""
+SecurityID = None
 
 
 def __secfilter__(line):
@@ -18,15 +18,14 @@ def __secfilter__(line):
 	if mk_refresh and sec_desc:
 		return line
 
-
 def initial_book(data, security_id, product):
 	sec_desc_id = b'\x0148=' + security_id.encode() + b'\x01'
-	msg_type = lambda e: b'35=X\x01' in e and sec_desc_id in e
-	trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
-	open_msg = lambda e: True if msg_type(e) and trade_type(e) else None
+	msg_type = lambda e: e is not None and b'35=X\x01' in e and self.sec_desc_id in e
+	trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
+	open_msg = lambda e: msg_type(e) and trade_type(e)
 	temp = b'\x01279=NA\x0122=NA' + sec_desc_id + \
 	       b"83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023="
-	if product in "opt|options.py":
+	if product in "opt|options":
 		top_order = 3
 		prev_body = [temp + str(i).encode() for i in range(1, top_order + 1)]
 		temp = temp.replace(b'\x01269=0', b'\x01269=1')
@@ -47,7 +46,6 @@ def initial_book(data, security_id, product):
 	book_body = bids + offers
 	book_header += b''.join([e for e in book_body])
 	book = book_header + book_end
-	data.seek(0)
 	return book
 
 
@@ -132,7 +130,7 @@ def __update__(book_body, msg_body, sec_desc_id, top_order):
 
 
 class OrderBook:
-	book = ""
+	book = b''
 	top_order = 0
 	sec_desc_id = b''
 
@@ -145,11 +143,11 @@ class OrderBook:
 		global SecurityID
 		SecurityID = self.security_id
 		self.sec_desc_id = b'\x0148=' + SecurityID.encode() + b'\x01'
-		msg_type = lambda e: b'35=X\x01' in e and self.sec_desc_id in e
-		trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
-		open_msg = lambda e: True if msg_type(e) and trade_type(e) else None
-
+		msg_type = lambda e: e is not None and b'35=X\x01' in e and self.sec_desc_id in e
+		trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
+		open_msg = lambda e: msg_type(e) and trade_type(e)
 		temp = b'\x01279=NA\x0122=NA' + self.sec_desc_id + b'83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023='
+
 		if self.product in "opt|options":
 			self.top_order = 3
 			prev_body = [temp + str(i).encode() for i in range(1, 4)]
@@ -162,49 +160,58 @@ class OrderBook:
 			prev_body = prev_body + [temp + str(i).encode() for i in range(1, 11)]
 
 		msg = next(filter(open_msg, self.data), None)
-		book_header = msg.split(b'\x01279')[0]
-		book_end = b'\x0110' + msg.split(b'\x0110')[-1]
-		msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
-		msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
-		msg_body = iter(filter(lambda e: trade_type(e), msg_body))
 
-		# BOOK UPDATE
-		bids, offers = self.__update__(prev_body, msg_body)
-		book_body = bids + offers
-		book_header += b''.join([e for e in book_body])
-		self.book = book_header + book_end
-		self.data.seek(0)
+		if msg is not None:
+			book_header = msg.split(b'\x01279')[0]
+			book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+			msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+			msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
+			msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+			# BOOK UPDATE
+			bids, offers = self.__update__(prev_body, msg_body)
+			book_body = bids + offers
+			book_header += b''.join([e for e in book_body])
+			self.book = book_header + book_end
+
+		if type(self.data) != filter:
+			self.data.seek(0)
+
 		return self.book
 
 	def build_book(self, chunksize=10 ** 4):
-		msg_seq_num = lambda line: int(line.split(b'\x0134=')[1].split(b'\x01')[0])
-		book = self.initial_book()
-		book_seq_num = int(book.split(b'\x0134=')[1].split(b'\x01')[0])
-		updates = lambda entry: entry is not None and msg_seq_num(entry) > book_seq_num
-		trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
-		with mp.Pool() as pool:
-			msg_map = pool.imap(__secfilter__, self.data, chunksize)
-			messages = iter(filter(updates, msg_map))
-			for msg in messages:
-				# PRIVIOUS BOOK
-				prev_body = self.book.split(b'\x0110=')[0]
-				prev_body = prev_body.split(b'\x01279')[1:]
-				prev_body = [b'\x01279' + entry for entry in prev_body]
-				book_header = msg.split(b'\x01279')[0]
-				book_end = b'\x0110' + msg.split(b'\x0110')[-1]
-				msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
-				msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
-				msg_body = iter(filter(lambda e: trade_type(e), msg_body))
-				# BOOK UPDATE
-				bids, offers = self.__update__(prev_body, msg_body)
-				book_body = bids + offers
-				if book_body == prev_body:
-					pass
+		self.book = self.initial_book()
+		if self.book != b'':
+			msg_seq_num = lambda line: int(line.split(b'\x0134=')[1].split(b'\x01')[0])
+			book_seq_num = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
+			updates = lambda entry: entry is not None and msg_seq_num(entry) > book_seq_num
+			trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
+			with mp.Pool() as pool:
+				msg_map = pool.imap(__secfilter__, self.data, chunksize)
+				if msg_map is not None:
+					messages = iter(filter(updates, msg_map))
+					for msg in messages:
+						# PREVIOUS BOOK
+						prev_body = self.book.split(b'\x0110=')[0]
+						prev_body = prev_body.split(b'\x01279')[1:]
+						prev_body = [b'\x01279' + entry for entry in prev_body]
+						book_header = msg.split(b'\x01279')[0]
+						book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+						msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+						msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
+						msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+						# BOOK UPDATE
+						bids, offers = self.__update__(prev_body, msg_body)
+						book_body = bids + offers
+						if book_body == prev_body:
+							pass
+						else:
+							book_header += b''.join([e for e in book_body])
+							self.book = book_header + book_end
+							yield self.book
 				else:
-					book_header += b''.join([e for e in book_body])
-					self.book = book_header + book_end
-					yield self.book
-		self.data.seek(0)
+					pass
+			if type(self.data) != filter:
+				self.data.seek(0)
 
 	def __update__(self, book_body, msg_body):
 		bids, offers = book_body[0:self.top_order], book_body[self.top_order:]

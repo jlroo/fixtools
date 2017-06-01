@@ -108,17 +108,6 @@ def __metrics__(line):
 	return b','.join([sec, secdes, day])
 
 
-all_contracts = set()
-
-
-def __secfilter__(line):
-	global all_contracts
-	sec_id = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
-	mk_refresh = b'35=X\x01' in line
-	if mk_refresh and sec_id in all_contracts:
-		return line
-
-
 class FixData:
 	dates = []
 	stats = {}
@@ -282,10 +271,11 @@ class FixData:
 				filtered = self.filter_by(security_id, file_out=False)
 				fix_sec.writelines(filtered)
 		self.data.seek(0)
-
+"""
 	def contracts_filter(self, contracts, chunksize=10 ** 4):
 		global all_contracts
 		all_contracts = contracts
 		with mp.Pool() as pool:
-			filtered = pool.imap(__secfilter__, self.data, chunksize)
+			filtered = pool.map(__secfilter__, self.data, chunksize)
 		return filtered
+"""
