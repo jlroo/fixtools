@@ -7,6 +7,7 @@ import gzip
 import bz2
 import re
 import datetime
+import calendar
 from fixtools.fixfast import FixData
 
 """
@@ -48,9 +49,23 @@ def settlement_day(date, week_number, day_of_week):
 	return False
 
 
-def contract_code(month, codes="F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"):
+def expiration_date(year, month, week, day=""):
+	if day == "":
+		day = "friday"
+		print("Using Friday as expiration day. \n")
+	weekday = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6}
+	weeks = calendar.monthcalendar(year, month)
+	for dd in weeks[week - 1]:
+		date = datetime.datetime(year, month, dd)
+		if date.weekday() == weekday[day.lower()]:
+			if date.day // 7 == (week - 1):
+				return datetime.datetime(year, month, dd)
+
+
+def contract_code(month, codes=""):
 	if codes == "":
 		codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
+		print("Using CME Codes: \n" + codes)
 	month_codes = {k[0]: k[1] for k in enumerate(codes.rsplit(","), 1)}
 	codes_hash = {}
 	for index in month_codes:
@@ -106,6 +121,7 @@ def __metrics__(line):
 	day = line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
 	return b','.join([sec, secdes, day])
 
+
 SecurityID = None
 
 
@@ -119,7 +135,7 @@ def __secfilter__(line):
 
 def initial_book(data, security_id, product):
 	sec_desc_id = b'\x0148=' + security_id.encode() + b'\x01'
-	msg_type = lambda e: e is not None and b'35=X\x01' in e and self.sec_desc_id in e
+	msg_type = lambda e: e is not None and b'35=X\x01' in e and sec_desc_id in e
 	trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
 	open_msg = lambda e: msg_type(e) and trade_type(e)
 	temp = b'\x01279=NA\x0122=NA' + sec_desc_id + \
