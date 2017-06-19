@@ -1,5 +1,5 @@
 
-from fixtools.util import (open_fix, most_liquid, __metrics__, __day_filter__)
+from fixtools.util import (open_fix, most_liquid, expiration_date, __metrics__, __day_filter__)
 from fixtools.futures import (Futures)
 from fixtools.options import (Options)
 
