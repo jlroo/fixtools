@@ -1,9 +1,9 @@
 
-from fixtools.util import (open_fix, most_liquid)
+from fixtools.util import (open_fix, most_liquid, __metrics__, __day_filter__)
 from fixtools.futures import (Futures)
 from fixtools.options import (Options)
 
-__all__ = ['most_liquid', 'open_fix', 'Futures', 'Options']
+__all__ = ['most_liquid', 'expiration_date', 'open_fix', 'Futures', 'Options']
 __docformat__ = 'restructuredtext'
 
 # Let users know if they're missing any of our hard dependencies
