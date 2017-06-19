@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fixtools/__init__.py" afterPath="$PROJECT_DIR$/fixtools/__init__.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,23 +27,47 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="book.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="book.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1463">
-              <caret line="77" column="23" lean-forward="false" selection-start-line="77" selection-start-column="23" selection-end-line="77" selection-end-column="23" />
+            <state relative-caret-position="190">
+              <caret line="10" column="17" lean-forward="true" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="fixfast.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fixtools/fixfast.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="228">
+              <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+              <folding>
+                <element signature="e#60#92#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+            <state relative-caret-position="266">
+              <caret line="14" column="8" lean-forward="true" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
               <folding>
-                <element signature="e#1#96#0" expanded="true" />
+                <element signature="e#1#37#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="futures.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fixtools/futures.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="133">
+              <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding>
+                <element signature="e#108#143#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -51,8 +76,8 @@
       <file leaf-file-name="util.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2280">
-              <caret line="51" column="19" lean-forward="false" selection-start-line="51" selection-start-column="4" selection-end-line="51" selection-end-column="19" />
+            <state relative-caret-position="19">
+              <caret line="10" column="36" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="36" />
               <folding>
                 <element signature="e#60#71#0" expanded="true" />
               </folding>
@@ -87,11 +112,11 @@
         <option value="$PROJECT_DIR$/fixtools/fixdata" />
         <option value="$PROJECT_DIR$/fixtools/futures.py" />
         <option value="$PROJECT_DIR$/fixtools/options.py" />
-        <option value="$PROJECT_DIR$/fixtools/util.py" />
         <option value="$PROJECT_DIR$/build/lib/fixtools/fixfast.py" />
+        <option value="$PROJECT_DIR$/fixtools/book.py" />
+        <option value="$PROJECT_DIR$/fixtools/util.py" />
         <option value="$PROJECT_DIR$/fixtools/__init__.py" />
         <option value="$PROJECT_DIR$/fixtools/fixfast.py" />
-        <option value="$PROJECT_DIR$/fixtools/book.py" />
       </list>
     </option>
   </component>
@@ -399,7 +424,14 @@
       <option name="project" value="LOCAL" />
       <updated>1497901854665</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="expiration_day function added">
+      <created>1497901859278</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1497901859278</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TodoView">
@@ -801,27 +833,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/futures.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build/lib/fixtools/fixfast.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="57">
           <caret line="3" column="3" lean-forward="true" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/futures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding>
-            <element signature="e#60#88#0" expanded="true" />
+            <element signature="e#108#143#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/book.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="17" lean-forward="true" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/util.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="10" column="36" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="36" />
+          <folding>
+            <element signature="e#60#71#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/fixfast.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        <state relative-caret-position="228">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
           <folding>
             <element signature="e#60#92#0" expanded="true" />
           </folding>
@@ -830,29 +881,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        <state relative-caret-position="266">
+          <caret line="14" column="8" lean-forward="true" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
           <folding>
-            <element signature="e#1#96#0" expanded="true" />
+            <element signature="e#1#37#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2280">
-          <caret line="51" column="19" lean-forward="false" selection-start-line="51" selection-start-column="4" selection-end-line="51" selection-end-column="19" />
-          <folding>
-            <element signature="e#60#71#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/book.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1463">
-          <caret line="77" column="23" lean-forward="false" selection-start-line="77" selection-start-column="23" selection-end-line="77" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
