@@ -5,7 +5,6 @@ Created on Fri Jul 22 17:33:13 2016
 
 import gzip
 import bz2
-import re
 import datetime
 import calendar
 from fixtools.fixfast import FixData
@@ -98,28 +97,6 @@ def most_liquid(dates, instrument="", product=""):
 			sec_code = contract_code(date.month + 1)
 	sec_desc = instrument + sec_code + contract_year(str(date.year))
 	return sec_desc
-
-
-fixDate = ""
-
-
-def __day_filter__(line):
-	global fixDate
-	filter_date = b'\x0152=' + str(fixDate).encode()
-	if filter_date in line:
-		return line
-
-
-def __metrics__(line):
-	# GET SECURITY ID
-	sec = re.search(b'(\x0148\=)(.*)(\x01)', line)
-	sec = sec.group(2).split(b'\x01')[0]
-	# GET SECURITY DESCRIPTION
-	secdes = re.search(b'(\x01107\=)(.*)(\x01)', line)
-	secdes = secdes.group(2).split(b'\x01')[0]
-	# GET SENDING DATE TAG 52
-	day = line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
-	return b','.join([sec, secdes, day])
 
 
 SecurityID = None

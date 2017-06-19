@@ -5,9 +5,30 @@ Created on Fri Jul 22 17:33:13 2016
 
 import multiprocessing as __mp__
 from collections import defaultdict
-from fixtools.util import __metrics__, __day_filter__
 import datetime as __datetime__
 import bz2 as __bz2__
+import re as __re__
+
+fixDate = ""
+
+
+def __day_filter__(line):
+	global fixDate
+	filter_date = b'\x0152=' + str(fixDate).encode()
+	if filter_date in line:
+		return line
+
+
+def __metrics__(line):
+	# GET SECURITY ID
+	sec = __re__.search(b'(\x0148\=)(.*)(\x01)', line)
+	sec = sec.group(2).split(b'\x01')[0]
+	# GET SECURITY DESCRIPTION
+	secdes = __re__.search(b'(\x01107\=)(.*)(\x01)', line)
+	secdes = secdes.group(2).split(b'\x01')[0]
+	# GET SENDING DATE TAG 52
+	day = line.split(b'\x0152=')[1].split(b'\x01')[0][0:8]
+	return b','.join([sec, secdes, day])
 
 
 class FixData:
@@ -28,6 +49,7 @@ class FixData:
 		else:
 			raise ValueError("Supported time period: weekly data to get dates")
 
+
 	"""
                        def securities
 
@@ -39,6 +61,7 @@ class FixData:
         {MONTH: {SEC_ID:SEC_DESC}
 
     """
+
 
 	def securities(self):
 		months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
