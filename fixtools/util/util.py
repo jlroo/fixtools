@@ -3,11 +3,12 @@ Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
 """
 
-import gzip
-import bz2
-import datetime
-import calendar
-from fixtools.fixfast import FixData
+import bz2 as __bz2__
+import calendar as __calendar__
+import datetime as __datetime__
+import gzip as __gzip__
+
+from fixtools.io.fixfast import FixData
 
 """
 					Def FixData
@@ -29,9 +30,9 @@ def open_fix(path, period="weekly", compression=True):
 			fixfile = open(path, 'rb')
 	else:
 		if path[-3:] == ".gz":
-			fixfile = gzip.open(path, 'rb')
+			fixfile = __gzip__.open(path, 'rb')
 		elif path[-4:] == ".bz2":
-			fixfile = bz2.BZ2File(path, 'rb')
+			fixfile = __bz2__.BZ2File(path, 'rb')
 		else:
 			raise ValueError("Supported files gzip,bz2, \
 			uncompress bytes file. For uncompressed \
@@ -41,7 +42,7 @@ def open_fix(path, period="weekly", compression=True):
 
 def settlement_day(date, week_number, day_of_week):
 	weekday = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6}
-	date = datetime.datetime(date.year, date.month, date.day)
+	date = __datetime__.datetime(date.year, date.month, date.day)
 	if date.weekday() == weekday[day_of_week.lower()]:
 		if date.day // 7 == (week_number - 1):
 			return True
@@ -53,12 +54,12 @@ def expiration_date(year, month, week, day=""):
 		day = "friday"
 		print("Using Friday as expiration day. \n")
 	weekday = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6}
-	weeks = calendar.monthcalendar(year, month)
+	weeks = __calendar__.monthcalendar(year, month)
 	for dd in weeks[week - 1]:
-		date = datetime.datetime(year, month, dd)
+		date = __datetime__.datetime(year, month, dd)
 		if date.weekday() == weekday[day.lower()]:
 			if date.day // 7 == (week - 1):
-				return datetime.datetime(year, month, dd)
+				return __datetime__.datetime(year, month, dd)
 
 
 def contract_code(month, codes=""):
@@ -80,7 +81,7 @@ def contract_code(month, codes=""):
 
 
 def most_liquid(dates, instrument="", product=""):
-	date = datetime.datetime(year=dates[0].year, month=dates[0].month, day=dates[0].day)
+	date = __datetime__.datetime(year=dates[0].year, month=dates[0].month, day=dates[0].day)
 	contract_year = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
 	exp_week = next(filter(lambda day: settlement_day(day, 3, 'friday'), dates), None)
 	expired = True if date.day > 16 else False

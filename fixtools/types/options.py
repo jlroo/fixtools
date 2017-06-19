@@ -6,9 +6,10 @@ Created on Mon Apr 24 12:50:00 2017
 @author: jlroo
 """
 
-import multiprocessing as mp
-from fixtools.book import OrderBook
-from fixtools.util import initial_book
+import multiprocessing as __mp__
+
+from fixtools.core.book import OrderBook
+from fixtools.util.util import initial_book
 
 option_contracts = None
 
@@ -43,7 +44,7 @@ class Options:
 		books = {}
 		global option_contracts
 		option_contracts = contracts
-		with mp.Pool() as pool:
+		with __mp__.Pool() as pool:
 			filtered = pool.map(__options_filter__, self.data, chunksize)
 		for sec_id in contracts:
 			books[sec_id] = []

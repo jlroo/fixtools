@@ -6,8 +6,8 @@ Created on Mon Apr 24 12:52:01 2017
 @author: jlroo
 """
 
-from fixtools.book import OrderBook
-from fixtools.util import initial_book
+from fixtools.core.book import OrderBook
+from fixtools.util.util import initial_book
 
 
 class Futures:

@@ -4,17 +4,17 @@ Created on Fri Jul 22 17:33:13 2016
 """
 
 import multiprocessing as __mp__
-from collections import defaultdict
+from collections import defaultdict as __defaultdict__
 import datetime as __datetime__
 import bz2 as __bz2__
 import re as __re__
 
-fixDate = ""
+__fixDate__ = None
 
 
 def __day_filter__(line):
-	global fixDate
-	filter_date = b'\x0152=' + str(fixDate).encode()
+	global __fixDate__
+	filter_date = b'\x0152=' + str(__fixDate__).encode()
 	if filter_date in line:
 		return line
 
@@ -96,22 +96,22 @@ class FixData:
 
 	def data_metrics(self, chunksize=10 ** 4, file_out=False, path=""):
 		desc = {}
-		table = defaultdict(dict)
+		table = __defaultdict__(dict)
 		with __mp__.Pool() as pool:
 			data_map = pool.imap(__metrics__, self.data, chunksize)
 			for entry in data_map:
 				day = entry.split(b',')[2][0:8].decode()
 				sec = entry.split(b',')[0].decode()
-				secdesc = entry.split(b',')[1].decode()
-				desc[sec] = secdesc
+				sec_desc = entry.split(b',')[1].decode()
+				desc[sec] = sec_desc
 				if sec not in table[day].keys():
 					table[day][sec] = 1
 				else:
 					table[day][sec] += 1
 		if file_out is False:
-			fix_stats = defaultdict(dict)
+			fix_stats = __defaultdict__(dict)
 			for day in sorted(table.keys()):
-				fix_stats[day] = defaultdict(dict)
+				fix_stats[day] = __defaultdict__(dict)
 				for sec in table[day]:
 					fix_stats[day][sec]["desc"] = desc[sec]
 					fix_stats[day][sec]["vol"] = table[day][sec]
@@ -141,8 +141,8 @@ class FixData:
 
 	def split_by(self, dates, chunksize=10 ** 4, file_out=False):
 		for day in dates:
-			global fixDate
-			fixDate = str(day).encode()
+			global __fixDate__
+			__fixDate__ = str(day).encode()
 			path_out = self.path[:-4] + "_" + str(day) + ".bz2"
 			with __mp__.Pool() as pool:
 				msg_day = pool.imap(__day_filter__, self.data, chunksize)
