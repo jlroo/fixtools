@@ -121,7 +121,7 @@ class OrderBook:
 							bids.insert(price_level - 1, entry)
 							for i in range(price_level, self.top_order):
 								bids[i] = bids[i].replace(b'\x011023=' + str(i).encode(),
-								                          b'\x011023=' + str(i + 1).encode())
+														  b'\x011023=' + str(i + 1).encode())
 							bids.pop()
 					else:  # b'\x01279=2' DELETE
 						delete = temp + str(self.top_order).encode()
@@ -131,7 +131,7 @@ class OrderBook:
 							bids.pop(price_level - 1)
 							for i in range(price_level, self.top_order):
 								bids[i - 1] = bids[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
-								                                  b'\x011023=' + str(i).encode())
+																  b'\x011023=' + str(i).encode())
 							bids.append(delete)
 				else:  # OFFER tag 269=1
 					if action_type == 1:  # CHANGE 279=1
@@ -143,7 +143,7 @@ class OrderBook:
 							offers.insert(price_level - 1, entry)
 							for i in range(price_level, self.top_order):
 								offers[i] = offers[i].replace(b'\x011023=' + str(i).encode(),
-								                              b'\x011023=' + str(i + 1).encode())
+															  b'\x011023=' + str(i + 1).encode())
 							offers.pop()
 					else:  # b'\x01279=2' DELETE
 						temp = temp.replace(b'\x01269=0', b'\x01269=1')
@@ -154,7 +154,7 @@ class OrderBook:
 							offers.pop(price_level - 1)
 							for i in range(price_level, self.top_order):
 								offers[i - 1] = offers[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
-								                                      b'\x011023=' + str(i).encode())
+																	  b'\x011023=' + str(i).encode())
 							offers.append(delete)
 			except StopIteration:
 				continue

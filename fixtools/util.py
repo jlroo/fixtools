@@ -10,7 +10,7 @@ import calendar
 from fixtools.fixfast import FixData
 
 """
-                    Def FixData
+					Def FixData
 
 This class returns that number a report of the fix data
 contracts and volume.
@@ -116,7 +116,7 @@ def initial_book(data, security_id, product):
 	trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
 	open_msg = lambda e: msg_type(e) and trade_type(e)
 	temp = b'\x01279=NA\x0122=NA' + sec_desc_id + \
-	       b"83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023="
+		   b"83=NA\x01107=NA\x01269=0\x01270=NA\x01271=NA\x01273=NA\x01336=NA\x01346=NA\x011023="
 	if product in "opt|options":
 		top_order = 3
 		prev_body = [temp + str(i).encode() for i in range(1, top_order + 1)]
@@ -181,7 +181,7 @@ def __update__(book_body, msg_body, sec_desc_id, top_order):
 						bids.insert(price_level - 1, entry)
 						for i in range(price_level, top_order):
 							bids[i] = bids[i].replace(b'\x011023=' + str(i).encode(),
-							                          b'\x011023=' + str(i + 1).encode())
+													  b'\x011023=' + str(i + 1).encode())
 						bids.pop()
 				else:  # b'\x01279=2' DELETE
 					delete = temp + str(top_order).encode()
@@ -191,7 +191,7 @@ def __update__(book_body, msg_body, sec_desc_id, top_order):
 						bids.pop(price_level - 1)
 						for i in range(price_level, top_order):
 							bids[i - 1] = bids[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
-							                                  b'\x011023=' + str(i).encode())
+															  b'\x011023=' + str(i).encode())
 						bids.append(delete)
 			else:  # OFFER tag 269=1
 				if action_type == 1:  # CHANGE 279=1
@@ -203,7 +203,7 @@ def __update__(book_body, msg_body, sec_desc_id, top_order):
 						offers.insert(price_level - 1, entry)
 						for i in range(price_level, top_order):
 							offers[i] = offers[i].replace(b'\x011023=' + str(i).encode(),
-							                              b'\x011023=' + str(i + 1).encode())
+														  b'\x011023=' + str(i + 1).encode())
 						offers.pop()
 				else:  # b'\x01279=2' DELETE
 					temp = temp.replace(b'\x01269=0', b'\x01269=1')
@@ -214,7 +214,7 @@ def __update__(book_body, msg_body, sec_desc_id, top_order):
 						offers.pop(price_level - 1)
 						for i in range(price_level, top_order):
 							offers[i - 1] = offers[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
-							                                      b'\x011023=' + str(i).encode())
+																  b'\x011023=' + str(i).encode())
 						offers.append(delete)
 		except StopIteration:
 			continue

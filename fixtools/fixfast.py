@@ -49,19 +49,17 @@ class FixData:
 		else:
 			raise ValueError("Supported time period: weekly data to get dates")
 
+	"""
+					   def securities
+
+		This function returns the securities in the data
+		by the expiration month
+
+		returns a dictionary
+
+		{MONTH: {SEC_ID:SEC_DESC}
 
 	"""
-                       def securities
-
-        This function returns the securities in the data
-        by the expiration month
-
-        returns a dictionary
-
-        {MONTH: {SEC_ID:SEC_DESC}
-
-    """
-
 
 	def securities(self):
 		months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
@@ -86,15 +84,15 @@ class FixData:
 		return self.contracts
 
 	"""
-                       def data_metrics
+					   def data_metrics
 
-        This function returns the number of messages
-        sent in a particular date.
+		This function returns the number of messages
+		sent in a particular date.
 
-        returns a dictionary
+		returns a dictionary
 
-        {DAY: VOLUME}
-    """
+		{DAY: VOLUME}
+	"""
 
 	def data_metrics(self, chunksize=10 ** 4, file_out=False, path=""):
 		desc = {}
@@ -129,17 +127,17 @@ class FixData:
 		self.data.seek(0)
 
 	"""
-                        def split_by
+						def split_by
 
-        The week to day function take a path to the fix file
-        and a list with days corresponding to the trading of
-        that week and breaks the Fix week file into its
-        associate trading days.
+		The week to day function take a path to the fix file
+		and a list with days corresponding to the trading of
+		that week and breaks the Fix week file into its
+		associate trading days.
 
-        This functions creates a new gzip file located in
-        the same path as the weekly data.
+		This functions creates a new gzip file located in
+		the same path as the weekly data.
 
-    """
+	"""
 
 	def split_by(self, dates, chunksize=10 ** 4, file_out=False):
 		for day in dates:
@@ -158,13 +156,13 @@ class FixData:
 			self.data.seek(0)
 
 	"""
-                        def filter_by
+						def filter_by
 
-        This function takes a path to a fix file and
-        a security id in order to create a new list or
-        fix file with messages from that security.
+		This function takes a path to a fix file and
+		a security id in order to create a new list or
+		fix file with messages from that security.
 
-    """
+	"""
 
 	def filter_by(self, security_id, file_out=False):
 		sec_id = b"\x0148=" + security_id.encode() + b"\x01"
