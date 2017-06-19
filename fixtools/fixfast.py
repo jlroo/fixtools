@@ -3,11 +3,11 @@ Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
 """
 
-import multiprocessing as mp
+import multiprocessing as __mp__
 from collections import defaultdict
 from fixtools.util import __metrics__, __day_filter__
-import datetime
-import bz2
+import datetime as __datetime__
+import bz2 as __bz2__
 
 
 class FixData:
@@ -23,8 +23,8 @@ class FixData:
 		day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
 
 		if src["period"] == "weekly":
-			start = datetime.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
-			self.dates = [start + datetime.timedelta(days=i) for i in range(6)]
+			start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
+			self.dates = [start + __datetime__.timedelta(days=i) for i in range(6)]
 		else:
 			raise ValueError("Supported time period: weekly data to get dates")
 
@@ -76,7 +76,7 @@ class FixData:
 	def data_metrics(self, chunksize=10 ** 4, file_out=False, path=""):
 		desc = {}
 		table = defaultdict(dict)
-		with mp.Pool() as pool:
+		with __mp__.Pool() as pool:
 			data_map = pool.imap(__metrics__, self.data, chunksize)
 			for entry in data_map:
 				day = entry.split(b',')[2][0:8].decode()
@@ -123,10 +123,10 @@ class FixData:
 			global fixDate
 			fixDate = str(day).encode()
 			path_out = self.path[:-4] + "_" + str(day) + ".bz2"
-			with mp.Pool() as pool:
+			with __mp__.Pool() as pool:
 				msg_day = pool.imap(__day_filter__, self.data, chunksize)
 				if file_out is True:
-					with bz2.open(path_out, 'ab') as f:
+					with __bz2__.open(path_out, 'ab') as f:
 						for entry in msg_day:
 							f.write(entry)
 				else:
@@ -169,7 +169,7 @@ class FixData:
 		else:
 			print("Using default compression bzip")
 			path_out = self.path[:-4] + "_ID" + str(security_id) + ".bz2"
-			with bz2.open(path_out, 'wb') as fix_sec:
+			with __bz2__.open(path_out, 'wb') as fix_sec:
 				filtered = self.filter_by(security_id, file_out=False)
 				fix_sec.writelines(filtered)
 		self.data.seek(0)

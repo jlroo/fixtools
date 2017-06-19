@@ -6,7 +6,7 @@ Created on Wed Apr  5 10:17:23 2017
 @author: jlroo
 """
 
-import multiprocessing as mp
+import multiprocessing as __mp__
 
 SecurityID = None
 
@@ -75,7 +75,7 @@ class OrderBook:
 			book_seq_num = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
 			updates = lambda entry: entry is not None and msg_seq_num(entry) > book_seq_num
 			trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
-			with mp.Pool() as pool:
+			with __mp__.Pool() as pool:
 				msg_map = pool.imap(__secfilter__, self.data, chunksize)
 				if msg_map is not None:
 					messages = iter(filter(updates, msg_map))
