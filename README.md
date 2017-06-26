@@ -1,7 +1,3 @@
-# fixtools
-
-## This package is no longer available on github as I am currently working on my dissertation and was advised to take the package offline for now. I'd appreciate any insight you may be willing to offer regarding how you have found it useful as I am considering future expansion. If you have any inquiries email me.
-
 
 Overview
 ---------
