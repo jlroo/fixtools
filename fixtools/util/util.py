@@ -35,9 +35,8 @@ def open_fix(path, period="weekly", compression=True):
         elif path[-4:] == ".bz2":
             fixfile = __bz2__.BZ2File(path, 'rb')
         else:
-            raise ValueError("Supported files gzip,bz2, \
-			uncompress bytes file. For uncompressed \
-			files change compression flag to False.")
+            raise ValueError("Supported files gzip,bz2, uncompress bytes file. \
+            For uncompressed files change compression flag to False.")
     return FixData(fixfile, src)
 
 
@@ -86,7 +85,6 @@ def most_liquid(dates, instrument="", product=""):
     contract_year = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
     exp_week = next(filter(lambda day: settlement_day(day, 3, 'friday'), dates), None)
     expired = True if date.day > 16 else False
-    sec_code = contract_code(date.month)
     if exp_week is not None or expired:
         if product.lower() in ("fut", "futures"):
             if date.month % 3 == 0:
@@ -95,8 +93,18 @@ def most_liquid(dates, instrument="", product=""):
                 sec_code = contract_code(date.month + 2)
             if date.month % 3 == 2:
                 sec_code = contract_code(date.month + 1)
-        if product.lower() in ("opt", "options.py"):
+        if product.lower() in ("opt", "options"):
             sec_code = contract_code(date.month + 1)
+    else:
+        if product.lower() in ("fut", "futures"):
+            if date.month % 3 == 0:
+                sec_code = contract_code(date.month)
+            if date.month % 3 == 1:
+                sec_code = contract_code(date.month + 2)
+            if date.month % 3 == 2:
+                sec_code = contract_code(date.month + 1)
+        if product.lower() in ("opt", "options"):
+            sec_code = contract_code(date.month)
     sec_desc = instrument + sec_code + contract_year(str(date.year))
     return sec_desc
 

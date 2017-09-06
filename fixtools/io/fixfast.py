@@ -40,7 +40,7 @@ class FixData:
         self.data = fixfile
         self.path = src["path"]
 
-        peek = self.data.peek().split(b"\n")[0]
+        peek = self.data.peek(1).split(b"\n")[0]
         day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
 
         if src["period"] == "weekly":
