@@ -11,18 +11,18 @@ from fixtools.util.util import initial_book
 
 
 class Futures:
-	book = b''
-	product = "futures"
-	top_order = 10
-	sec_desc_id = b''
+    book = b''
+    product = "futures"
+    top_order = 10
+    sec_desc_id = b''
 
-	def __init__(self, data):
-		self.data = data
+    def __init__(self, data):
+        self.data = data
 
-	def initial_book(self, security_id):
-		self.book = initial_book(self.data, security_id, self.product)
-		return self.book
+    def initial_book(self, security_id):
+        self.book = initial_book(self.data, security_id, self.product)
+        return self.book
 
-	def build_book(self, security_id):
-		book_obj = OrderBook(self.data, security_id, self.product)
-		return book_obj.build_book()
+    def build_book(self, security_id):
+        book_obj = OrderBook(self.data, security_id, self.product)
+        return book_obj.build_book()
