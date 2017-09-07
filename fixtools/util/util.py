@@ -134,9 +134,9 @@ def build_books(fixdata, chunksize=10 ** 4):
     __contract__ = set(securities["ALL"].keys())
     with __mp__.Pool() as pool:
         filtered = pool.map(__filter__,fixdata.data, chunksize)
+    __data__ = filter(None, filtered)
     for sec_id in securities["ALL"]:
         books[sec_id] = []
-        __data__ = filter(None, filtered)
         product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
         book_obj = OrderBook(__data__, sec_id, product(securities["ALL"][sec_id]))
         book_generator = book_obj.build_book()
