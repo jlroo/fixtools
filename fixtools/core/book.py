@@ -13,7 +13,7 @@ __securityID__ = None
 
 def __secfilter__(line):
     global __securityID__
-    sec_desc = b'\x0148=' + __securityID__.encode() + b'\x01' in line
+    sec_desc = b'\x0148=' + str(__securityID__).encode() + b'\x01' in line
     mk_refresh = b'35=X\x01' in line
     if mk_refresh and sec_desc:
         return line
@@ -32,7 +32,7 @@ class OrderBook:
     def initial_book(self):
         global __securityID__
         __securityID__ = self.security_id
-        self.sec_desc_id = b'\x0148=' + __securityID__.encode() + b'\x01'
+        self.sec_desc_id = b'\x0148=' + str(__securityID__).encode() + b'\x01'
         msg_type = lambda e: e is not None and b'35=X\x01' in e and self.sec_desc_id in e
         trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
         open_msg = lambda e: msg_type(e) and trade_type(e)

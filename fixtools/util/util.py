@@ -114,7 +114,7 @@ __contract__ = None
 
 def __filter__(line):
     global __contract__
-    sec_desc = [b'\x0148=' + sec_id.encode() + b'\x01' for sec_id in __contract__]
+    sec_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in __contract__]
     valid_contract = [sec in line for sec in sec_desc]
     mk_refresh = b'35=X\x01' in line
     if mk_refresh and any(valid_contract):
