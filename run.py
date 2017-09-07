@@ -3,7 +3,7 @@
 
 import fixtools as fx
 
-path = ""
+path = "/home/jlroo/data/XCME_MD_ES_20120102_20120106.gz"
 data = fx.open_fix(path)
 securities = data.securities()
 dates = data.dates
@@ -12,4 +12,9 @@ opt = fx.most_liquid(dates,"ES","opt")
 options = list(securities[opt]["OPT"].values())
 future = list(securities[fut]["FUT"].values())
 contracts = future+options
-books = fx.build_books(data,contracts)
+futures = fx.Futures(data.data)
+options = fx.Options(data.data)
+start = time.time()
+books = fx.build_books(data.data,contracts)
+end = time.time()
+print(end - start)
