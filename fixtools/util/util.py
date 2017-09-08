@@ -109,6 +109,17 @@ def most_liquid(dates, instrument="", product=""):
     return sec_desc
 
 
+def liquid_securities(fixdata,instrument = "ES"):
+    securities = fixdata.securities()
+    dates = fixdata.dates
+    liquid_contracts = {}
+    fut = most_liquid(dates,instrument,"fut")
+    opt = most_liquid(dates,instrument,"opt")
+    liquid_contracts.update(securities[fut]["FUT"])
+    for price in securities[opt]["PAIRS"].keys():
+        liquid_contracts.update(securities[opt]['PAIRS'][price])
+    return liquid_contracts
+
 __contract__ = None
 
 
@@ -119,16 +130,6 @@ def __filter__(line):
     mk_refresh = b'35=X\x01' in line
     if mk_refresh and any(valid_contract):
         return line
-
-def liquid_securities(fixdata):
-    securities = fixdata.securities()
-    securities["ALL"] = {}
-    dates = fixdata.dates
-    fut = most_liquid(dates,"ES","fut")
-    opt = most_liquid(dates,"ES","opt")
-    securities[opt]["OPT"].update(securities[fut]["FUT"])
-    securities["ALL"].update(securities[opt]["OPT"])
-    return securities["ALL"]
 
 def build_books(fixdata, securities, chunksize=10 ** 4):
     books = {}

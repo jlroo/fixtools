@@ -64,22 +64,43 @@ class FixData:
     def securities(self):
         months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
         for line in self.data:
-            desc = line[line.find(b'd\x01'):line.find(b'd\x01') + 1]
+            desc = line[line.find(b'35=d\x01') + 3:line.find(b'35=d\x01') + 4]
             if desc != b'd':
                 break
             sec_id = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
             sec_desc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
             sec_key = sec_desc[0:4]
             if sec_key not in self.contracts.keys():
-                self.contracts[sec_key] = {"FUT": {}, "OPT": {}, "SPREAD": {}}
+                self.contracts[sec_key] = {"FUT": {}, "OPT": {}, "PAIRS": {}, "SPREAD": {}}
             for month in months:
                 if month in sec_desc:
                     if len(sec_desc) < 7:
                         self.contracts[sec_key]['FUT'][sec_id] = sec_desc
                     if 'P' in sec_desc or 'C' in sec_desc:
                         self.contracts[sec_key]['OPT'][sec_id] = sec_desc
+                        if 'C' in sec_desc:
+                            call_price = int(sec_desc.split(" C")[-1])
+                            if call_price not in self.contracts[sec_key]['PAIRS'].keys():
+                                self.contracts[sec_key]['PAIRS'][call_price] = {}
+                                self.contracts[sec_key]['PAIRS'][call_price][sec_id] = sec_desc
+                            else:
+                                self.contracts[sec_key]['PAIRS'][call_price][sec_id] = sec_desc
+                        if "P" in sec_desc:
+                            put_price = int(sec_desc.split(" P")[-1])
+                            if put_price not in self.contracts[sec_key]['PAIRS'].keys():
+                                self.contracts[sec_key]['PAIRS'][put_price] = {}
+                                self.contracts[sec_key]['PAIRS'][put_price][sec_id] = sec_desc
+                            else:
+                                self.contracts[sec_key]['PAIRS'][put_price][sec_id] = sec_desc
                     if '-' in sec_desc:
                         self.contracts[sec_key]['SPREAD'][sec_id] = sec_desc
+        
+        for sec_key in self.contracts.keys():
+            pairs = self.contracts[sec_key]['PAIRS'].copy()
+            for price in pairs.keys():
+                if len(pairs[price]) != 2:
+                    del self.contracts[sec_key]['PAIRS'][price]
+        
         self.data.seek(0)
         return self.contracts
 
@@ -94,7 +115,7 @@ class FixData:
 		{DAY: VOLUME}
 	"""
 
-    def data_metrics(self, chunksize=10 ** 4, file_out=False, path=""):
+    def data_metrics(self,file_out=False, path="", chunksize=10 ** 4):
         desc = {}
         table = __defaultdict__(dict)
         with __mp__.Pool() as pool:
