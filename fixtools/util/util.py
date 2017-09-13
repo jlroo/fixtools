@@ -109,8 +109,8 @@ def most_liquid(dates, instrument="", product=""):
     return sec_desc
 
 
-def liquid_securities(fixdata,instrument = "ES"):
-    securities = fixdata.securities()
+def liquid_securities(fixdata, instrument = "ES", group_code = "EZ", max_lines = 10000):
+    securities = fixdata.securities(instrument, group_code, max_lines)
     dates = fixdata.dates
     liquid_contracts = {}
     fut = most_liquid(dates,instrument,"fut")
@@ -131,17 +131,18 @@ def __filter__(line):
     if mk_refresh and any(valid_contract):
         return line
 
+
 def build_books(fixdata, securities, chunksize=10 ** 4):
     books = {}
     global __contract__
-    __contract__ = set(securities["ALL"].keys())
+    __contract__ = set(securities.keys())
     with __mp__.Pool() as pool:
         filtered = pool.map(__filter__,fixdata.data, chunksize)
-    __data__ = filter(None, filtered)
-    for sec_id in securities["ALL"]:
+    for sec_id in __contract__:
+        __data__ = filter(None, filtered)
         books[sec_id] = []
         product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
-        book_obj = OrderBook(__data__, sec_id, product(securities["ALL"][sec_id]))
+        book_obj = OrderBook(__data__, sec_id, product(securities[sec_id]))
         book_generator = book_obj.build_book()
         for book in book_generator:
             books[sec_id].append(book)

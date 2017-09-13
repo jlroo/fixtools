@@ -31,6 +31,27 @@ def __metrics__(line):
     return b','.join([sec, secdes, day])
 
 
+def __secdesc__(data, group = "ES", group_code = "EZ", max_lines = 10000):
+    cnt = 0
+    lines = []
+    code = (group.encode() ,group_code.encode())
+    for line in data:
+        if cnt > max_lines:
+            break
+        desc = line[line.find(b'35=d\x01') + 3:line.find(b'35=d\x01') + 4]
+        tag_sec_group = b'\x011151='
+        tag_grp_code = b'\x0155='
+        sec_grp = line[line.find(tag_sec_group)+6:line.find(tag_sec_group)+8]
+        code_grp = line[line.find(tag_grp_code)+4:line.find(tag_grp_code)+6]
+        if desc == b'd' and sec_grp in code and code_grp in code:
+            secid = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
+            secdesc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
+            lines.append({secid:secdesc})
+        cnt += 1
+    data.seek(0)
+    return lines
+
+
 class FixData:
     dates = []
     stats = {}
@@ -61,46 +82,45 @@ class FixData:
 
 	"""
 
-    def securities(self):
+    def securities(self,group = "ES", group_code = "EZ", max_lines = 10000):
         months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
-        for line in self.data:
-            desc = line[line.find(b'35=d\x01') + 3:line.find(b'35=d\x01') + 4]
-            if desc != b'd':
-                break
-            sec_id = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
-            sec_desc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
-            sec_key = sec_desc[0:4]
-            if sec_key not in self.contracts.keys():
-                self.contracts[sec_key] = {"FUT": {}, "OPT": {}, "PAIRS": {}, "SPREAD": {}}
-            for month in months:
-                if month in sec_desc:
-                    if len(sec_desc) < 7:
-                        self.contracts[sec_key]['FUT'][sec_id] = sec_desc
-                    if 'P' in sec_desc or 'C' in sec_desc:
-                        self.contracts[sec_key]['OPT'][sec_id] = sec_desc
-                        if 'C' in sec_desc:
-                            call_price = int(sec_desc.split(" C")[-1])
-                            if call_price not in self.contracts[sec_key]['PAIRS'].keys():
-                                self.contracts[sec_key]['PAIRS'][call_price] = {}
-                                self.contracts[sec_key]['PAIRS'][call_price][sec_id] = sec_desc
-                            else:
-                                self.contracts[sec_key]['PAIRS'][call_price][sec_id] = sec_desc
-                        if "P" in sec_desc:
-                            put_price = int(sec_desc.split(" P")[-1])
-                            if put_price not in self.contracts[sec_key]['PAIRS'].keys():
-                                self.contracts[sec_key]['PAIRS'][put_price] = {}
-                                self.contracts[sec_key]['PAIRS'][put_price][sec_id] = sec_desc
-                            else:
-                                self.contracts[sec_key]['PAIRS'][put_price][sec_id] = sec_desc
-                    if '-' in sec_desc:
-                        self.contracts[sec_key]['SPREAD'][sec_id] = sec_desc
+        securities = __secdesc__(self.data, group, group_code, max_lines)
+        filtered = {list(item.keys())[0]:list(item.values())[0] for item in securities}
+        for sec_id in filtered.keys():
+            sec_desc = filtered[sec_id]
+            if len(sec_desc) < 12:
+                sec_key = sec_desc[0:4]
+                if sec_key not in self.contracts.keys():
+                    self.contracts[sec_key] = {"FUT": {}, "OPT": {}, "PAIRS": {}, "SPREAD": {}}
+                for month in months:
+                    if month in sec_desc:
+                        if len(sec_desc) < 7:
+                            self.contracts[sec_key]['FUT'][sec_id] = sec_desc
+                        if 'P' in sec_desc or 'C' in sec_desc:
+                            self.contracts[sec_key]['OPT'][sec_id] = sec_desc
+                            if 'C' in sec_desc:
+                                call_price = int(sec_desc.split(" C")[-1])
+                                if call_price not in self.contracts[sec_key]['PAIRS'].keys():
+                                    self.contracts[sec_key]['PAIRS'][call_price] = {}
+                                    self.contracts[sec_key]['PAIRS'][call_price][sec_id] = sec_desc
+                                else:
+                                    self.contracts[sec_key]['PAIRS'][call_price][sec_id] = sec_desc
+                            if "P" in sec_desc:
+                                put_price = int(sec_desc.split(" P")[-1])
+                                if put_price not in self.contracts[sec_key]['PAIRS'].keys():
+                                    self.contracts[sec_key]['PAIRS'][put_price] = {}
+                                    self.contracts[sec_key]['PAIRS'][put_price][sec_id] = sec_desc
+                                else:
+                                    self.contracts[sec_key]['PAIRS'][put_price][sec_id] = sec_desc
+                        if '-' in sec_desc:
+                            self.contracts[sec_key]['SPREAD'][sec_id] = sec_desc
         
         for sec_key in self.contracts.keys():
             pairs = self.contracts[sec_key]['PAIRS'].copy()
             for price in pairs.keys():
                 if len(pairs[price]) != 2:
                     del self.contracts[sec_key]['PAIRS'][price]
-        
+            
         self.data.seek(0)
         return self.contracts
 
