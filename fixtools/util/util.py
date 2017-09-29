@@ -162,7 +162,8 @@ def __booksOut__(sec_id):
 
 def build_books(fixdata, securities, file_out = True, path_out = "", chunksize = 10 ** 4):
     global contracts_msgs
-    global __out__
+    global __out__ 
+    __out__ = ""
     global __securities__
     __securities__ = securities
     books = {}
@@ -176,6 +177,8 @@ def build_books(fixdata, securities, file_out = True, path_out = "", chunksize =
         if path_out != "":
             if path_out[:-1] != "/":
                 __out__ = path_out + "/"
+            else:
+                __out__ = path_out
         with __mp__.Pool() as pool:
             books = pool.map(__booksOut__,__contracts__)
     try:
