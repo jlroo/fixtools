@@ -124,10 +124,10 @@ def liquid_securities(fixdata, instrument = "ES", group_code = "EZ", max_lines =
 
 def __filter__(line):
     valid_contract = [sec if sec in line else None for sec in __secdesc__]
-    secid = next(filter(None,valid_contract))
-    secid = int(secid.split(b'\x0148=')[1].split(b'\x01')[0])
+    setids = filter(None,valid_contract)
+    security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in setids)
     if b'35=X\x01' in line and any(valid_contract):
-        return (secid,line)
+        return (security_ids, line)
 
 
 def filter_securities(data, contracts, chunksize = 10 ** 4):
@@ -136,10 +136,10 @@ def filter_securities(data, contracts, chunksize = 10 ** 4):
     __secdesc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contracts]
     with __mp__.Pool() as pool:
         filtered = pool.map(__filter__, data, chunksize)
-        for secid, line in filter(None, filtered):
+        for setids, line in filter(None, filtered):
+            for secid in setids:
                 messages[secid].append(line)
     return messages
-
 
 
 def build_books(fixdata, securities, file_out = True, path_out = "", chunksize = 10 ** 4):
