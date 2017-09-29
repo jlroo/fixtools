@@ -142,32 +142,46 @@ def filter_securities(data, contracts, chunksize = 10 ** 4):
     return messages
 
 
+def __books__(sec_id):
+    books = []
+    product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
+    book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(securities[sec_id]))
+    for book in book_obj.build_book():
+        books.append(book)
+    return {sec_id: books}
+
+
+def __booksOut__(sec_id):
+    product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
+    book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(securities[sec_id]))
+    filename = securities[sec_id].replace(" ","_")
+    with open(path_out + filename,'wb') as book_out:
+        for book in book_obj.build_book():
+            book_out.write(book)
+
+
 def build_books(fixdata, securities, file_out = True, path_out = "", chunksize = 10 ** 4):
+    global contracts_msgs
+    global securities
+    global path_out
     books = {}
     __contracts__ = set(securities.keys())
     contracts_msgs = filter_securities(fixdata.data, __contracts__, chunksize)
-    for sec_id in __contracts__:
-        books[sec_id] = []
-        product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
-        book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(securities[sec_id]))
-        book_generator = book_obj.build_book()
-        if file_out == False:
-            for book in book_generator:
-                books[sec_id].append(book)
-        if file_out == True:
-            if path_out == "":
-                filename = securities[sec_id].replace(" ","_")
-            else:
-                filename = path_out + "/" + securities[sec_id].replace(" ","_")
-            with open(filename,'wb') as book_out:
-                for book in book_generator:
-                    book_out.write(book)
+    
+    if file_out == False:
+        with __mp__.Pool() as pool:
+            books = pool.map(__books__,__contracts__)
+        return books
+    if file_out == True:
+        if path_out != "":
+            if path_out[:-1] != "/":
+                path_out = path_out + "/"
+        with __mp__.Pool() as pool:
+            books = pool.map(__booksOut__,__contracts__)
     try:
         fixdata.data.seek(0)
     except AttributeError:
         pass
-    return books
-
 
 
 def __secfilter__(line):
