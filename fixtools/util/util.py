@@ -111,15 +111,16 @@ def most_liquid(dates, instrument="", product=""):
 
 
 def liquid_securities(fixdata, instrument = "ES", group_code = "EZ", max_lines = 10000):
+    global liquid_secs
     securities = fixdata.securities(instrument, group_code, max_lines)
     dates = fixdata.dates
-    liquid_contracts = {}
+    liquid_secs = {}
     fut = most_liquid(dates,instrument,"fut")
     opt = most_liquid(dates,instrument,"opt")
-    liquid_contracts.update(securities[fut]["FUT"])
+    liquid_secs.update(securities[fut]["FUT"])
     for price in securities[opt]["PAIRS"].keys():
-        liquid_contracts.update(securities[opt]['PAIRS'][price])
-    return liquid_contracts
+        liquid_secs.update(securities[opt]['PAIRS'][price])
+    return liquid_secs
 
 
 def __filter__(line):
@@ -145,7 +146,7 @@ def filter_securities(data, contracts, chunksize = 10 ** 4):
 def __books__(sec_id):
     books = []
     product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
-    book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(securities[sec_id]))
+    book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(liquid_secs[sec_id]))
     for book in book_obj.build_book():
         books.append(book)
     return {sec_id: books}
@@ -153,21 +154,19 @@ def __books__(sec_id):
 
 def __booksOut__(sec_id):
     product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
-    book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(securities[sec_id]))
-    filename = securities[sec_id].replace(" ","_")
-    with open(path_out + filename,'wb') as book_out:
+    book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(liquid_secs[sec_id]))
+    filename = liquid_secs[sec_id].replace(" ","_")
+    with open(__out__ + filename,'wb') as book_out:
         for book in book_obj.build_book():
             book_out.write(book)
 
 
 def build_books(fixdata, securities, file_out = True, path_out = "", chunksize = 10 ** 4):
     global contracts_msgs
-    global securities
-    global path_out
+    global __out__
     books = {}
     __contracts__ = set(securities.keys())
     contracts_msgs = filter_securities(fixdata.data, __contracts__, chunksize)
-    
     if file_out == False:
         with __mp__.Pool() as pool:
             books = pool.map(__books__,__contracts__)
@@ -175,7 +174,7 @@ def build_books(fixdata, securities, file_out = True, path_out = "", chunksize =
     if file_out == True:
         if path_out != "":
             if path_out[:-1] != "/":
-                path_out = path_out + "/"
+                __out__ = path_out + "/"
         with __mp__.Pool() as pool:
             books = pool.map(__booksOut__,__contracts__)
     try:
