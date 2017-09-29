@@ -6,17 +6,15 @@ Created on Wed Apr  5 10:17:23 2017
 @author: jlroo
 """
 
-import multiprocessing as __mp__
-
-__securityID__ = None
+#import multiprocessing as __mp__
 
 
-def __secfilter__(line):
-    global __securityID__
-    sec_desc = b'\x0148=' + str(__securityID__).encode() + b'\x01' in line
-    mk_refresh = b'35=X\x01' in line
-    if mk_refresh and sec_desc:
-        return line
+#def __secfilter__(line):
+#    global __securityID__
+#    sec_desc = b'\x0148=' + str(__securityID__).encode() + b'\x01' in line
+#    mk_refresh = b'35=X\x01' in line
+#    if mk_refresh and sec_desc:
+#        return line
 
 
 class OrderBook:
@@ -68,40 +66,72 @@ class OrderBook:
             pass
         return self.book
 
-    def build_book(self, chunksize=10 ** 4):
+    def build_book(self, chunksize = 10 ** 4):
         self.book = self.initial_book()
         if self.book != b'':
             msg_seq_num = lambda line: int(line.split(b'\x0134=')[1].split(b'\x01')[0])
             book_seq_num = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
             updates = lambda entry: entry is not None and msg_seq_num(entry) > book_seq_num
             trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
-            with __mp__.Pool() as pool:
-                msg_map = pool.imap(__secfilter__, self.data, chunksize)
-                if msg_map is not None:
-                    messages = iter(filter(updates, msg_map))
-                    for msg in messages:
-                        # PREVIOUS BOOK
-                        prev_body = self.book.split(b'\x0110=')[0]
-                        prev_body = prev_body.split(b'\x01279')[1:]
-                        prev_body = [b'\x01279' + entry for entry in prev_body]
-                        book_header = msg.split(b'\x01279')[0]
-                        book_end = b'\x0110' + msg.split(b'\x0110')[-1]
-                        msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
-                        msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
-                        msg_body = iter(filter(lambda e: trade_type(e), msg_body))
-                        # BOOK UPDATE
-                        bids, offers = self.__update__(prev_body, msg_body)
-                        book_body = bids + offers
-                        if book_body == prev_body:
-                            pass
-                        else:
-                            book_header += b''.join([e for e in book_body])
-                            self.book = book_header + book_end
-                            yield self.book
+            messages = iter(filter(updates, self.data))
+            for msg in messages:
+                # PREVIOUS BOOK
+                prev_body = self.book.split(b'\x0110=')[0]
+                prev_body = prev_body.split(b'\x01279')[1:]
+                prev_body = [b'\x01279' + entry for entry in prev_body]
+                book_header = msg.split(b'\x01279')[0]
+                book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+                msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+                msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
+                msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+                # BOOK UPDATE
+                bids, offers = self.__update__(prev_body, msg_body)
+                book_body = bids + offers
+                if book_body == prev_body:
+                    pass
+                else:
+                    book_header += b''.join([e for e in book_body])
+                    self.book = book_header + book_end
+                    yield self.book
             try:
                 self.data.seek(0)
             except AttributeError:
                 pass
+
+#    def build_book(self, chunksize = 10 ** 4):
+#        self.book = self.initial_book()
+#        if self.book != b'':
+#            msg_seq_num = lambda line: int(line.split(b'\x0134=')[1].split(b'\x01')[0])
+#            book_seq_num = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
+#            updates = lambda entry: entry is not None and msg_seq_num(entry) > book_seq_num
+#            trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
+#            with __mp__.Pool() as pool:
+#                msg_map = pool.imap(__secfilter__, self.data, chunksize)
+#                if msg_map is not None:
+#                    messages = iter(filter(updates, msg_map))
+#                    for msg in messages:
+#                        # PREVIOUS BOOK
+#                        prev_body = self.book.split(b'\x0110=')[0]
+#                        prev_body = prev_body.split(b'\x01279')[1:]
+#                        prev_body = [b'\x01279' + entry for entry in prev_body]
+#                        book_header = msg.split(b'\x01279')[0]
+#                        book_end = b'\x0110' + msg.split(b'\x0110')[-1]
+#                        msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
+#                        msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
+#                        msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+#                        # BOOK UPDATE
+#                        bids, offers = self.__update__(prev_body, msg_body)
+#                        book_body = bids + offers
+#                        if book_body == prev_body:
+#                            pass
+#                        else:
+#                            book_header += b''.join([e for e in book_body])
+#                            self.book = book_header + book_end
+#                            yield self.book
+#            try:
+#                self.data.seek(0)
+#            except AttributeError:
+#                pass
 
     def __update__(self, book_body, msg_body):
         bids, offers = book_body[0:self.top_order], book_body[self.top_order:]

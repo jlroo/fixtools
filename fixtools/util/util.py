@@ -10,6 +10,7 @@ import gzip as __gzip__
 import multiprocessing as __mp__
 from fixtools.core.book import OrderBook
 from fixtools.io.fixfast import FixData
+from collections import defaultdict
 
 """
 					Def FixData
@@ -120,40 +121,53 @@ def liquid_securities(fixdata, instrument = "ES", group_code = "EZ", max_lines =
         liquid_contracts.update(securities[opt]['PAIRS'][price])
     return liquid_contracts
 
-__contract__ = None
-
 
 def __filter__(line):
-    global __contract__
-    sec_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in __contract__]
-    valid_contract = [sec in line for sec in sec_desc]
-    mk_refresh = b'35=X\x01' in line
-    if mk_refresh and any(valid_contract):
-        return line
+    valid_contract = [sec if sec in line else None for sec in __secdesc__]
+    secid = next(filter(None,valid_contract))
+    secid = int(secid.split(b'\x0148=')[1].split(b'\x01')[0])
+    if b'35=X\x01' in line and any(valid_contract):
+        return (secid,line)
 
 
-def build_books(fixdata, securities, chunksize=10 ** 4):
-    books = {}
-    global __contract__
-    __contract__ = set(securities.keys())
+def filter_securities(data, contracts, chunksize = 10 ** 4):
+    messages = defaultdict(list)
+    global __secdesc__
+    __secdesc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contracts]
     with __mp__.Pool() as pool:
-        filtered = pool.map(__filter__,fixdata.data, chunksize)
-    for sec_id in __contract__:
-        __data__ = filter(None, filtered)
+        filtered = pool.map(__filter__, data, chunksize)
+        for secid, line in filter(None, filtered):
+                messages[secid].append(line)
+    return messages
+
+
+
+def build_books(fixdata, securities, file_out = True, path_out = "", chunksize = 10 ** 4):
+    books = {}
+    __contracts__ = set(securities.keys())
+    contracts_msgs = filter_securities(fixdata.data, __contracts__, chunksize)
+    for sec_id in __contracts__:
         books[sec_id] = []
         product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
-        book_obj = OrderBook(__data__, sec_id, product(securities[sec_id]))
+        book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(securities[sec_id]))
         book_generator = book_obj.build_book()
-        for book in book_generator:
-            books[sec_id].append(book)
+        if file_out == False:
+            for book in book_generator:
+                books[sec_id].append(book)
+        if file_out == True:
+            if path_out == "":
+                filename = securities[sec_id].replace(" ","_")
+            else:
+                filename = path_out + "/" + securities[sec_id].replace(" ","_")
+            with open(filename,'wb') as book_out:
+                for book in book_generator:
+                    book_out.write(book)
     try:
         fixdata.data.seek(0)
     except AttributeError:
         pass
     return books
 
-
-__securityID__ = None
 
 
 def __secfilter__(line):
