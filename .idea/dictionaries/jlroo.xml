@@ -2,6 +2,7 @@
   <dictionary name="jlroo">
     <words>
       <w>chunksize</w>
+      <w>fixdata</w>
       <w>fixfile</w>
       <w>fixtools</w>
       <w>initialbook</w>

@@ -31,22 +31,22 @@ def __metrics__(line):
     return b','.join([sec, secdes, day])
 
 
-def __secdesc__(data, group = "ES", group_code = "EZ", max_lines = 10000):
+def __secdesc__(data, group="ES", group_code="EZ", max_lines=10000):
     cnt = 0
     lines = []
-    code = (group.encode() ,group_code.encode())
+    code = (group.encode(), group_code.encode())
     for line in data:
         if cnt > max_lines:
             break
         desc = line[line.find(b'35=d\x01') + 3:line.find(b'35=d\x01') + 4]
         tag_sec_group = b'\x011151='
         tag_grp_code = b'\x0155='
-        sec_grp = line[line.find(tag_sec_group)+6:line.find(tag_sec_group)+8]
-        code_grp = line[line.find(tag_grp_code)+4:line.find(tag_grp_code)+6]
+        sec_grp = line[line.find(tag_sec_group) + 6:line.find(tag_sec_group) + 8]
+        code_grp = line[line.find(tag_grp_code) + 4:line.find(tag_grp_code) + 6]
         if desc == b'd' and sec_grp in code and code_grp in code:
             secid = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
             secdesc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
-            lines.append({secid:secdesc})
+            lines.append({secid: secdesc})
         cnt += 1
     data.seek(0)
     return lines
@@ -70,22 +70,22 @@ class FixData:
         else:
             raise ValueError("Supported time period: weekly data to get dates")
 
+
     """
 					   def securities
 
 		This function returns the securities in the data
-		by the expiration month
-
-		returns a dictionary
+		by the expiration month returns a dictionary
 
 		{MONTH: {SEC_ID:SEC_DESC}
 
 	"""
 
-    def securities(self,group = "ES", group_code = "EZ", max_lines = 10000):
+
+    def securities(self, group="ES", group_code="EZ", max_lines=10000):
         months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
         securities = __secdesc__(self.data, group, group_code, max_lines)
-        filtered = {list(item.keys())[0]:list(item.values())[0] for item in securities}
+        filtered = {list(item.keys())[0]: list(item.values())[0] for item in securities}
         for sec_id in filtered.keys():
             sec_desc = filtered[sec_id]
             if len(sec_desc) < 12:
@@ -114,13 +114,13 @@ class FixData:
                                     self.contracts[sec_key]['PAIRS'][put_price][sec_id] = sec_desc
                         if '-' in sec_desc:
                             self.contracts[sec_key]['SPREAD'][sec_id] = sec_desc
-        
+
         for sec_key in self.contracts.keys():
             pairs = self.contracts[sec_key]['PAIRS'].copy()
             for price in pairs.keys():
                 if len(pairs[price]) != 2:
                     del self.contracts[sec_key]['PAIRS'][price]
-            
+
         self.data.seek(0)
         return self.contracts
 
@@ -135,7 +135,7 @@ class FixData:
 		{DAY: VOLUME}
 	"""
 
-    def data_metrics(self,file_out=False, path="", chunksize=10 ** 4):
+    def data_metrics(self, file_out=False, path="", chunksize=10 ** 4):
         desc = {}
         table = __defaultdict__(dict)
         with __mp__.Pool() as pool:

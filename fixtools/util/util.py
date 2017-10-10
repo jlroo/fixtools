@@ -63,10 +63,9 @@ def expiration_date(year, month, week, day=""):
                 return __datetime__.datetime(year, month, dd)
 
 
-def contract_code(month, codes=""):
-    if codes == "":
+def contract_code(month, codes="", cme_codes=False):
+    if cme_codes:
         codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
-        print("Using CME Codes: \n" + codes)
     month_codes = {k[0]: k[1] for k in enumerate(codes.rsplit(","), 1)}
     codes_hash = {}
     for index in month_codes:
@@ -81,7 +80,10 @@ def contract_code(month, codes=""):
         return codes_hash[month + 1][1][month]
 
 
-def most_liquid(dates, instrument="", product=""):
+def most_liquid(dates, instrument="", product="", cme_codes=True):
+    if cme_codes:
+        codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
+    sec_code = ""
     date = __datetime__.datetime(year=dates[0].year, month=dates[0].month, day=dates[0].day)
     contract_year = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
     exp_week = next(filter(lambda day: settlement_day(day, 3, 'friday'), dates), None)
@@ -89,34 +91,42 @@ def most_liquid(dates, instrument="", product=""):
     if exp_week is not None or expired:
         if product.lower() in ("fut", "futures"):
             if date.month % 3 == 0:
-                sec_code = contract_code(date.month + 3)
+                sec_code = contract_code(date.month + 3, codes)
             if date.month % 3 == 1:
-                sec_code = contract_code(date.month + 2)
+                sec_code = contract_code(date.month + 2, codes)
             if date.month % 3 == 2:
-                sec_code = contract_code(date.month + 1)
+                sec_code = contract_code(date.month + 1, codes)
         if product.lower() in ("opt", "options"):
-            sec_code = contract_code(date.month + 1)
+            sec_code = contract_code(date.month + 1, codes)
     else:
         if product.lower() in ("fut", "futures"):
             if date.month % 3 == 0:
-                sec_code = contract_code(date.month)
+                sec_code = contract_code(date.month, codes)
             if date.month % 3 == 1:
-                sec_code = contract_code(date.month + 2)
+                sec_code = contract_code(date.month + 2, codes)
             if date.month % 3 == 2:
-                sec_code = contract_code(date.month + 1)
+                sec_code = contract_code(date.month + 1, codes)
         if product.lower() in ("opt", "options"):
-            sec_code = contract_code(date.month)
+            sec_code = contract_code(date.month, codes)
     sec_desc = instrument + sec_code + contract_year(str(date.year))
     return sec_desc
 
 
-def liquid_securities(fixdata, instrument = "ES", group_code = "EZ", max_lines = 10000):
+def liquid_securities(fixdata,
+                      instrument="ES",
+                      group_code="EZ",
+                      products=None,
+                      cme_codes=True,
+                      max_lines=10000):
+
+    if products is None:
+        products = ["FUT", "OPT"]
     securities = fixdata.securities(instrument, group_code, max_lines)
     dates = fixdata.dates
     liquid_secs = {}
-    fut = most_liquid(dates,instrument,"fut")
-    opt = most_liquid(dates,instrument,"opt")
-    liquid_secs.update(securities[fut]["FUT"])
+    fut = most_liquid(dates, instrument, products[0], cme_codes)
+    opt = most_liquid(dates, instrument, products[1], cme_codes)
+    liquid_secs.update(securities[fut][products[0]])
     for price in securities[opt]["PAIRS"].keys():
         liquid_secs.update(securities[opt]['PAIRS'][price])
     return liquid_secs
@@ -124,13 +134,13 @@ def liquid_securities(fixdata, instrument = "ES", group_code = "EZ", max_lines =
 
 def __filter__(line):
     valid_contract = [sec if sec in line else None for sec in __secdesc__]
-    setids = filter(None,valid_contract)
+    setids = filter(None, valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in setids)
     if b'35=X\x01' in line and any(valid_contract):
-        return (security_ids, line)
+        return security_ids, line
 
 
-def filter_securities(data, contracts, chunksize = 10 ** 4):
+def filter_securities(data, contracts, chunksize=10 ** 4):
     messages = defaultdict(list)
     global __secdesc__
     __secdesc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contracts]
@@ -151,36 +161,33 @@ def __books__(sec_id):
     return {sec_id: books}
 
 
-def __booksOut__(sec_id):
+def __books_out__(sec_id):
     product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
     book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(__securities__[sec_id]))
-    filename = __securities__[sec_id].replace(" ","_")
-    with open(__out__ + filename,'wb') as book_out:
+    filename = __securities__[sec_id].replace(" ", "-")
+    with open(__out__ + filename, 'wb') as book_out:
         for book in book_obj.build_book():
             book_out.write(book)
 
 
-def build_books(fixdata, securities, file_out = True, path_out = "", chunksize = 10 ** 4):
+def build_books(fixdata, securities, file_out=True, path_out="", chunksize=10 ** 4):
     global contracts_msgs
-    global __out__ 
+    global __out__
     __out__ = ""
     global __securities__
     __securities__ = securities
-    books = {}
     __contracts__ = set(securities.keys())
     contracts_msgs = filter_securities(fixdata.data, __contracts__, chunksize)
-    if file_out == False:
-        with __mp__.Pool() as pool:
-            books = pool.map(__books__,__contracts__)
-        return books
-    if file_out == True:
+
+    if file_out:
         if path_out != "":
-            if path_out[:-1] != "/":
-                __out__ = path_out + "/"
-            else:
-                __out__ = path_out
+            __out__ = path_out
         with __mp__.Pool() as pool:
-            books = pool.map(__booksOut__,__contracts__)
+            pool.map(__books_out__, __contracts__)
+    else:
+        with __mp__.Pool() as pool:
+            books = pool.map(__books__, __contracts__)
+        return books
     try:
         fixdata.data.seek(0)
     except AttributeError:

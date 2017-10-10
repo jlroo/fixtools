@@ -6,6 +6,7 @@ Created on Wed Apr  5 10:17:23 2017
 @author: jlroo
 """
 
+
 class OrderBook:
     book = b''
     top_order = 0
