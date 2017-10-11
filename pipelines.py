@@ -26,7 +26,7 @@ class FindFiles(luigi.Task):
                                                  day = int(self.data_start_date[6:8]))
         start_date = self.data_start_date - datetime.timedelta(days=31)
         end_date = start_date + datetime.timedelta(days=365)
-        data_start = set([start_date.year, start_date.month])
+        data_start = {start_date.year, start_date.month}
         with self.output().open('w') as out:
             for root, dirs, files in os.walk(str(self.data_in)):
                 for name in files:
