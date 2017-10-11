@@ -83,7 +83,7 @@ class FixFiles(luigi.Task):
 
 class OrderBooks(luigi.Task):
     data_pipe = luigi.Parameter()
-    data_year = luigi.IntParameter()
+    data_year = luigi.Parameter()
     year_code = luigi.Parameter()
     chunksize = luigi.IntParameter()   # 10**5
     data_out = ""
