@@ -102,8 +102,14 @@ class OrderBooks(luigi.Task):
                     fixdata = fx.open_fix(path=file.strip())
                     dates = fixdata.dates
                     securities = fx.liquid_securities(fixdata, year_code=int(self.data_year[-2:]))
-                    opt_code = fx.most_liquid(dates=dates, instrument="ES", product="OPT")
-                    fut_code = fx.most_liquid(dates=dates, instrument="ES", product="FUT")
+                    opt_code = fx.most_liquid(dates=dates,
+                                              instrument="ES",
+                                              product="OPT",
+                                              year_code=int(self.data_year[-2:]))
+                    fut_code = fx.most_liquid(dates=dates,
+                                              instrument="ES",
+                                              product="FUT",
+                                              year_code=int(self.data_year[-2:]))
                     desc_path = self.data_out + fut_code[2] + "/"
                     filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
                     path = desc_path + filename
