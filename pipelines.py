@@ -89,18 +89,19 @@ class OrderBooks(luigi.Task):
 
     def requires(self):
         self.data_pipe = str([item + "/" if item[-1] != "/" else item for item in [self.data_pipe]][0])
-        return [FixFiles(self.data_pipe + str(self.data_year) + "-files.txt")]
+        self.data_year = str(self.data_year)
+        return [FixFiles(self.data_pipe + self.data_year + "-files.txt")]
 
     def run(self):
         self.data_pipe = str([item + "/" if item[-1] != "/" else item for item in [self.data_pipe]][0])
-        self.data_out = self.data_pipe + str(self.data_year) + "/"
+        self.data_out = self.data_pipe + self.data_year + "/"
         contracts = self.output().open('w')
         for files_list in self.input():
             with files_list.open('r') as open_file:
                 for k, file in enumerate(open_file):
                     fixdata = fx.open_fix(path=file.strip())
                     dates = fixdata.dates
-                    securities = fx.liquid_securities(fixdata)
+                    securities = fx.liquid_securities(fixdata, year_code=int(self.data_year[-2:]))
                     opt_code = fx.most_liquid(dates=dates, instrument="ES", product="OPT")
                     fut_code = fx.most_liquid(dates=dates, instrument="ES", product="FUT")
                     desc_path = self.data_out + fut_code[2] + "/"
@@ -117,7 +118,7 @@ class OrderBooks(luigi.Task):
         contracts.close()
 
     def output(self):
-        return luigi.LocalTarget(self.data_pipe + str(self.data_year) + "-books.txt")
+        return luigi.LocalTarget(self.data_pipe + self.data_year + "-books.txt")
 
 
 if __name__ == "__main__":

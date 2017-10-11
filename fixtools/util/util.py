@@ -80,12 +80,12 @@ def contract_code(month, codes="", cme_codes=False):
         return codes_hash[month + 1][1][month]
 
 
-def most_liquid(dates, instrument="", product="", cme_codes=True):
-    if cme_codes:
-        codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
+def most_liquid(dates, instrument="", product="", year_code="", cme_codes=True, other_codes=""):
+    codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
+    if not cme_codes:
+        codes = other_codes
     sec_code = ""
     date = __datetime__.datetime(year=dates[0].year, month=dates[0].month, day=dates[0].day)
-    contract_year = lambda yr: yr[-1:] if yr[1:3] != "00" else yr[-1:]
     exp_week = next(filter(lambda day: settlement_day(day, 3, 'friday'), dates), None)
     expired = True if date.day > 16 else False
     if exp_week is not None or expired:
@@ -108,13 +108,14 @@ def most_liquid(dates, instrument="", product="", cme_codes=True):
                 sec_code = contract_code(date.month + 1, codes)
         if product.lower() in ("opt", "options"):
             sec_code = contract_code(date.month, codes)
-    sec_desc = instrument + sec_code + contract_year(str(date.year))
+    sec_desc = instrument + sec_code + year_code
     return sec_desc
 
 
 def liquid_securities(fixdata,
                       instrument="ES",
                       group_code="EZ",
+                      year_code="",
                       products=None,
                       cme_codes=True,
                       max_lines=10000):
@@ -124,8 +125,8 @@ def liquid_securities(fixdata,
     securities = fixdata.securities(instrument, group_code, max_lines)
     dates = fixdata.dates
     liquid_secs = {}
-    fut = most_liquid(dates, instrument, products[0], cme_codes)
-    opt = most_liquid(dates, instrument, products[1], cme_codes)
+    fut = most_liquid(dates, instrument, products[0], year_code, cme_codes)
+    opt = most_liquid(dates, instrument, products[1], year_code, cme_codes)
     liquid_secs.update(securities[fut][products[0]])
     for price in securities[opt]["PAIRS"].keys():
         liquid_secs.update(securities[opt]['PAIRS'][price])
