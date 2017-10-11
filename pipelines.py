@@ -83,7 +83,8 @@ class FixFiles(luigi.Task):
 
 class OrderBooks(luigi.Task):
     data_pipe = luigi.Parameter()
-    data_year = luigi.Parameter()
+    data_year = luigi.IntParameter()
+    year_code = luigi.Parameter()
     chunksize = luigi.IntParameter()   # 10**5
     data_out = ""
 
@@ -95,22 +96,22 @@ class OrderBooks(luigi.Task):
     def run(self):
         self.data_pipe = str([item + "/" if item[-1] != "/" else item for item in [self.data_pipe]][0])
         self.data_out = self.data_pipe + self.data_year + "/"
-        year_code = str(int(self.data_year[-2:]))
+        self.year_code = str(self.year_code)
         contracts = self.output().open('w')
         for files_list in self.input():
             with files_list.open('r') as open_file:
                 for k, file in enumerate(open_file):
                     fixdata = fx.open_fix(path=file.strip())
                     dates = fixdata.dates
-                    securities = fx.liquid_securities(fixdata, year_code=year_code)
+                    securities = fx.liquid_securities(fixdata, year_code=self.year_code)
                     opt_code = fx.most_liquid(dates=dates,
                                               instrument="ES",
                                               product="OPT",
-                                              year_code=year_code)
+                                              year_code=self.year_code)
                     fut_code = fx.most_liquid(dates=dates,
                                               instrument="ES",
                                               product="FUT",
-                                              year_code=year_code)
+                                              year_code=self.year_code)
                     desc_path = self.data_out + fut_code[2] + "/"
                     filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
                     path = desc_path + filename
