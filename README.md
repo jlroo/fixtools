@@ -52,6 +52,15 @@ Group by security ID number
     > path_gzip =  "XCME_ES_20130103_20130111.gz"
     > security_id = "222858"
     > fx.group_by(path_gzip,security_id)
+    
+Build Books
+
+    > path = "/home/jlroo/data/2010/XCME_MD_ES_20100104_20100108.gz"
+    > fixdata = fx.open_fix(path)
+    > securities = fx.liquid_securities(fixdata)
+    > fx.build_books(fixdata, securities, chunksize = 10**5)
+
+
 
 See Also
 ------------

@@ -14,7 +14,7 @@ import datetime
 import fixtools as fx
 
 
-class FixFiles(luigi.Task):
+class FindFiles(luigi.Task):
 
     data_in = luigi.Parameter()
     data_out = luigi.Parameter()
@@ -55,7 +55,7 @@ class CMEPipeline(luigi.Task):
     def requires(self):
         self.data_in = str([item + "/" if item[-1] != "/" else item for item in [self.data_in]][0])
         self.data_out = str([item + "/" if item[-1] != "/" else item for item in [self.data_out]][0])
-        return FixFiles(self.data_in, self.data_out, str(self.data_start_date))
+        return FindFiles(self.data_in, self.data_out, str(self.data_start_date))
 
     def run(self):
         if not os.path.exists(self.data_out):
@@ -71,38 +71,53 @@ class CMEPipeline(luigi.Task):
         return luigi.LocalTarget(self.data_out + str(self.data_start_date)[0:4] + "-folders.txt")
 
 
-class OrderBooks(luigi.Taks):
+class FixFiles(luigi.Task):
+    data_path = luigi.Parameter()
 
+    def run(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(self.data_path)
+
+
+class OrderBooks(luigi.Task):
     data_pipe = luigi.Parameter()
     data_year = luigi.Parameter()
-    chunksize = luigi.Parameter()   # 10**5
-    data_path = ""
+    chunksize = luigi.IntParameter()   # 10**5
+    data_out = ""
 
     def requires(self):
         self.data_pipe = str([item + "/" if item[-1] != "/" else item for item in [self.data_pipe]][0])
-        data_path = self.data_pipe + str(self.data_year) + "/"
-        return luigi.LocalTarget(data_path + str(self.data_year) + "-files.txt")
+        return [FixFiles(self.data_pipe + str(self.data_year) + "-files.txt")]
 
     def run(self):
-        with self.output().open('a') as out:
-            for k, file in enumerate(self.input()):
-                fixdata = fx.open_fix(file)
-                dates = fixdata.dates
-                securities = fx.liquid_securities(fixdata)
-                opt_code = fx.most_liquid(dates=dates, instrument="ES", product="OPT")
-                fut_code = fx.most_liquid(dates=dates, instrument="ES", product="FUT")
-                desc_path = self.data_path + fut_code[2] + "/"
-                filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
-                path = desc_path + filename
-                fx.build_books(fixdata,
-                               securities,
-                               file_out=True,
-                               path_out=path,
-                               chunksize=self.chunksize)
+        self.data_pipe = str([item + "/" if item[-1] != "/" else item for item in [self.data_pipe]][0])
+        self.data_out = self.data_pipe + str(self.data_year) + "/"
+        contracts = self.output().open('w')
+        for files_list in self.input():
+            with files_list.open('r') as open_file:
+                for k, file in enumerate(open_file):
+                    fixdata = fx.open_fix(path=file.strip())
+                    dates = fixdata.dates
+                    securities = fx.liquid_securities(fixdata)
+                    opt_code = fx.most_liquid(dates=dates, instrument="ES", product="OPT")
+                    fut_code = fx.most_liquid(dates=dates, instrument="ES", product="FUT")
+                    desc_path = self.data_out + fut_code[2] + "/"
+                    filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
+                    path = desc_path + filename
+                    fx.build_books(fixdata,
+                                   securities,
+                                   file_out=True,
+                                   path_out=path,
+                                   chunksize=self.chunksize)
+                    for sec_desc in securities.values():
+                        name = path + sec_desc.replace(" ", "-")
+                        contracts.write("%s\n" % name)
+        contracts.close()
 
-                for sec_desc in securities.values():
-                    filename = filename + sec_desc.replace(" ", "-")
-                    out.write("%s\n" % self.data_path + filename)
+    def output(self):
+        return luigi.LocalTarget(self.data_pipe + str(self.data_year) + "-books.txt")
 
 
 if __name__ == "__main__":
