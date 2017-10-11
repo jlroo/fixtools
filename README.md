@@ -61,6 +61,12 @@ Build Books
     > fx.build_books(fixdata, securities, chunksize = 10**5)
 
 
+Pipelines
+----------
+
+    > python -m luigi --module pipelines OrderBooks --local-scheduler --data-pipe "/Users/jlroo/cme/pipeline" --chunksize 10000 --data-year 2010
+    > python -m luigi --module pipelines CMEPipeline --local-scheduler --data-in "/Users/jlroo/cme/data/2010" --data-out "/Users/jlroo/cme/pipeline" --data-start-date 20100101 --data-months 'H,M,U,Z'
+
 
 See Also
 ------------
