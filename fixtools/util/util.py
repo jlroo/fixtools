@@ -41,6 +41,15 @@ def open_fix(path, period="weekly", compression=True):
     return FixData(fixfile, src)
 
 
+def data_dates(fixdata, period = "weekly"):
+    peek = fixdata.data.peek(1).split(b"\n")[0]
+    day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
+    start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
+    if period == "weekly":
+        dates = [start + __datetime__.timedelta(days=i) for i in range(6)]
+    return dates
+
+
 def settlement_day(date, week_number, day_of_week):
     weekday = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6}
     date = __datetime__.datetime(date.year, date.month, date.day)
@@ -150,6 +159,7 @@ def filter_securities(data, contracts, chunksize=10 ** 4):
         for setids, line in filter(None, filtered):
             for secid in setids:
                 messages[secid].append(line)
+    data.close()
     return messages
 
 
@@ -179,7 +189,6 @@ def build_books(fixdata, securities, file_out=True, path_out="", chunksize=10 **
     __securities__ = securities
     __contracts__ = set(securities.keys())
     contracts_msgs = filter_securities(fixdata.data, __contracts__, chunksize)
-
     if file_out:
         if path_out != "":
             __out__ = path_out
@@ -190,7 +199,7 @@ def build_books(fixdata, securities, file_out=True, path_out="", chunksize=10 **
             books = pool.map(__books__, __contracts__)
         return books
     try:
-        fixdata.data.seek(0)
+        fixdata.data.close()
     except AttributeError:
         pass
 
