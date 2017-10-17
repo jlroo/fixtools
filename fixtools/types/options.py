@@ -10,6 +10,7 @@ from fixtools.core.book import OrderBook
 from fixtools.util.util import initial_book
 from fixtools.util.util import filter_securities
 
+
 class Options:
     book = b''
     product = "options"

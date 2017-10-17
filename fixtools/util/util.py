@@ -176,12 +176,12 @@ def __books_out__(sec_id):
     product = lambda sec_desc: "opt" if len(sec_desc) > 7 else "fut"
     book_obj = OrderBook(contracts_msgs[sec_id], sec_id, product(__securities__[sec_id]))
     filename = __securities__[sec_id].replace(" ", "-")
-    with open(__out__ + filename, 'wb') as book_out:
+    with open(__out__ + filename, 'ab+') as book_out:
         for book in book_obj.build_book():
             book_out.write(book)
 
 
-def build_books(fixdata, securities, file_out=True, path_out="", chunksize=10 ** 4):
+def build_books(fixdata, securities, file_out=True, path_out="", chunksize=31500):
     global contracts_msgs
     global __out__
     __out__ = ""
@@ -192,11 +192,19 @@ def build_books(fixdata, securities, file_out=True, path_out="", chunksize=10 **
     if file_out:
         if path_out != "":
             __out__ = path_out
-        with __mp__.Pool() as pool:
-            pool.map(__books_out__, __contracts__)
+        if chunksize:
+            with __mp__.Pool() as pool:
+                pool.map(__books_out__, __contracts__, chunksize)
+        else:
+            with __mp__.Pool() as pool:
+                pool.map(__books_out__, __contracts__)
     else:
-        with __mp__.Pool() as pool:
-            books = pool.map(__books__, __contracts__)
+        if chunksize:
+            with __mp__.Pool() as pool:
+                books = pool.map(__books_out__, __contracts__, chunksize)
+        else:
+            with __mp__.Pool() as pool:
+                books = pool.map(__books_out__, __contracts__)
         return books
     try:
         fixdata.data.close()

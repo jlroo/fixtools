@@ -84,9 +84,6 @@ class CMEPipeline(luigi.Task):
 class FixFiles(luigi.Task):
     data_path = luigi.Parameter()
 
-    def run(self):
-        pass
-
     def output(self):
         return luigi.LocalTarget(self.data_path)
 
@@ -110,8 +107,8 @@ class OrderBooks(luigi.Task):
         with self.input()[0].open('r') as infile:
             files = infile.read().splitlines()
         contracts = self.output().open('w')
-        for k, file in enumerate(files):
 
+        for k, file in enumerate(files):
             fixdata = fx.open_fix(path=file.strip())
             dates = fixdata.dates
             securities = fx.liquid_securities(fixdata, year_code=self.year_code)
@@ -135,6 +132,11 @@ class OrderBooks(luigi.Task):
             for sec_desc in securities.values():
                 name = path + sec_desc.replace(" ", "-")
                 contracts.write("%s\n" % name)
+
+            if k % 10 == 0:
+                self.set_status_message("Progress: %d / 100" % k)
+                # displays a progress bar in the scheduler UI
+                self.set_progress_percentage(k)
 
         contracts.close()
 

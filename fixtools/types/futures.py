@@ -17,7 +17,6 @@ class Futures:
     top_order = 10
     sec_desc_id = b''
 
-
     def __init__(self, data, security_id, chunksize = 10 ** 4):
         self.secid = security_id
         self.data = filter_securities(data, security_id, chunksize)
