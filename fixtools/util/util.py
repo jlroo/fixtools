@@ -198,6 +198,7 @@ def build_books(fixdata, securities, file_out=True, path_out="", chunksize=31500
         else:
             with __mp__.Pool() as pool:
                 pool.map(__books_out__, __contracts__)
+        del contracts_msgs
     else:
         if chunksize:
             with __mp__.Pool() as pool:
@@ -205,6 +206,7 @@ def build_books(fixdata, securities, file_out=True, path_out="", chunksize=31500
         else:
             with __mp__.Pool() as pool:
                 books = pool.map(__books_out__, __contracts__)
+        del contracts_msgs
         return books
     try:
         fixdata.data.close()

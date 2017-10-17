@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fixtools/types/futures.py" afterPath="$PROJECT_DIR$/fixtools/types/futures.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fixtools/types/options.py" afterPath="$PROJECT_DIR$/fixtools/types/options.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fixtools/util/util.py" afterPath="$PROJECT_DIR$/fixtools/util/util.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pipelines.py" afterPath="$PROJECT_DIR$/pipelines.py" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="pipelines.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="pipelines.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pipelines.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1275">
-              <caret line="85" column="4" lean-forward="false" selection-start-line="85" selection-start-column="4" selection-end-line="85" selection-end-column="4" />
+            <state relative-caret-position="-844">
+              <caret line="34" column="38" lean-forward="true" selection-start-line="34" selection-start-column="38" selection-end-line="34" selection-end-column="38" />
               <folding>
                 <element signature="e#110#119#0" expanded="true" />
               </folding>
@@ -45,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="util.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="util.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="183" column="51" lean-forward="true" selection-start-line="183" selection-start-column="51" selection-end-line="183" selection-end-column="51" />
+            <state relative-caret-position="597">
+              <caret line="208" column="26" lean-forward="false" selection-start-line="208" selection-start-column="26" selection-end-line="208" selection-end-column="26" />
               <folding>
                 <element signature="e#60#81#0" expanded="true" />
               </folding>
@@ -105,8 +102,8 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/fixtools/types/futures.py" />
         <option value="$PROJECT_DIR$/fixtools/types/options.py" />
-        <option value="$PROJECT_DIR$/fixtools/util/util.py" />
         <option value="$PROJECT_DIR$/pipelines.py" />
+        <option value="$PROJECT_DIR$/fixtools/util/util.py" />
       </list>
     </option>
   </component>
@@ -535,7 +532,14 @@
       <option name="project" value="LOCAL" />
       <updated>1507933212595</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="modified build_books function chunksize">
+      <created>1508212786191</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1508212786191</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TodoView">
@@ -593,7 +597,8 @@
     <MESSAGE value="refactor pipeline function" />
     <MESSAGE value="refactor pipeline" />
     <MESSAGE value="modified build_books function, added data_dates function" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified build_books function, added data_dates function" />
+    <MESSAGE value="modified build_books function chunksize" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified build_books function chunksize" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -918,22 +923,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
+    <entry file="file://$PROJECT_DIR$/pipelines.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="183" column="51" lean-forward="true" selection-start-line="183" selection-start-column="51" selection-end-line="183" selection-end-column="51" />
+        <state relative-caret-position="-844">
+          <caret line="34" column="38" lean-forward="true" selection-start-line="34" selection-start-column="38" selection-end-line="34" selection-end-column="38" />
           <folding>
-            <element signature="e#60#81#0" expanded="true" />
+            <element signature="e#110#119#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pipelines.py">
+    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1275">
-          <caret line="85" column="4" lean-forward="false" selection-start-line="85" selection-start-column="4" selection-end-line="85" selection-end-column="4" />
+        <state relative-caret-position="597">
+          <caret line="208" column="26" lean-forward="false" selection-start-line="208" selection-start-column="26" selection-end-line="208" selection-end-column="26" />
           <folding>
-            <element signature="e#110#119#0" expanded="true" />
+            <element signature="e#60#81#0" expanded="true" />
           </folding>
         </state>
       </provider>
