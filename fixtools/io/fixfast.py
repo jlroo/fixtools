@@ -8,8 +8,30 @@ from collections import defaultdict as __defaultdict__
 import datetime as __datetime__
 import bz2 as __bz2__
 import re as __re__
+from dateutil import tz as __tz__
+import os as __os__
+
 
 __fixDate__ = None
+
+
+def from_time(timestamp = None,
+              stamp_date = None,
+              stamp_time = None,
+              time_format = '%Y%m%d%H%M%S%f',
+              fromzone = 'UTC',
+              tozone = 'America/Chicago'):
+
+    if not timestamp:
+        timestamp = stamp_date + stamp_time
+    from_zone = __tz__.gettz(fromzone)
+    to_zone = __tz__.gettz(tozone)
+    stamp = __datetime__.datetime.strptime(timestamp, time_format)
+    stamp = stamp.replace(tzinfo = from_zone)
+    stamp = stamp.astimezone(to_zone)
+    date = stamp.strftime("%Y%m%d")
+    time = stamp.strftime("%H%M%S%f")[:-3]
+    return {"date":date, "time":time, "timestamp":date+time}
 
 
 def __day_filter__(line):
@@ -52,6 +74,78 @@ def __secdesc__(data, group="ES", group_code="EZ", max_lines=10000):
     return lines
 
 
+def files_tree(path):
+    files_list = list(__os__.walk(path))[0][2]
+    files = __defaultdict__(dict)
+    for f in files_list:
+        key = int(f.split("-")[0])
+        if key not in files.keys():
+            files[key] = {"options": [], "futures":[]}
+        if "C" in f or "P" in f:
+            files[key]["options"].append(f)
+        else:
+            files[key]["futures"].append(f)
+    return files
+
+
+def to_csv(fixline, top_order=3):
+    for item in [fixline]:
+        tag34 = item.split(b"\x0134=")[1].split(b"\x01")[0]
+        tag48 = item.split(b"\x0148=")[1].split(b"\x01")[0]
+        tag52 = item.split(b"\x0152=")[1].split(b"\x01")[0]
+        tag75 = item.split(b"\x0175=")[1].split(b"\x01")[0]
+        tag107 = item.split(b"\x01107=")[1].split(b"\x01")[0]
+        body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
+        bids = body[:top_order]
+        offers = body[top_order:]
+        row = []
+        for i in range(top_order):
+            tag270b = bids[i].split(b'\x01270=')[1].split(b'\x01')[0]
+            tag270s = offers[i].split(b'\x01270=')[1].split(b'\x01')[0]
+            tag271b = bids[i].split(b'\x01271=')[1].split(b'\x01')[0]
+            tag271s = offers[i].split(b'\x01271=')[1].split(b'\x01')[0]
+            row.append(b",".join([tag48,tag107,tag34,tag52,tag75,
+                    tag270b,tag271b,str(1+i).encode(),
+                    tag270s,tag271s,str(1+i).encode()])+b"\n")
+        return b" ".join([e for e in row])
+
+
+
+def to_dict(fixline, top_order=3):
+    dd = {}
+    for item in [fixline]:
+        dd["msg_seq_num"] = int(item.split(b"\x0134=")[1].split(b"\x01")[0].decode())
+        dd["security_id"] = item.split(b"\x0148=")[1].split(b"\x01")[0].decode()
+        dd["sending_time"] = int(item.split(b"\x0152=")[1].split(b"\x01")[0].decode())
+        dd["trade_date"] = item.split(b"\x0175=")[1].split(b"\x01")[0].decode()
+        dd["security_desc"] = item.split(b"\x01107=")[1].split(b"\x01")[0].decode()
+        body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
+        bids = body[:top_order]
+        offers = body[top_order:]
+        if top_order == 1:
+            dd["bid_price"] = bids[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+            dd["bid_size"] = bids[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+            dd["bid_level"] = top_order
+            dd["offer_price"] = offers[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+            dd["offer_size"] = offers[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+            dd["offer_level"] = top_order
+        elif top_order>1:
+            dd["bid_price"] = []
+            dd["bid_size"] = []
+            dd["bid_level"] = []
+            dd["offer_price"] = []
+            dd["offer_size"] = []
+            dd["offer_level"] = []
+            for i in range(top_order):
+                dd["bid_price"].append(bids[i].split(b'\x01270=')[1].split(b'\x01')[0].decode())
+                dd["bid_size"].append(bids[i].split(b'\x01271=')[1].split(b'\x01')[0].decode())
+                dd["bid_level"].append(1+i)
+                dd["offer_price"].append(offers[i].split(b'\x01270=')[1].split(b'\x01')[0].decode())
+                dd["offer_size"].append(offers[i].split(b'\x01271=')[1].split(b'\x01')[0].decode())
+                dd["offer_level"].append(1+i)
+        return dd
+
+
 class FixData:
     dates = []
     stats = {}
@@ -60,15 +154,14 @@ class FixData:
     def __init__(self, fixfile, src):
         self.data = fixfile
         self.path = src["path"]
-
-        peek = self.data.peek(1).split(b"\n")[0]
-        day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
-
-        if src["period"] == "weekly":
-            start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
-            self.dates = [start + __datetime__.timedelta(days=i) for i in range(6)]
-        else:
-            raise ValueError("Supported time period: weekly data to get dates")
+        if b'\x0152=' in self.data.peek():
+            peek = self.data.peek(1).split(b"\n")[0]
+            day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
+            if src["period"] == "weekly":
+                start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
+                self.dates = [start + __datetime__.timedelta(days=i) for i in range(6)]
+            else:
+                raise ValueError("Supported time period: weekly data to get dates")
 
 
     """

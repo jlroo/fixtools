@@ -15,9 +15,8 @@ if missing_dependencies:
 del hard_dependencies, dependency, missing_dependencies
 
 from fixtools.util.util import *
+from fixtools.util.parity import *
 from fixtools.io.fixfast import *
-from fixtools.types.options import *
-from fixtools.types.futures import *
 
 # module level doc-string
 __doc__ = """
