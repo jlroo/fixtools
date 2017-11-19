@@ -115,12 +115,12 @@ def search_out(result, timestamp, path, string_time = True):
     df.to_csv(fname, index=False)
 
 
-def put_call_query(futures,
-                   options,
-                   sending_time,
-                   futures_time=None,
-                   options_time=None,
-                   month_codes="F,G,H,J,K,M,N,Q,U,V,X,Z",
+def put_call_query(futures = None,
+                   options = None,
+                   timestamp = None,
+                   futures_time = None,
+                   options_time = None,
+                   month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z",
                    level_limit = 1,
                    time_format = "%Y%m%d%H%M%S%f",
                    milliseconds = 1000):
@@ -133,7 +133,7 @@ def put_call_query(futures,
     futures = futures.sort_values('sending_time')
     query = futures[(futures['bid_level']<=level_limit)]
     query = query[__pd__.notnull(query['security_desc'])]
-    query = query[query['sending_time']<int(sending_time)]
+    query = query[query['sending_time']<int(timestamp)]
     query = query.sort_values('sending_time')
     query = query.reset_index()
     fut_dict = query.tail(level_limit).to_dict(orient = "index")
@@ -144,6 +144,8 @@ def put_call_query(futures,
         year,month,day = int(trade_day[0:4]),int(trade_day[4:6]),int(trade_day[6:])
         trade_date = __datetime__.datetime(year,month,day)
         month_exp = codes[sec_desc[2].lower()]
+        if month ==12:
+            year = year+1
         exp_date = expiration_date(year,month_exp,3,day='friday')
         dd["trade_date"] = trade_date
         dd["fut_exp_date"] = exp_date
@@ -161,15 +163,15 @@ def put_call_query(futures,
         dd["fut_offer_level"] = fut_dict[k]['offer_level']
         table["fut"].append(dd.copy())
 
-    sending_time = __datetime__.datetime.strptime(sending_time, time_format)
-    lower_time = sending_time - __datetime__.timedelta(milliseconds=1000)
-    sending_time = int(sending_time.strftime(time_format)[:-3])
+    timestamp = __datetime__.datetime.strptime(timestamp, time_format)
+    lower_time = timestamp - __datetime__.timedelta(milliseconds=1000)
+    timestamp = int(timestamp.strftime(time_format)[:-3])
     lower_time = int(lower_time.strftime(time_format)[:-3])
 
     options = options[(options['bid_level']<=level_limit)]
     query = options[__pd__.notnull(options['security_desc'])]
     query = query.sort_values('sending_time')
-    query = query[query['sending_time']<int(sending_time)]
+    query = query[query['sending_time']<int(timestamp)]
     query = query.reset_index()
     opts = set(query['security_id'])
     optlist = []
@@ -188,6 +190,8 @@ def put_call_query(futures,
         year,month,day = int(trade_day[0:4]),int(trade_day[4:6]),int(trade_day[6:])
         trade_date = __datetime__.datetime(year,month,day)
         month_exp = codes[sec_desc[2].lower()]
+        if month == 12:
+            year = year+1
         exp_date = expiration_date(year,month_exp,3,day='friday')
         if order_type == "C":
             dd['strike_price'] = strike_price
