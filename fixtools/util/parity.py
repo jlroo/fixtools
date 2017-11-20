@@ -115,6 +115,69 @@ def search_out(result, timestamp, path, string_time = True):
     df.to_csv(fname, index=False)
 
 
+def __put_call__(item,codes):
+    dd = {}
+    sec_desc = str(item['security_desc'])
+    strike_price = int(sec_desc.split(" ")[1][1:])
+    order_type = sec_desc.split(" ")[1][0]
+    trade_day = str(item['trade_date'])
+    year = int(trade_day[0:4])
+    month = int(trade_day[4:6])
+    day = int(trade_day[6:])
+    trade_date = __datetime__.datetime(year,month,day)
+    month_exp = codes[sec_desc[2].lower()]
+    if month == 12: year+=1
+    exp_date = expiration_date(year,month_exp,3,day='friday')
+    dd['strike_price'] = strike_price
+    dd['trade_date'] = trade_date
+    dd['exp_date'] = exp_date
+    delta = exp_date - trade_date
+    dd['exp_days'] = delta.days
+    if order_type == "C":
+        dd["opt_c_sec_id"] = item['security_id']
+        dd["opt_c_desc"] = sec_desc
+        dd["opt_c_msg_seq_num"] = item['msg_seq_num']
+        dd["opt_c_sending_time"] = str(item['sending_time'])
+        dd["opt_c_bid_price"] = item['bid_price']
+        dd["opt_c_bid_size"] = item['bid_size']
+        dd["opt_c_bid_level"] = item['bid_level']
+        dd["opt_c_offer_price"] = item['offer_price']
+        dd["opt_c_offer_size"] = item['offer_size']
+        dd["opt_c_offer_level"] = item['offer_level']
+        dd["opt_p_sec_id"] = __np__.nan
+        dd["opt_p_desc"] = __np__.nan
+        dd["opt_p_msg_seq_num"] = __np__.nan
+        dd["opt_p_sending_time"] = __np__.nan
+        dd["opt_p_bid_price"] = __np__.nan
+        dd["opt_p_bid_size"] = __np__.nan
+        dd["opt_p_bid_level"] = __np__.nan
+        dd["opt_p_offer_price"] = __np__.nan
+        dd["opt_p_offer_size"] = __np__.nan
+        dd["opt_p_offer_level"] = __np__.nan
+    else:
+        dd["opt_c_sec_id"] = __np__.nan
+        dd["opt_c_desc"] = __np__.nan
+        dd["opt_c_msg_seq_num"] = __np__.nan
+        dd["opt_c_sending_time"] = __np__.nan
+        dd["opt_c_bid_price"] = __np__.nan
+        dd["opt_c_bid_size"] = __np__.nan
+        dd["opt_c_bid_level"] = __np__.nan
+        dd["opt_c_offer_price"] = __np__.nan
+        dd["opt_c_offer_size"] = __np__.nan
+        dd["opt_c_offer_level"] = __np__.nan
+        dd["opt_p_sec_id"] = item['security_id']
+        dd["opt_p_desc"] = sec_desc
+        dd["opt_p_msg_seq_num"] = item['msg_seq_num']
+        dd["opt_p_sending_time"] = str(item['sending_time'])
+        dd["opt_p_bid_price"] = item['bid_price']
+        dd["opt_p_bid_size"] = item['bid_size']
+        dd["opt_p_bid_level"] = item['bid_level']
+        dd["opt_p_offer_price"] = item['offer_price']
+        dd["opt_p_offer_size"] = item['offer_size']
+        dd["opt_p_offer_level"] = item['offer_level']
+    return dd
+
+
 def put_call_query(futures = None,
                    options = None,
                    timestamp = None,
@@ -163,84 +226,31 @@ def put_call_query(futures = None,
         dd["fut_offer_level"] = fut_dict[k]['offer_level']
         table["fut"].append(dd.copy())
 
-    timestamp = __datetime__.datetime.strptime(timestamp, time_format)
-    lower_time = timestamp - __datetime__.timedelta(milliseconds=1000)
-    timestamp = int(timestamp.strftime(time_format)[:-3])
-    lower_time = int(lower_time.strftime(time_format)[:-3])
-
     options = options[(options['bid_level']<=level_limit)]
     query = options[__pd__.notnull(options['security_desc'])]
     query = query.sort_values('sending_time')
     query = query[query['sending_time']<int(timestamp)]
     query = query.reset_index()
-    opts = set(query['security_id'])
-    optlist = []
+    opts = list(query['security_id'].unique())
+
     for sec in opts:
         sec_query = query[query['security_id']==sec]
         sec_query = sec_query.tail(level_limit)
         optdict = sec_query.to_dict(orient = "index")
-        optlist.append(optdict[sec_query.index[0]])
-    dd = {}
-    for k in optlist:
-        sec_desc = str(k['security_desc'])
-        level = k['bid_level']-1
-        order_type = sec_desc.split(" ")[1][0]
+        key = list(optdict.keys())[0]
+        item = optdict[key]
+        sec_desc = str(item['security_desc'])
         strike_price = int(sec_desc.split(" ")[1][1:])
-        trade_day = str(k['trade_date'])
-        year,month,day = int(trade_day[0:4]),int(trade_day[4:6]),int(trade_day[6:])
-        trade_date = __datetime__.datetime(year,month,day)
-        month_exp = codes[sec_desc[2].lower()]
-        if month == 12:
-            year = year+1
-        exp_date = expiration_date(year,month_exp,3,day='friday')
-        if order_type == "C":
-            dd['strike_price'] = strike_price
-            dd['trade_date'] = trade_date
-            dd['exp_date'] = exp_date
-            delta = exp_date - trade_date
-            dd['exp_days'] = delta.days
-            dd["opt_c_sec_id"] = k['security_id']
-            dd["opt_c_desc"] = sec_desc
-            dd["opt_c_msg_seq_num"] = k['msg_seq_num']
-            dd["opt_c_sending_time"] = str(k['sending_time'])
-            dd["opt_c_bid_price"] = k['bid_price']
-            dd["opt_c_bid_size"] = k['bid_size']
-            dd["opt_c_bid_level"] = k['bid_level']
-            dd["opt_c_offer_price"] = k['offer_price']
-            dd["opt_c_offer_size"] = k['offer_size']
-            dd["opt_c_offer_level"] = k['offer_level']
-            if strike_price not in table.keys():
-                table[strike_price] = {i:{} for i in range(level_limit)}
-                dd.update(table["fut"][level].items())
-                table[strike_price][level] = dd.copy()
-            else:
-                dd.update(table["fut"][level].items())
-                dd.update(table[strike_price][level].copy())
-                table[strike_price][level] = dd.copy()
-        elif order_type == "P":
-            dd['strike_price'] = strike_price
-            dd['trade_date'] = trade_date
-            dd['exp_date'] = exp_date
-            delta = exp_date - trade_date
-            dd['exp_days'] = delta.days
-            dd["opt_p_sec_id"] = k['security_id']
-            dd["opt_p_desc"] = sec_desc
-            dd["opt_p_msg_seq_num"] = k['msg_seq_num']
-            dd["opt_p_sending_time"] = str(k['sending_time'])
-            dd["opt_p_bid_price"] = k['bid_price']
-            dd["opt_p_bid_size"] = k['bid_size']
-            dd["opt_p_bid_level"] = k['bid_level']
-            dd["opt_p_offer_price"] = k['offer_price']
-            dd["opt_p_offer_size"] = k['offer_size']
-            dd["opt_p_offer_level"] = k['offer_level']
-            if strike_price not in table.keys():
-                table[strike_price] = {i:{} for i in range(level_limit)}
-                dd.update(table["fut"][level].items())
-                table[strike_price][level] = dd.copy()
-            else:
-                dd.update(table["fut"][level].items())
-                dd.update(table[strike_price][level].copy())
-                table[strike_price][level] = dd.copy()
+        dd = {}
+        if strike_price not in table.keys():
+            table[strike_price] = {i:{} for i in range(level_limit)}
+            dd = __put_call__(item, codes)
+            dd.update(table["fut"][level_limit-1])
+            table[strike_price][level_limit-1] = dd.copy()
+        else:
+            dd = __put_call__(item, codes)
+            dd.update(table[strike_price][level_limit-1])
+            table[strike_price][level_limit-1] = dd.copy()
     del table["fut"]
     return table
 
