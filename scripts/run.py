@@ -13,24 +13,62 @@ time ./run.py --path /home/jlroo/cme/data/raw/test/
 import fixtools as fx
 import pandas as pd
 
-def main():
 
+def search_csv():
     path = "/home/jlroo/cme/data/output/"
     out_query = "/home/jlroo/cme/data/search/"
     fixfiles = fx.files_tree(path)
-    sending_time = "210000000"
-
     for key in fixfiles.keys():
         opt_file = fixfiles[key]['options']
         options = pd.read_csv(path+opt_file[0])
         fut_file = fixfiles[key]['futures'][0]
         futures = pd.read_csv(path+fut_file)
-        trade_dates = list(futures['trade_date'].unique())
-        for date in trade_dates:
-            timestamp = str(date) + sending_time
-            result = fx.put_call_query(futures, options, timestamp)
-            fx.search_out(result, timestamp, out_query)
-            print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
+        times = fx.time_table(futures, options)
+        for date in times['futures'].keys():
+            for hour in times['futures'][date].keys():
+                timestamp = str(times['futures'][date][hour][-1])
+                result = fx.put_call_query(futures, options, timestamp)
+                if not result =={}:
+                    fx.search_out(result, timestamp, out_query)
+                    print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
+
+
+
+def search_fix():
+    path = "/home/jlroo/cme/data/books/2010/U/"
+    out_table = "/home/jlroo/cme/data/output/"
+    out_query = "/home/jlroo/cme/data/search/"
+    fixfiles = fx.files_tree(path)
+
+    for key in fixfiles.keys():
+
+        opt_files = fixfiles[key]['options']
+        options = fx.options_table(path,
+                                   opt_files,
+                                   top_order = 1,
+                                   write_csv = True,
+                                   path_out = out_table,
+                                   return_table = True)
+
+        fut_file = fixfiles[key]['futures'][0]
+        futures = fx.futures_table(path,
+                                   fut_file,
+                                   top_order = 1,
+                                   write_csv = True,
+                                   path_out = out_table,
+                                   return_table = True)
+
+        times = fx.time_table(futures, options)
+
+        for date in times['futures'].keys():
+            for hour in times['futures'][date].keys():
+                timestamp = str(times['futures'][date][hour][-1])
+                result = fx.put_call_query(futures, options, timestamp)
+                if not result=={}:
+                    fx.search_out(result, timestamp, out_query)
+                    print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 if __name__ == "__main__":
-    main()
+    #search_csv()
+    search_fix()
+

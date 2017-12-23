@@ -9,7 +9,7 @@ Created on Sun Nov  5 09:53:03 2017
 
 import fixtools as fx
 
-path = "/home/jlroo/cme/data/books/2010/H/"
+path = "/home/jlroo/cme/data/books/2010/M/"
 out_table = "/home/jlroo/cme/data/output/"
 out_query = "/home/jlroo/cme/data/search/"
 fixfiles = fx.files_tree(path)

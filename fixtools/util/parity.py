@@ -67,7 +67,7 @@ def futures_table(path = None,
 
 def time_table(futures, options):
     grouped = {"futures":{}, "options":{}}
-    fut_times = set(futures['sending_time'])
+    fut_times = set(futures['sending_time'].unique())
     for t in fut_times:
         date = __datetime__.datetime.strptime(str(t),"%Y%m%d%H%M%S%f")
         ymd = int(str(date)[0:10].replace("-",""))
@@ -81,8 +81,11 @@ def time_table(futures, options):
                 grouped["futures"][ymd][date.hour].append(t)
             else:
                 grouped["futures"][ymd][date.hour].append(t)
-
-    opt_times = set(options['sending_time'])
+    for date in grouped['futures'].keys():
+        for hour in grouped['futures'][date].keys():
+            hh = sorted(grouped['futures'][date][hour])
+            grouped['futures'][date][hour] = hh
+    opt_times = set(options['sending_time'].unique())
     for t in opt_times:
         date = __datetime__.datetime.strptime(str(t),"%Y%m%d%H%M%S%f")
         ymd = int(str(date)[0:10].replace("-",""))
@@ -96,6 +99,10 @@ def time_table(futures, options):
                 grouped["options"][ymd][date.hour].append(t)
             else:
                 grouped["options"][ymd][date.hour].append(t)
+    for date in grouped['options'].keys():
+        for hour in grouped['options'][date].keys():
+            hh = sorted(grouped['options'][date][hour])
+            grouped['options'][date][hour] = hh
     return grouped
 
 
@@ -107,12 +114,13 @@ def search_out(result, timestamp, path, string_time = True):
     for k in result.keys():
         df.append(__pd__.DataFrame.from_dict(result[k], orient='index'))
     df = __pd__.concat(df)
-    df.reset_index(level=0)
-    if string_time:
-        time_labels = [i for i in df.columns if "time" in i]
-        for label in time_labels:
-            df[label] = [str(i) for i in list(df[label])]
-    df.to_csv(fname, index=False)
+    if not df.empty:
+        df.reset_index(level=0)
+        if string_time:
+            time_labels = [i for i in df.columns if "time" in i]
+            for label in time_labels:
+                df[label] = [str(i) for i in list(df[label])]
+        df.to_csv(fname, index=False)
 
 
 def __put_call__(item,codes):
@@ -155,7 +163,7 @@ def __put_call__(item,codes):
         dd["opt_p_offer_price"] = item['offer_price']
         dd["opt_p_offer_size"] = item['offer_size']
         dd["opt_p_offer_level"] = item['offer_level']
-    return dd
+    return dd.copy()
 
 def put_call_table(item,codes):
     dd = {}
@@ -201,7 +209,7 @@ def put_call_table(item,codes):
     dd["opt_c_offer_price"] = __np__.nan
     dd["opt_c_offer_size"] = __np__.nan
     dd["opt_c_offer_level"] = __np__.nan
-    return dd
+    return dd.copy()
 
 
 def put_call_query(futures = None,
@@ -218,7 +226,7 @@ def put_call_query(futures = None,
     month_codes = month_codes.lower()
     table = {"fut":[]}
     codes = {k[1]: k[0] for k in enumerate(month_codes.rsplit(","), 1)}
-    futures = futures.sort_values('sending_time')
+    #futures = futures.sort_values('sending_time')
     query = futures[(futures['bid_level']<=level_limit)]
     query = query[__pd__.notnull(query['security_desc'])]
     query = query[query['sending_time']<int(timestamp)]
@@ -228,14 +236,15 @@ def put_call_query(futures = None,
     for item in fut_dict.values():
         dd = put_call_table(item, codes)
         table["fut"].append(dd.copy())
+    del dd, fut_dict
     options = options[(options['bid_level']<=level_limit)]
-    query = options[__pd__.notnull(options['security_desc'])]
-    query = query.sort_values('sending_time')
+    query = options[__pd__.notnull(options['security_desc'])].copy()
+    #query = query.sort_values('sending_time')
     query = query[query['sending_time']<int(timestamp)]
     query = query.reset_index()
     opts = list(query['security_id'].unique())
     for sec in opts:
-        sec_query = query[query['security_id']==sec]
+        sec_query = query[query['security_id']==sec].copy()
         sec_query = sec_query.tail(level_limit)
         optdict = sec_query.to_dict(orient = "index")
         key = list(optdict.keys())[0]
@@ -249,9 +258,11 @@ def put_call_query(futures = None,
             table_dd = table["fut"][level_limit-1].copy()
             table_dd.update(dd)
             table[strike_price][level_limit-1] = table_dd.copy()
+            del table_dd
         else:
             dd = __put_call__(item, codes)
             table[strike_price][level_limit-1].update(dd)
+        del dd, item
     del table["fut"]
     return table
 
