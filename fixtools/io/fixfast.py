@@ -35,11 +35,14 @@ def from_time(timestamp,
     return {"date": date, "time": time, "timestamp": date+time}
 
 
-def __day_filter__(line):
-    global __fixDate__
-    filter_date = b'\x0152=' + str(__fixDate__).encode()
-    if filter_date in line:
-        return line
+class DayFilter:
+    def __init__(self, fix_date):
+        self.__fixDate__ = fix_date
+
+    def filter(self, line):
+        filter_date = b'\x0152=' + str(self.__fixDate__).encode()
+        if filter_date in line:
+            return line
 
 
 def __metrics__(line):
@@ -280,11 +283,10 @@ class FixData:
 
     def split_by(self, dates, chunksize=10 ** 4, file_out=False):
         for day in dates:
-            global __fixDate__
-            __fixDate__ = str(day).encode()
             path_out = self.path[:-4] + "_" + str(day) + ".bz2"
+            day_filter = DayFilter(str(day).encode())
             with __mp__.Pool() as pool:
-                msg_day = pool.imap(__day_filter__, self.data, chunksize)
+                msg_day = pool.imap(day_filter.filter, self.data, chunksize)
                 if file_out is True:
                     with __bz2__.open(path_out, 'ab') as f:
                         for entry in msg_day:

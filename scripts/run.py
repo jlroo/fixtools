@@ -45,7 +45,7 @@ def search_fix():
         opt_files = fixfiles[key]['options']
         options = fx.options_table(path,
                                    opt_files,
-                                   top_order = 1,
+                                   num_orders = 1,
                                    write_csv = True,
                                    path_out = out_table,
                                    return_table = True)
@@ -53,7 +53,7 @@ def search_fix():
         fut_file = fixfiles[key]['futures'][0]
         futures = fx.futures_table(path,
                                    fut_file,
-                                   top_order = 1,
+                                   num_orders = 1,
                                    write_csv = True,
                                    path_out = out_table,
                                    return_table = True)
