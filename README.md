@@ -2,7 +2,7 @@
 
 Overview
 ---------
-This tool kit was created to make it easier to work and analyze FIX 5.0 SP2 financial data from the CME group. Some of its features will help you identify most trdaded securities ( futures,options ), break large week FIX bianary files into its corresponding trading days. You can read in gzip files containing FIX data or uncompress files also you can create an order book for a giving security. Finally in conjuction with the nodejs fix2json package from SunGard-Labs you can insert the processed FIX records into JSON-conformant NoSQL repositories, such as MongoDB.
+This tool kit was created to make it easier to work and analyze FIX 5.0 SP2 financial data from the CME group. Some of its features will help you identify most trdaded securities ( futures,options), break large week FIX bianary files into its corresponding trading days. You can read in gzip files containing FIX data or uncompress files also you can create an order book for a giving security. Finally in conjuction with the nodejs fix2json package from SunGard-Labs you can insert the processed FIX records into JSON-conformant NoSQL repositories, such as MongoDB.
 
 Background
 ----------

@@ -1,7 +1,10 @@
 luigi
 ###### Requirements ######
+dateutil
 gzip
 bzip2
 multiprocessing
 re
 collections
+pandas
+numpy

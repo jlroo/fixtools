@@ -1,6 +1,7 @@
 """
 Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
+
 """
 
 import multiprocessing as __mp__
@@ -15,23 +16,23 @@ import os as __os__
 __fixDate__ = None
 
 
-def from_time(timestamp = None,
-              stamp_date = None,
-              stamp_time = None,
-              time_format = '%Y%m%d%H%M%S%f',
-              fromzone = 'UTC',
-              tozone = 'America/Chicago'):
+def from_time(timestamp,
+              stamp_date,
+              stamp_time,
+              time_format='%Y%m%d%H%M%S%f',
+              from_zone='UTC',
+              to_zone='America/Chicago'):
 
     if not timestamp:
         timestamp = stamp_date + stamp_time
-    from_zone = __tz__.gettz(fromzone)
-    to_zone = __tz__.gettz(tozone)
+    from_zone = __tz__.gettz(from_zone)
+    to_zone = __tz__.gettz(to_zone)
     stamp = __datetime__.datetime.strptime(timestamp, time_format)
-    stamp = stamp.replace(tzinfo = from_zone)
+    stamp = stamp.replace(tzinfo=from_zone)
     stamp = stamp.astimezone(to_zone)
     date = stamp.strftime("%Y%m%d")
     time = stamp.strftime("%H%M%S%f")[:-3]
-    return {"date":date, "time":time, "timestamp":date+time}
+    return {"date": date, "time": time, "timestamp": date+time}
 
 
 def __day_filter__(line):
@@ -66,9 +67,9 @@ def __secdesc__(data, group="ES", group_code="EZ", max_lines=10000):
         sec_grp = line[line.find(tag_sec_group) + 6:line.find(tag_sec_group) + 8]
         code_grp = line[line.find(tag_grp_code) + 4:line.find(tag_grp_code) + 6]
         if desc == b'd' and sec_grp in code and code_grp in code:
-            secid = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
-            secdesc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
-            lines.append({secid: secdesc})
+            sec_id = int(line.split(b'\x0148=')[1].split(b'\x01')[0])
+            sec_desc = line.split(b'\x01107=')[1].split(b'\x01')[0].decode()
+            lines.append({sec_id: sec_desc})
         cnt += 1
     data.seek(0)
     return lines
@@ -88,8 +89,8 @@ def files_tree(path):
     return files
 
 
-def to_csv(fixline, top_order=3):
-    for item in [fixline]:
+def to_csv(line, top_order=3):
+    for item in [line]:
         tag34 = item.split(b"\x0134=")[1].split(b"\x01")[0]
         tag48 = item.split(b"\x0148=")[1].split(b"\x01")[0]
         tag52 = item.split(b"\x0152=")[1].split(b"\x01")[0]
@@ -104,46 +105,50 @@ def to_csv(fixline, top_order=3):
             tag270s = offers[i].split(b'\x01270=')[1].split(b'\x01')[0]
             tag271b = bids[i].split(b'\x01271=')[1].split(b'\x01')[0]
             tag271s = offers[i].split(b'\x01271=')[1].split(b'\x01')[0]
-            row.append(b",".join([tag48,tag107,tag34,tag52,tag75,
-                    tag270b,tag271b,str(1+i).encode(),
-                    tag270s,tag271s,str(1+i).encode()])+b"\n")
+            row.append(b",".join([tag48, tag107, tag34, tag52, tag75, tag270b,
+                                  tag271b, str(1+i).encode(),
+                                  tag270s, tag271s, str(1+i).encode()]) + b"\n")
         return b" ".join([e for e in row])
 
 
+class FixDict:
 
-def to_dict(fixline, top_order=3):
-    dd = {}
-    for item in [fixline]:
-        dd["msg_seq_num"] = int(item.split(b"\x0134=")[1].split(b"\x01")[0].decode())
-        dd["security_id"] = item.split(b"\x0148=")[1].split(b"\x01")[0].decode()
-        dd["sending_time"] = int(item.split(b"\x0152=")[1].split(b"\x01")[0].decode())
-        dd["trade_date"] = item.split(b"\x0175=")[1].split(b"\x01")[0].decode()
-        dd["security_desc"] = item.split(b"\x01107=")[1].split(b"\x01")[0].decode()
-        body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
-        bids = body[:top_order]
-        offers = body[top_order:]
-        if top_order == 1:
-            dd["bid_price"] = bids[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
-            dd["bid_size"] = bids[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
-            dd["bid_level"] = top_order
-            dd["offer_price"] = offers[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
-            dd["offer_size"] = offers[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
-            dd["offer_level"] = top_order
-        elif top_order>1:
-            dd["bid_price"] = []
-            dd["bid_size"] = []
-            dd["bid_level"] = []
-            dd["offer_price"] = []
-            dd["offer_size"] = []
-            dd["offer_level"] = []
-            for i in range(top_order):
-                dd["bid_price"].append(bids[i].split(b'\x01270=')[1].split(b'\x01')[0].decode())
-                dd["bid_size"].append(bids[i].split(b'\x01271=')[1].split(b'\x01')[0].decode())
-                dd["bid_level"].append(1+i)
-                dd["offer_price"].append(offers[i].split(b'\x01270=')[1].split(b'\x01')[0].decode())
-                dd["offer_size"].append(offers[i].split(b'\x01271=')[1].split(b'\x01')[0].decode())
-                dd["offer_level"].append(1+i)
-        return dd
+    def __init__(self, num_orders):
+        self.num_orders = num_orders
+
+    def to_dict(self, line):
+        dd = {}
+        for item in [line]:
+            dd["msg_seq_num"] = int(item.split(b"\x0134=")[1].split(b"\x01")[0].decode())
+            dd["security_id"] = item.split(b"\x0148=")[1].split(b"\x01")[0].decode()
+            dd["sending_time"] = int(item.split(b"\x0152=")[1].split(b"\x01")[0].decode())
+            dd["trade_date"] = item.split(b"\x0175=")[1].split(b"\x01")[0].decode()
+            dd["security_desc"] = item.split(b"\x01107=")[1].split(b"\x01")[0].decode()
+            body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
+            bids = body[:len(body) // 2]
+            offers = body[len(body) // 2:]
+            if self.num_orders > 1:
+                dd["bid_price"] = []
+                dd["bid_size"] = []
+                dd["bid_level"] = []
+                dd["offer_price"] = []
+                dd["offer_size"] = []
+                dd["offer_level"] = []
+                for i in range(self.num_orders):
+                    dd["bid_price"].append(bids[i].split(b'\x01270=')[1].split(b'\x01')[0].decode())
+                    dd["bid_size"].append(bids[i].split(b'\x01271=')[1].split(b'\x01')[0].decode())
+                    dd["bid_level"].append(i + 1)
+                    dd["offer_price"].append(offers[i].split(b'\x01270=')[1].split(b'\x01')[0].decode())
+                    dd["offer_size"].append(offers[i].split(b'\x01271=')[1].split(b'\x01')[0].decode())
+                    dd["offer_level"].append(i + 1)
+            else:
+                dd["bid_price"] = bids[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+                dd["bid_size"] = bids[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+                dd["bid_level"] = self.num_orders
+                dd["offer_price"] = offers[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+                dd["offer_size"] = offers[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+                dd["offer_level"] = self.num_orders
+            return dd
 
 
 class FixData:
