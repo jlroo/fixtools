@@ -111,20 +111,22 @@ def time_table(fut_matrix, opt_matrix):
     return grouped
 
 
-def search_out(result, timestamp, path, string_time=True):
-    if path[-1] != "/":
-        path = path + "/"
-    fname = path + str(timestamp) + ".csv"
+def search_out(result, timestamp, path_out):
+    if path_out[-1] != "/":
+        path_out = path_out + "/"
+    fname = path_out + str(timestamp) + ".csv"
     df = []
     for k in result.keys():
         df.append(__pd__.DataFrame.from_dict(result[k],  orient='index'))
     df = __pd__.concat(df)
     df.reset_index(level=0)
-    if string_time:
-        time_labels = [i for i in df.columns if "time" in i]
-        for label in time_labels:
-            df[label] = [str(i) for i in list(df[label])]
-    df.to_csv(fname, index=False)
+    df['opt_p_sending_time'] = [str(i.astype(int)) if str(i) != 'nan' else str(i) for i in df['opt_p_sending_time']]
+    df['opt_c_sending_time'] = [str(i.astype(int)) if str(i) != 'nan' else str(i) for i in df['opt_c_sending_time']]
+    df['fut_sending_time'] = [str(i.astype(int)) if str(i) != 'nan' else str(i) for i in df['fut_sending_time']]
+    cols = list(df.columns).sort()
+    ordered = cols[-2:] + cols[:-2]
+    df = df[ordered]
+    df.to_csv(fname, index=False, quotechar='"')
 
 
 def __putcall__(item, codes):
