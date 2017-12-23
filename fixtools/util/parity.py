@@ -4,7 +4,7 @@ import datetime as __datetime__
 import pandas as __pd__
 import numpy as __np__
 import multiprocessing as __mp__
-from collections import defaultdict as __defaultdict__
+from collections import defaultdict
 from fixtools.util.util import expiration_date,  open_fix
 from fixtools.io.fixfast import FixDict
 
@@ -93,7 +93,7 @@ def time_table(fut_matrix, opt_matrix):
     for item in fut_times:
         ymd = item[0]
         if ymd not in grouped["futures"].keys():
-            grouped["futures"][ymd] = __defaultdict__(list)
+            grouped["futures"][ymd] = defaultdict(list)
             grouped["futures"][ymd][item[1]].append(item[2])
         else:
             grouped["futures"][ymd][item[1]].append(item[2])
@@ -104,7 +104,7 @@ def time_table(fut_matrix, opt_matrix):
     for item in opt_times:
         ymd = item[0]
         if ymd not in grouped["options"].keys():
-            grouped["options"][ymd] = __defaultdict__(list)
+            grouped["options"][ymd] = defaultdict(list)
             grouped["options"][ymd][item[1]].append(item[2])
         else:
             grouped["options"][ymd][item[1]].append(item[2])
