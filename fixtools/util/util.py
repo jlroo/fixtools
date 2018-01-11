@@ -41,7 +41,7 @@ def open_fix(path, period="weekly", compression=True):
     return FixData(fixfile, src)
 
 
-def data_dates(fixdata, period = "weekly"):
+def data_dates(fixdata, period="weekly"):
     peek = fixdata.data.peek(1).split(b"\n")[0]
     day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
     start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
@@ -122,13 +122,12 @@ def most_liquid(dates, instrument="", product="", year_code="", cme_codes=True, 
 
 
 def liquid_securities(fixdata,
-                      instrument="ES",
-                      group_code="EZ",
-                      year_code="",
-                      products=None,
-                      cme_codes=True,
-                      max_lines=10000):
-
+                       instrument="ES",
+                       group_code="EZ",
+                       year_code="",
+                       products=None,
+                       cme_codes=True,
+                       max_lines=10000):
     if products is None:
         products = ["FUT", "OPT"]
     securities = fixdata.securities(instrument, group_code, max_lines)
@@ -179,6 +178,19 @@ def __books_out__(sec_id):
     with open(__out__ + filename, 'ab+') as book_out:
         for book in book_obj.build_book():
             book_out.write(book)
+
+class BookOut:
+    def __init__(self, securities):
+        __securities__ = securities
+    def write(self, security_id):
+        sec_desc = self.__securities__[security_id]
+        product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+        book_obj = OrderBook(contracts_msgs[security_id], security_id, product)
+        filename = __securities__[security_id].replace(" " , "-")
+        with open(__out__ + filename, 'ab+') as book_out:
+            for book in book_obj.build_book():
+                book_out.write(book)
+
 
 
 def build_books(fixdata, securities, file_out=True, path_out="", chunksize=31500):
