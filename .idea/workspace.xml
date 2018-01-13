@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change beforePath="$PROJECT_DIR$/fixtools/io/fixfast.py" afterPath="$PROJECT_DIR$/fixtools/io/fixfast.py" />
       <change beforePath="$PROJECT_DIR$/fixtools/util/parity.py" afterPath="$PROJECT_DIR$/fixtools/util/parity.py" />
-      <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" afterPath="$PROJECT_DIR$/fixtools/util/util.py" />
-      <change beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
+      <change beforePath="$PROJECT_DIR$/scripts/run.py" afterPath="$PROJECT_DIR$/scripts/run.py" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,8 +34,8 @@
       <file leaf-file-name="parity.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/util/parity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="14" column="28" lean-forward="false" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="28" />
+            <state relative-caret-position="255">
+              <caret line="90" column="21" lean-forward="true" selection-start-line="90" selection-start-column="21" selection-end-line="90" selection-end-column="21" />
               <folding>
                 <element signature="e#25#56#0" expanded="true" />
               </folding>
@@ -46,7 +43,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="setup.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="190">
@@ -56,14 +53,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="run.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="run.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="665">
-              <caret line="36" column="17" lean-forward="false" selection-start-line="36" selection-start-column="17" selection-end-line="36" selection-end-column="17" />
-              <folding>
-                <element signature="e#199#220#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="418">
+              <caret line="23" column="46" lean-forward="true" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -157,12 +152,12 @@
         <option value="$USER_HOME$/Library/Preferences/PyCharm2017.2/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/scripts/book-search.py" />
-        <option value="$PROJECT_DIR$/scripts/run.py" />
         <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/fixtools/util/util.py" />
-        <option value="$PROJECT_DIR$/fixtools/util/parity.py" />
         <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$PROJECT_DIR$/fixtools/util/parity.py" />
+        <option value="$PROJECT_DIR$/scripts/run.py" />
       </list>
     </option>
   </component>
@@ -639,7 +634,14 @@
       <option name="project" value="LOCAL" />
       <updated>1513998901320</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="refactor parity,fixfast,utility added classes and better performance">
+      <created>1515700837112</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1515700837112</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TodoView">
@@ -703,7 +705,8 @@
     <MESSAGE value="modified build_books function chunksize" />
     <MESSAGE value="build_books function modified - del contracts_msgs" />
     <MESSAGE value="modified parity and fixfast code" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified parity and fixfast code" />
+    <MESSAGE value="refactor parity,fixfast,utility added classes and better performance" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor parity,fixfast,utility added classes and better performance" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -960,16 +963,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="665">
-          <caret line="36" column="17" lean-forward="false" selection-start-line="36" selection-start-column="17" selection-end-line="36" selection-end-column="17" />
-          <folding>
-            <element signature="e#199#220#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/book-search.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
@@ -1014,20 +1007,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="6" lean-forward="false" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/parity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="14" column="28" lean-forward="false" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="28" />
+        <state relative-caret-position="255">
+          <caret line="90" column="21" lean-forward="true" selection-start-line="90" selection-start-column="21" selection-end-line="90" selection-end-column="21" />
           <folding>
             <element signature="e#25#56#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
+    <entry file="file://$PROJECT_DIR$/scripts/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="6" lean-forward="false" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
+        <state relative-caret-position="418">
+          <caret line="23" column="46" lean-forward="true" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
           <folding />
         </state>
       </provider>

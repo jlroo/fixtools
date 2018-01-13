@@ -83,9 +83,9 @@ def __timemap__(item):
     return ymd, date.hour, sending_time
 
 
-def time_table(fut_matrix, opt_matrix):
+def time_table(futures, options):
     with __mp__.Pool() as pool:
-        fut_times = pool.map(__timemap__, fut_matrix)
+        fut_times = pool.map(__timemap__, futures.as_matrix())
     grouped = {"futures": {}, "options": {}}
     for item in fut_times:
         ymd = item[0]
@@ -95,7 +95,7 @@ def time_table(fut_matrix, opt_matrix):
         else:
             grouped["futures"][ymd][item[1]].append(item[2])
     with __mp__.Pool() as pool:
-        opt_times = pool.map(__timemap__, opt_matrix)
+        opt_times = pool.map(__timemap__, options.as_matrix())
     for item in opt_times:
         ymd = item[0]
         if ymd not in grouped["options"].keys():

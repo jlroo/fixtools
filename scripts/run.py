@@ -1,4 +1,4 @@
-#!/opt/anaconda3/bin/python
+#!/usr/bin/env python3
 
 """
  Created on Wed Jul 20 11:24:41 2016
@@ -15,12 +15,12 @@ import pandas as pd
 
 
 def search_csv():
-    path = "/home/jlroo/cme/data/output/"
-    out_query = "/home/jlroo/cme/data/search/"
+    path = "/Users/jlroo/cme/data/output/"
+    out_query = "/Users/jlroo/cme/data/search/"
     fixfiles = fx.files_tree(path)
     for key in fixfiles.keys():
-        opt_file = fixfiles[key]['options']
-        options = pd.read_csv(path+opt_file[0])
+        opt_file = fixfiles[key]['options'][0]
+        options = pd.read_csv(path+opt_file)
         fut_file = fixfiles[key]['futures'][0]
         futures = pd.read_csv(path+fut_file)
         times = fx.time_table(futures, options)
@@ -35,9 +35,9 @@ def search_csv():
 
 
 def search_fix():
-    path = "/home/jlroo/cme/data/books/2010/U/"
-    out_table = "/home/jlroo/cme/data/output/"
-    out_query = "/home/jlroo/cme/data/search/"
+    path = "/Users/jlroo/cme/pipeline/2010/U/"
+    out_table = "/Users/jlroo/cme/data/output/"
+    out_query = "/Users/jlroo/cme/data/search/"
     fixfiles = fx.files_tree(path)
 
     for key in fixfiles.keys():
@@ -69,6 +69,6 @@ def search_fix():
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 if __name__ == "__main__":
-    #search_csv()
-    search_fix()
+    search_csv()
+    #search_fix()
 
