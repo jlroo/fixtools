@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/jlroo/anaconda3/bin/python
 
 """
  Created on Wed Jul 20 11:24:41 2016
@@ -15,8 +15,8 @@ import pandas as pd
 
 
 def search_csv():
-    path = "/Users/jlroo/cme/data/output/"
-    out_query = "/Users/jlroo/cme/data/search/"
+    path = "/home/jlroo/cme/data/output/"
+    out_query = "/home/jlroo/cme/data/search/"
     fixfiles = fx.files_tree(path)
     for key in fixfiles.keys():
         opt_file = fixfiles[key]['options'][0]
@@ -35,9 +35,9 @@ def search_csv():
 
 
 def search_fix():
-    path = "/Users/jlroo/cme/pipeline/2010/U/"
-    out_table = "/Users/jlroo/cme/data/output/"
-    out_query = "/Users/jlroo/cme/data/search/"
+    path = "/data/cme/2010/H/"
+    out_table = "/home/jlroo/cme/data/output/"
+    out_query = "/home/jlroo/cme/data/search/"
     fixfiles = fx.files_tree(path)
 
     for key in fixfiles.keys():
@@ -69,6 +69,6 @@ def search_fix():
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 if __name__ == "__main__":
-    search_csv()
-    #search_fix()
+    #search_csv()
+    search_fix()
 
