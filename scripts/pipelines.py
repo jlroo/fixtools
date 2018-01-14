@@ -1,4 +1,4 @@
-#!/home/jlroo/anaconda3/bin/python
+#!/usr/bin/env python3
 
 """
 Created on Tue Oct  10 16:14:23 2017
