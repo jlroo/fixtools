@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/home/jlroo/anaconda3/bin/python
+
 """
 Created on Tue Oct  10 16:14:23 2017
 
@@ -146,3 +146,5 @@ class OrderBooks(luigi.Task):
 
 if __name__ == "__main__":
     luigi.run()
+    #luigi.run(main_task_cls=CMEPipeline)
+

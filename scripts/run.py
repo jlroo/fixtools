@@ -1,4 +1,4 @@
-#!/home/jlroo/anaconda3/bin/python
+#!/usr/bin/env python3
 
 """
  Created on Wed Jul 20 11:24:41 2016
@@ -36,8 +36,8 @@ def search_csv():
 
 def search_fix():
     path = "/data/cme/2010/H/"
-    out_table = "/home/jlroo/cme/data/output/"
-    out_query = "/home/jlroo/cme/data/search/"
+    out_table = "/data/cme/output/"
+    out_query = "/data/cme/search/"
     fixfiles = fx.files_tree(path)
 
     for key in fixfiles.keys():
