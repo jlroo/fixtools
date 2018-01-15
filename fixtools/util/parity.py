@@ -115,9 +115,9 @@ def search_out(result, timestamp, path_out):
         df.append(__pd__.DataFrame.from_dict(result[k],  orient='index'))
     df = __pd__.concat(df)
     df.reset_index(level=0)
-    df['opt_p_sending_time'] = [int(i) if i != 'nan' else None for i in df['opt_p_sending_time']]
-    df['opt_c_sending_time'] = [int(i) if i != 'nan' else None for i in df['opt_c_sending_time']]
-    df['fut_sending_time'] = [int(i) if i != 'nan' else None for i in df['fut_sending_time']]
+    df['opt_p_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_p_sending_time']]
+    df['opt_c_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_c_sending_time']]
+    df['fut_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['fut_sending_time']]
     cols = list(df.columns)
     ordered = cols[-2:] + cols[:-2]
     df = df[ordered]
