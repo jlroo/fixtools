@@ -90,7 +90,7 @@ class OrderBook:
 
 
     def __update__(self, book_body, msg_body):
-        bids, offers = book_body[0:self.top_order], book_body[self.top_order:]
+        bids, offers = book_body[:len(book_body) // 2], book_body[len(book_body) // 2:]
         for entry in msg_body:
             try:
                 price_level = int(entry.split(b'\x011023=')[1])

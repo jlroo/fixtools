@@ -69,6 +69,6 @@ def search_fix():
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 if __name__ == "__main__":
-    search_csv()
-    #search_fix()
+    #search_csv()
+    search_fix()
 

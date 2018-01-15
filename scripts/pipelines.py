@@ -127,16 +127,15 @@ class OrderBooks(luigi.Task):
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
             path = desc_path + filename
 
-            fx.build_books(fixdata, securities, file_out=True, path_out=path, chunksize=self.chunksize)
+            fx.build_books(fixdata, 
+                           securities, 
+                           file_out = True, 
+                           path_out = path, 
+                           chunksize = self.chunksize)
 
             for sec_desc in securities.values():
                 name = path + sec_desc.replace(" ", "-")
                 contracts.write("%s\n" % name)
-
-            if k % 10 == 0:
-                self.set_status_message("Progress: %d / 100" % k)
-                # displays a progress bar in the scheduler UI
-                self.set_progress_percentage(k)
 
         contracts.close()
 

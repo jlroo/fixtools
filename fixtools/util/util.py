@@ -181,19 +181,19 @@ def __books_out__(sec_id):
 
 class BookOut:
     def __init__(self, securities):
-        __securities__ = securities
+        self.__securities__ = securities
     def write(self, security_id):
         sec_desc = self.__securities__[security_id]
         product = ["opt" if len(sec_desc) < 7 else "fut"][0]
         book_obj = OrderBook(contracts_msgs[security_id], security_id, product)
-        filename = __securities__[security_id].replace(" " , "-")
+        filename = self.__securities__[security_id].replace(" " , "-")
         with open(__out__ + filename, 'ab+') as book_out:
             for book in book_obj.build_book():
                 book_out.write(book)
 
 
 
-def build_books(fixdata, securities, file_out=True, path_out="", chunksize=31500):
+def build_books(fixdata, securities, file_out=True, path_out="", chunksize=32000):
     global contracts_msgs
     global __out__
     __out__ = ""
