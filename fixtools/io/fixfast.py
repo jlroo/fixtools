@@ -100,8 +100,8 @@ def to_csv(line, top_order=3):
         tag75 = item.split(b"\x0175=")[1].split(b"\x01")[0]
         tag107 = item.split(b"\x01107=")[1].split(b"\x01")[0]
         body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
-        bids = body[:top_order]
-        offers = body[top_order:]
+        bids = body[:len(body) // 2]
+        offers = body[len(body) // 2:]
         row = []
         for i in range(top_order):
             tag270b = bids[i].split(b'\x01270=')[1].split(b'\x01')[0]
