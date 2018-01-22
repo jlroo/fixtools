@@ -33,9 +33,28 @@ def search_csv():
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 
+def put_call_csv():
+    path = "/data/cme/output/"
+    out_query = "/data/cme/parity/"
+    rates_table = pd.read_csv("/data/cme/rates/2010-tbill.csv")
+    fixfiles = fx.files_tree(path)
+    for key in fixfiles.keys():
+        opt_file = fixfiles[key]['options'][0]
+        options = pd.read_csv(path+opt_file)
+        fut_file = fixfiles[key]['futures'][0]
+        futures = pd.read_csv(path+fut_file)
+        times = fx.time_table(futures, options)
+        for date in times['futures'].keys():
+            for hour in times['futures'][date].keys():
+                timestamp = str(times['futures'][date][hour][-1])
+                result = fx.put_call_parity(futures, options, rates_table,timestamp)
+                if not result =={}:
+                    fx.search_out(result, timestamp, out_query, parity = True)
+                    print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
+
 
 def search_fix():
-    path = "/data/cme/2010/H/"
+    path = "/data/cme/pipeline/2010/H/"
     out_table = "/data/cme/output/"
     out_query = "/data/cme/search/"
     fixfiles = fx.files_tree(path)
@@ -69,6 +88,6 @@ def search_fix():
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 if __name__ == "__main__":
-    search_csv()
-    #search_fix()
+    #search_csv()
+    search_fix()
 

@@ -28,21 +28,23 @@ class FindFiles(luigi.Task):
         start_date = data_date - datetime.timedelta(days=31)
         end_date = start_date + datetime.timedelta(days=365)
         data_start = {start_date.year, start_date.month}
-
+        out_files = []
         if not os.path.exists(str(self.data_out)):
+            for root, dirs, files in os.walk(str(self.data_in)):
+                for name in files:
+                    file_date = re.findall(r"\d+", name)
+                    if file_date:
+                        file_date = str(file_date[0])
+                        file_date = datetime.datetime(year=int(file_date[:4]),
+                                                      month=int(file_date[4:6]),
+                                                      day=int(file_date[6:8]))
+                        year = file_date.year
+                        month = file_date.month
+                        if year in data_start and month in data_start or year == end_date.year:
+                            out_files.append(os.path.join(root, name))        
             with self.output().open('w') as out:
-                for root, dirs, files in os.walk(str(self.data_in)):
-                    for name in files:
-                        file_date = re.findall(r"\d+", name)
-                        if file_date:
-                            file_date = str(file_date[0])
-                            file_date = datetime.datetime(year=int(file_date[:4]),
-                                                          month=int(file_date[4:6]),
-                                                          day=int(file_date[6:8]))
-                            year = file_date.year
-                            month = file_date.month
-                            if year in data_start and month in data_start or year == end_date.year:
-                                out.write("%s\n" % os.path.join(root, name))
+                out_files.sort()
+                out.write('\n'.join(out_files))
 
     def output(self):
         name = self.data_start_date[:4] + "-" + str(self.file_name)
@@ -105,7 +107,7 @@ class OrderBooks(luigi.Task):
     def run(self):
         self.data_out = self.data_pipe + self.data_year + "/"
         with self.input()[0].open('r') as infile:
-            files = infile.read().splitlines()
+            files = sorted(infile.read().splitlines())
         contracts = self.output().open('w')
 
         for k, file in enumerate(files):
@@ -132,11 +134,12 @@ class OrderBooks(luigi.Task):
                            file_out = True, 
                            path_out = path, 
                            chunksize = self.chunksize)
-
+            
             for sec_desc in securities.values():
                 name = path + sec_desc.replace(" ", "-")
                 contracts.write("%s\n" % name)
-
+                print("[DONE] " + file.strip() + " -- CONTRACT -- " + name)
+                
         contracts.close()
 
     def output(self):
