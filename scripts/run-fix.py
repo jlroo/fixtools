@@ -16,6 +16,7 @@ import pandas as pd
 
 
 def search_fix(query=False):
+
     path_books = "/home/jlroo/data/pipeline/2010/M/"
     out_table = "/home/jlroo/data/output/"
     out_query = "/home/jlroo/data/search/"
@@ -24,24 +25,24 @@ def search_fix(query=False):
     fixfiles = fx.files_tree(path_books)
 
     for key in fixfiles.keys():
-
+        
         opt_files = fixfiles[key]['options']
-        options = fx.options_table(path_books,
-                                   opt_files,
-                                   num_orders = 1,
-                                   write_csv = True,
-                                   path_out = out_table,
-                                   return_table = True)
+        options = fx.options_table(path=path_books,
+                                   files=opt_files,
+                                   num_orders=1,
+                                   chunksize=32000,
+                                   path_out=out_table,
+                                   return_table=True)
 
         fut_file = fixfiles[key]['futures'][0]
-        futures = fx.futures_table(path_books,
-                                   fut_file,
-                                   num_orders = 1,
-                                   write_csv = True,
-                                   path_out = out_table,
-                                   return_table = True)
+        futures = fx.futures_table(path=path_books,
+                                   files=fut_file,
+                                   num_orders=1,
+                                   chunksize=32000,
+                                   path_out=out_table,
+                                   return_table=True)
 
-        times = fx.time_table(futures, options)
+        times = fx.time_table(futures, options, chunksize=32000)
 
         columns = ['share_strike','put_call','share_pv_strike',
                    'put_call_diff','strike_price','trade_date',
@@ -67,6 +68,5 @@ def search_fix(query=False):
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 if __name__ == "__main__":
-    #search_csv()
     search_fix()
 

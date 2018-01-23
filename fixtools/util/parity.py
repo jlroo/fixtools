@@ -13,11 +13,13 @@ def options_table(path=None,
                   files=None,
                   filename=None,
                   num_orders=1,
-                  write_csv=True,
+                  chunksize=32000,
                   path_out=None,
                   return_table=True):
+    
     if path[-1] != "/":
         path = path + "/"
+        
     if files:
         dfs = []
         for filename in files:
@@ -25,7 +27,7 @@ def options_table(path=None,
             fixdata = open_fix(fpath, compression=False)
             fix_dict = FixDict(num_orders)
             with __mp__.Pool() as pool:
-                df = pool.map(fix_dict.to_dict, fixdata.data)
+                df = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
             dfs.append(__pd__.DataFrame.from_dict(df))
         options = __pd__.concat(dfs)
 
@@ -34,15 +36,17 @@ def options_table(path=None,
         fixdata = open_fix(fpath, compression=False)
         fix_dict = FixDict(num_orders)
         with __mp__.Pool() as pool:
-            df = pool.map(fix_dict.to_dict, fixdata.data)
+            df = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
         options = __pd__.DataFrame.from_dict(df)
+    
     options = options.replace('NA',  __np__.nan)
-    options.reset_index(level=0)
-    if write_csv:
+    
+    if path_out:
         if path_out[-1] != "/":
             path_out = path_out + "/"
         fname = path_out + filename[:-5] + "OPTIONS.csv"
         options.to_csv(fname,  index=False)
+    
     if return_table:
         return options
 
@@ -50,7 +54,7 @@ def options_table(path=None,
 def futures_table(path=None,
                   filename=None,
                   num_orders=1,
-                  write_csv=True,
+                  chunksize=32000,
                   path_out=None,
                   return_table=True):
 
@@ -61,12 +65,11 @@ def futures_table(path=None,
     fixdata = open_fix(fpath, compression=False)
     fix_dict = FixDict(num_orders)
     with __mp__.Pool() as pool:
-        futures = pool.map(fix_dict.to_dict, fixdata.data)
+        futures = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
     futures = __pd__.DataFrame.from_dict(futures)
     futures = futures.replace('NA',  __np__.nan)
-    futures.reset_index(level=0)
 
-    if write_csv:
+    if path_out:
         if path_out[-1] != "/":
             path_out = path_out + "/"
         fname = path_out + filename + ".csv"
@@ -83,9 +86,9 @@ def __timemap__(item):
     return ymd, date.hour, sending_time
 
 
-def time_table(futures, options):
+def time_table(futures, options, chunksize=32000):
     with __mp__.Pool() as pool:
-        fut_times = pool.map(__timemap__, futures.as_matrix())
+        fut_times = pool.map(__timemap__, futures.as_matrix(), chunksize=chunksize)
     grouped = {"futures": {}, "options": {}}
     for item in fut_times:
         ymd = item[0]
