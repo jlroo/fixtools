@@ -270,7 +270,7 @@ def put_call_parity(futures, options, rates_table, timestamp, month_codes=None, 
         share_strike = share_strike - k
         put_call = call_price - put_price
         if put_call > share_pv_strike:
-            diff = put_call - (k - share_pv_strike)
+            diff = put_call - share_pv_strike
         elif put_call < share_strike:
             diff = put_call - share_strike
         else:
