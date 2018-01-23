@@ -236,29 +236,17 @@ def put_call_query(futures, options, timestamp,
     return table
 
 
-def put_call_parity(futures, options, rates_table,
-                   timestamp, month_codes=None,
-                   level_limit = 1):
-    
-    table = put_call_query(futures, options, timestamp, 
-                           month_codes, level_limit=1)
+def put_call_parity(futures, options, rates_table, timestamp, month_codes=None, level_limit=1):
+    table = put_call_query(futures, options, timestamp, month_codes, level_limit=level_limit)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
-    date = __datetime__.datetime(int(timestamp[0:4]),
-                         int(timestamp[4:6]),
-                         int(timestamp[6:8]))
-    
-    for i,day in enumerate(rates[list(rates.keys())[0]]):    
-        dtime = __datetime__.datetime(int(day[0:4]),
-                                  int(day[5:7]),
-                                  int(day[8:10]))    
-        rate_dict[dtime] = rates[list(rates.keys())[1]][i]    
-
+    date = __datetime__.datetime(int(timestamp[0:4]), int(timestamp[4:6]), int(timestamp[6:8]))
+    for i, day in enumerate(rates[list(rates.keys())[0]]):
+        day_time = __datetime__.datetime(int(day[0:4]), int(day[5:7]), int(day[8:10]))
+        rate_dict[day_time] = rates[list(rates.keys())[1]][i]
     if date not in rate_dict.keys():
         date = date + __datetime__.timedelta(days=1)
-
     risk_rate = rate_dict[date]
-    
     for k in table.keys():
         exp_days = table[k][0]['exp_days']
         fut_bid_price = table[k][0]['fut_bid_price']/100
@@ -274,7 +262,14 @@ def put_call_parity(futures, options, rates_table,
         share_pv_strike = share_strike - (k * __np__.exp(-risk_rate*(exp_days/365)))
         share_strike = share_strike - k
         put_call = call_price - put_price
+        if put_call > share_pv_strike:
+            diff = put_call - (k - share_pv_strike)
+        elif put_call < share_strike:
+            diff = put_call - share_strike
+        else:
+            diff = 0
         table[k][0]['share_strike'] = share_strike
         table[k][0]['share_pv_strike'] = share_pv_strike
         table[k][0]['put_call'] = put_call
+        table[k][0]['put_call_diff'] = diff
     return table
