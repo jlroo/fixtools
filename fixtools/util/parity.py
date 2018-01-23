@@ -106,7 +106,28 @@ def time_table(futures, options):
     return grouped
 
 
-def search_out(result, timestamp, path_out, parity = True):
+def search_out(result, 
+               timestamp, 
+               path_out, 
+               ordered = ['share_strike','put_call',
+                          'share_pv_strike','put_call_diff',
+                          'strike_price','trade_date',
+                          'exp_date', 'exp_days','fut_bid_price', 
+                          'opt_p_bid_price', 'opt_c_bid_price',
+                          'fut_offer_price', 'opt_p_offer_price', 
+                          'opt_c_offer_price','fut_msg_seq_num', 
+                          'opt_p_msg_seq_num', 'opt_c_msg_seq_num',
+                          'fut_sending_time', 'opt_p_sending_time', 
+                          'opt_c_sending_time', 'fut_bid_size',
+                          'opt_p_bid_size', 'opt_c_bid_size', 
+                          'fut_offer_size', 'opt_p_offer_size', 
+                          'opt_c_offer_size', 'fut_bid_level',
+                          'opt_p_bid_level', 'opt_p_offer_level',
+                          'fut_offer_level', 'opt_c_bid_level',
+                          'opt_c_offer_level', 'fut_sec_id', 
+                          'opt_p_sec_id', 'opt_c_sec_id', 
+                          'fut_sec_desc', 'opt_p_desc', 
+                          'opt_c_desc']):
     if path_out[-1] != "/":
         path_out = path_out + "/"
     fname = path_out + str(timestamp) + ".csv"
@@ -118,22 +139,8 @@ def search_out(result, timestamp, path_out, parity = True):
     df['opt_p_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_p_sending_time']]
     df['opt_c_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_c_sending_time']]
     df['fut_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['fut_sending_time']]
-    cols = list(df.columns)
-    ordered = cols[-2:] + cols[:-2]
-    if parity:
-        ordered = ['share_strike', 'put_call', 'share_pv_strike', 
-                   'strike_price','trade_date', 'exp_date', 'exp_days',
-                   'fut_bid_price', 'opt_p_bid_price', 'opt_c_bid_price',
-                   'fut_offer_price', 'opt_p_offer_price', 'opt_c_offer_price',
-                   'fut_msg_seq_num', 'opt_p_msg_seq_num', 'opt_c_msg_seq_num',
-                   'fut_sending_time', 'opt_p_sending_time', 'opt_c_sending_time',
-                   'fut_bid_size', 'opt_p_bid_size', 'opt_c_bid_size', 
-                   'fut_offer_size', 'opt_p_offer_size', 'opt_c_offer_size',
-                   'fut_bid_level', 'opt_p_bid_level', 'opt_p_offer_level',
-                   'fut_offer_level', 'opt_c_bid_level', 'opt_c_offer_level',
-                   'fut_sec_id', 'opt_p_sec_id', 'opt_c_sec_id',
-                   'fut_sec_desc', 'opt_p_desc', 'opt_c_desc']
-    df = df[ordered]
+    if ordered:
+        df = df[ordered]
     df.to_csv(fname, index=False, quotechar='"')
 
 
