@@ -34,9 +34,9 @@ def search_csv():
 
 
 def put_call_csv():
-    path = "/data/cme/output/"
-    out_query = "/data/cme/parity/"
-    rates_table = pd.read_csv("/data/cme/rates/2010-tbill.csv")
+    path = "/home/jlroo/data/output/"
+    out_query = "/home/jlroo/data/parity/"
+    rates_table = pd.read_csv("/home/jlroo/data/rates/tbill-2010.csv")
     fixfiles = fx.files_tree(path)
     
     columns = ['share_strike','put_call','share_pv_strike',
@@ -54,7 +54,7 @@ def put_call_csv():
         options = pd.read_csv(path+opt_file)
         fut_file = fixfiles[key]['futures'][0]
         futures = pd.read_csv(path+fut_file)
-        times = fx.time_table(futures, options)
+        times = fx.time_table(futures, options,chunksize=32000)
         for date in times['futures'].keys():
             for hour in times['futures'][date].keys():
                 timestamp = str(times['futures'][date][hour][-1])

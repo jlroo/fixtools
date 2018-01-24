@@ -19,30 +19,33 @@ def search_fix(query=False):
 
     path_books = "/home/jlroo/data/pipeline/2010/M/"
     out_table = "/home/jlroo/data/output/"
-    out_query = "/home/jlroo/data/search/"
-    path_rates = "/home/jlroo/data/rates/"
-    
+    out_query = "/home/jlroo/data/parity/"
+    path_rates = "/home/jlroo/data/rates/tbill-2010.csv"
+    rates_table = pd.read_csv(path_rates)
     fixfiles = fx.files_tree(path_books)
 
     for key in fixfiles.keys():
+        key = key + 1
+        if key == 27:
+            break
         
         opt_files = fixfiles[key]['options']
         options = fx.options_table(path=path_books,
                                    files=opt_files,
                                    num_orders=1,
-                                   chunksize=32000,
+                                   chunksize=30000,
                                    path_out=out_table,
                                    return_table=True)
 
         fut_file = fixfiles[key]['futures'][0]
         futures = fx.futures_table(path=path_books,
-                                   files=fut_file,
+                                   filename=fut_file,
                                    num_orders=1,
-                                   chunksize=32000,
+                                   chunksize=30000,
                                    path_out=out_table,
                                    return_table=True)
 
-        times = fx.time_table(futures, options, chunksize=32000)
+        times = fx.time_table(futures, options, chunksize=30000)
 
         columns = ['share_strike','put_call','share_pv_strike',
                    'put_call_diff','strike_price','trade_date',
@@ -53,8 +56,6 @@ def search_fix(query=False):
                    'fut_bid_size', 'fut_offer_size', 
                    'opt_p_bid_size', 'opt_c_bid_size', 
                    'opt_p_offer_size', 'opt_c_offer_size']
-
-        rates_table = pd.read_csv(path_rates + "tbill-2010.csv")
 
         for date in times['futures'].keys():
             for hour in times['futures'][date].keys():

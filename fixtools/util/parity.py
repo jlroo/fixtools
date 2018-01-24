@@ -138,7 +138,7 @@ def search_out(result,
     for k in result.keys():
         df.append(__pd__.DataFrame.from_dict(result[k],  orient='index'))
     df = __pd__.concat(df)
-    df.reset_index(level=0)
+    df.reset_index()
     df['opt_p_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_p_sending_time']]
     df['opt_c_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_c_sending_time']]
     df['fut_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['fut_sending_time']]
@@ -246,8 +246,12 @@ def put_call_query(futures, options, timestamp,
     return table
 
 
-def put_call_parity(futures, options, rates_table, timestamp, month_codes=None, level_limit=1):
-    table = put_call_query(futures, options, timestamp, month_codes, level_limit=level_limit)
+def put_call_parity(futures, options, 
+                    rates_table, timestamp, 
+                    month_codes=None, level_limit=1):
+    table = put_call_query(futures, options, 
+                           timestamp, month_codes, 
+                           level_limit=level_limit)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
     date = __datetime__.datetime(int(timestamp[0:4]), int(timestamp[4:6]), int(timestamp[6:8]))
@@ -259,14 +263,14 @@ def put_call_parity(futures, options, rates_table, timestamp, month_codes=None, 
     risk_rate = rate_dict[date]
     for k in table.keys():
         exp_days = table[k][0]['exp_days']
-        fut_bid_price = table[k][0]['fut_bid_price']/100
-        fut_offer_price = table[k][0]['fut_offer_price']/100
+        fut_bid_price = int(table[k][0]['fut_bid_price'])/100
+        fut_offer_price = int(table[k][0]['fut_offer_price'])/100
         fut_price = (fut_bid_price + fut_offer_price)/2
-        put_bid_price = table[k][0]['opt_p_bid_price']/100
-        put_offer_price = table[k][0]['opt_p_offer_price']/100
+        put_bid_price = int(table[k][0]['opt_p_bid_price'])/100
+        put_offer_price = int(table[k][0]['opt_p_offer_price'])/100
         put_price = (put_bid_price + put_offer_price)/2
-        call_bid_price = table[k][0]['opt_c_bid_price']/100
-        call_offer_price = table[k][0]['opt_c_offer_price']/100
+        call_bid_price = int(table[k][0]['opt_c_bid_price'])/100
+        call_offer_price = int(table[k][0]['opt_c_offer_price'])/100
         call_price = (call_bid_price + call_offer_price)/2
         share_strike = fut_price * __np__.exp(-risk_rate*(exp_days/365)) 
         share_pv_strike = share_strike - (k * __np__.exp(-risk_rate*(exp_days/365)))
