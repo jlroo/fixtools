@@ -25,7 +25,7 @@ def search_fix(query=False):
     fixfiles = fx.files_tree(path_books)
 
     for key in fixfiles.keys():
-        key = key + 1
+        key = key + 2
         if key == 27:
             break
         

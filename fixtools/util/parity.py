@@ -40,7 +40,7 @@ def options_table(path=None,
         options = __pd__.DataFrame.from_dict(df)
     
     options = options.replace('NA',  __np__.nan)
-    
+
     if path_out:
         if path_out[-1] != "/":
             path_out = path_out + "/"
@@ -263,14 +263,21 @@ def put_call_parity(futures, options,
     risk_rate = rate_dict[date]
     for k in table.keys():
         exp_days = table[k][0]['exp_days']
-        fut_bid_price = int(table[k][0]['fut_bid_price'])/100
-        fut_offer_price = int(table[k][0]['fut_offer_price'])/100
+        fut_bid = table[k][0]['fut_bid_price']
+        fut_bid_price = [__np__.NaN if __np__.isnan(p) else int(p)/100 for p in [fut_bid]][0]
+        fut_offer = table[k][0]['fut_offer_price']
+        fut_offer_price = [__np__.NaN if __np__.isnan(p) else int(p)/100 for p in [fut_offer]][0]
+        put_bid = table[k][0]['opt_p_bid_price']
+        put_bid_price = [__np__.NaN if __np__.isnan(p) else int(p)/100 for p in [put_bid]][0]
+        put_offer = table[k][0]['opt_p_offer_price']
+        put_offer_price = [__np__.NaN if __np__.isnan(p) else int(p)/100 for p in [put_offer]][0]
+        call_bid = table[k][0]['opt_c_bid_price']
+        call_bid_price = [__np__.NaN if __np__.isnan(p) else int(p)/100 for p in [call_bid]][0]
+        call_offer = table[k][0]['opt_c_offer_price']
+        call_offer_price = [__np__.NaN if __np__.isnan(p) else int(p)/100 for p in [call_offer]][0]
+        
         fut_price = (fut_bid_price + fut_offer_price)/2
-        put_bid_price = int(table[k][0]['opt_p_bid_price'])/100
-        put_offer_price = int(table[k][0]['opt_p_offer_price'])/100
         put_price = (put_bid_price + put_offer_price)/2
-        call_bid_price = int(table[k][0]['opt_c_bid_price'])/100
-        call_offer_price = int(table[k][0]['opt_c_offer_price'])/100
         call_price = (call_bid_price + call_offer_price)/2
         share_strike = fut_price * __np__.exp(-risk_rate*(exp_days/365)) 
         share_pv_strike = share_strike - (k * __np__.exp(-risk_rate*(exp_days/365)))
