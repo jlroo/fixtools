@@ -9,9 +9,11 @@ Created on Wed Apr  5 10:17:23 2017
 import multiprocessing as __mp__
 from collections import defaultdict
 
+__securityDesc__ = None
 
 def __filter__( line ):
-    valid_contract = [sec if sec in line else None for sec in security_desc]
+    global __securityDesc__
+    valid_contract = [sec if sec in line else None for sec in __securityDesc__]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
     if b'35=X\x01' in line and any(valid_contract):
@@ -23,13 +25,13 @@ class DataBook:
     __fileOut__ = None
 
     def __init__( self , data , securities , chunksize=10 ** 4 ):
-        global security_desc
+        global __securityDesc__
         self.data = data
         self.chunksize = chunksize
         self.securities = securities
         self.contracts_msgs = self.filter()
         contract_ids = set(securities.keys())
-        security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+        __securityDesc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
 
     def filter( self ):
         messages = defaultdict(list)
