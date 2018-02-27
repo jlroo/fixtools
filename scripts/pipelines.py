@@ -136,7 +136,7 @@ class OrderBooks(luigi.Task):
             #                path_out=path,
             #                chunksize=self.chunksize)
 
-            book_data = fx.DataBook(data=fixdata , securities=securities , chunksize=self.chunksize)
+            book_data = fx.DataBook(data=fixdata.data , securities=securities , chunksize=self.chunksize)
             book_data.create(path_out=path)
             
             for sec_desc in securities.values():

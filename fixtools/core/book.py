@@ -14,8 +14,8 @@ class DataBook:
     path_out = None
     __fileOut__ = None
 
-    def __init__( self , fixdata , securities , chunksize=10 ** 4 ):
-        self.data = fixdata.data
+    def __init__( self , data , securities , chunksize=10 ** 4 ):
+        self.data = data
         self.chunksize = chunksize
         self.securities = securities
         self.contracts_msgs = self.filter()
