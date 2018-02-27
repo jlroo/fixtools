@@ -48,7 +48,8 @@ class FindFiles(luigi.Task):
 
     def output(self):
         name = self.data_start_date[:4] + "-" + str(self.file_name)
-        target = luigi.LocalTarget(self.data_out + name)
+        name = self.data_out + name
+        target = luigi.LocalTarget(name)
         return target
 
 
@@ -129,11 +130,14 @@ class OrderBooks(luigi.Task):
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
             path = desc_path + filename
 
-            fx.build_books(fixdata, 
-                           securities, 
-                           file_out = True, 
-                           path_out = path, 
-                           chunksize = self.chunksize)
+            # fx.build_books(fixdata,
+            #                securities,
+            #                file_out=True,
+            #                path_out=path,
+            #                chunksize=self.chunksize)
+
+            book_data = fx.DataBook(data=fixdata , securities=securities , chunksize=self.chunksize)
+            book_data.create(path_out=path)
             
             for sec_desc in securities.values():
                 name = path + sec_desc.replace(" ", "-")
@@ -148,5 +152,4 @@ class OrderBooks(luigi.Task):
 
 if __name__ == "__main__":
     luigi.run()
-    #luigi.run(main_task_cls=CMEPipeline)
-
+    # luigi.run(main_task_cls=CMEPipeline)

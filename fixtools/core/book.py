@@ -6,6 +6,75 @@ Created on Wed Apr  5 10:17:23 2017
 @author: jlroo
 """
 
+import multiprocessing as __mp__
+from collections import defaultdict
+
+
+class DataBook:
+    path_out = None
+    __fileOut__ = None
+
+    def __init__( self , fixdata , securities , chunksize=10 ** 4 ):
+        self.data = fixdata.data
+        self.chunksize = chunksize
+        self.securities = securities
+        self.contracts_msgs = self.filter()
+        contract_ids = set(securities.keys())
+        self.__securityDesc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+
+    def __filter__( self , line ):
+        valid_contract = [sec if sec in line else None for sec in self.__securityDesc__]
+        set_ids = filter(None , valid_contract)
+        security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
+        if b'35=X\x01' in line and any(valid_contract):
+            return security_ids , line
+
+    def filter( self ):
+        messages = defaultdict(list)
+        with __mp__.Pool() as pool:
+            filtered = pool.map(self.__filter__ , self.data , self.chunksize)
+            for set_ids , line in filter(None , filtered):
+                for security_id in set_ids:
+                    messages[security_id].append(line)
+        try:
+            self.data.seek(0)
+        except AttributeError:
+            pass
+        return messages
+
+    def __build__( self , security_id ):
+        sec_desc = self.securities[security_id]
+        product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+        book_obj = OrderBook(self.contracts_msgs[security_id] , security_id , product)
+        filename = self.securities[security_id].replace(" " , "-")
+        if self.__fileOut__:
+            with open(self.path_out + filename , 'ab+') as book_out:
+                for book in book_obj.build_book():
+                    book_out.write(book)
+        else:
+            books = []
+            book_obj = OrderBook(self.contracts_msgs[security_id] , security_id , product)
+            for book in book_obj.build_book():
+                books.append(book)
+            return {security_id: books}
+
+    def create( self , path_out="" ):
+        self.path_out = path_out
+        contracts = set(self.securities.keys())
+        self.__fileOut__ = [True if path_out != "" else False][0]
+        if self.__fileOut__:
+            with __mp__.Pool() as pool:
+                pool.map(self.__build__ , contracts , self.chunksize)
+        else:
+            with __mp__.Pool() as pool:
+                books = pool.map(self.__build__ , contracts , self.chunksize)
+            return books
+        try:
+            del self.contracts_msgs
+            self.data.close()
+        except AttributeError:
+            pass
+
 
 class OrderBook:
     book = b''
@@ -18,9 +87,7 @@ class OrderBook:
         self.product = product.lower()
 
     def initial_book(self):
-        global __securityID__
-        __securityID__ = self.security_id
-        self.sec_desc_id = b'\x0148=' + str(__securityID__).encode() + b'\x01'
+        self.sec_desc_id = b'\x0148=' + str(self.security_id).encode() + b'\x01'
         msg_type = lambda e: e is not None and b'35=X\x01' in e and self.sec_desc_id in e
         trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
         open_msg = lambda e: msg_type(e) and trade_type(e)
@@ -87,7 +154,6 @@ class OrderBook:
                 self.data.seek(0)
             except AttributeError:
                 pass
-
 
     def __update__(self, book_body, msg_body):
         bids, offers = book_body[:len(book_body) // 2], book_body[len(book_body) // 2:]

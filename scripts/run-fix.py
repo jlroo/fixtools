@@ -14,7 +14,6 @@ import fixtools as fx
 import pandas as pd
 
 
-
 def search_fix(query=False):
 
     path_books = "/home/jlroo/data/pipeline/2010/M/"
@@ -65,8 +64,9 @@ def search_fix(query=False):
                 else:
                     result = fx.put_call_parity(futures, options, rates_table, timestamp)
                 if not result =={}:
-                    fx.search_out(result, timestamp,out_query, ordered = columns)
+                    fx.search_out(result , timestamp , out_query , ordered=columns)
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
+
 
 if __name__ == "__main__":
     search_fix()

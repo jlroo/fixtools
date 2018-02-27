@@ -171,19 +171,16 @@ class FixData:
             else:
                 raise ValueError("Supported time period: weekly data to get dates")
 
+    # 			   def securities
+    #
+    # This function returns the securities in the data
+    # by the expiration month returns a dictionary
+    #
+    # {MONTH: {SEC_ID:SEC_DESC}
+    #
+    #
 
-    """
-					   def securities
-
-		This function returns the securities in the data
-		by the expiration month returns a dictionary
-
-		{MONTH: {SEC_ID:SEC_DESC}
-
-	"""
-
-
-    def securities(self, group="ES", group_code="EZ", max_lines=10000):
+    def securities( self , group="ES" , group_code="EZ" , max_lines=100000 ):
         months = set("F,G,H,J,K,M,N,Q,U,V,X,Z".split(","))
         securities = __secdesc__(self.data, group, group_code, max_lines)
         filtered = {list(item.keys())[0]: list(item.values())[0] for item in securities}
@@ -225,16 +222,15 @@ class FixData:
         self.data.seek(0)
         return self.contracts
 
-    """
-					   def data_metrics
-
-		This function returns the number of messages
-		sent in a particular date.
-
-		returns a dictionary
-
-		{DAY: VOLUME}
-	"""
+    #
+    # 			   def data_metrics
+    #
+    # This function returns the number of messages
+    # sent in a particular date.
+    #
+    # returns a dictionary
+    #
+    # {DAY: VOLUME}
 
     def data_metrics(self, file_out=False, path="", chunksize=10 ** 4):
         desc = {}
@@ -268,18 +264,17 @@ class FixData:
                             [sec.encode(), desc[sec].encode(), str(table[day][sec]).encode(), day.encode()]) + b'\n')
         self.data.seek(0)
 
-    """
-						def split_by
-
-		The week to day function take a path to the fix file
-		and a list with days corresponding to the trading of
-		that week and breaks the Fix week file into its
-		associate trading days.
-
-		This functions creates a new gzip file located in
-		the same path as the weekly data.
-
-	"""
+    #
+    # 				def split_by
+    #
+    # The week to day function take a path to the fix file
+    # and a list with days corresponding to the trading of
+    # that week and breaks the Fix week file into its
+    # associate trading days.
+    #
+    # This functions creates a new gzip file located in
+    # the same path as the weekly data.
+    #
 
     def split_by(self, dates, chunksize=10 ** 4, file_out=False):
         for day in dates:
@@ -296,14 +291,12 @@ class FixData:
                         return entry
             self.data.seek(0)
 
-    """
-						def filter_by
-
-		This function takes a path to a fix file and
-		a security id in order to create a new list or
-		fix file with messages from that security.
-
-	"""
+    # 				def filter_by
+    #
+    # This function takes a path to a fix file and
+    # a security id in order to create a new list or
+    # fix file with messages from that security.
+    #
 
     def filter_by(self, security_id, file_out=False):
         sec_id = b"\x0148=" + security_id.encode() + b"\x01"

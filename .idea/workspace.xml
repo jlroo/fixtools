@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified error on put_call_parity function">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="Version Update v2.0 - Modified API - New DataBook class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" afterPath="$PROJECT_DIR$/fixtools/core/book.py" />
+      <change beforePath="$PROJECT_DIR$/fixtools/io/fixfast.py" afterPath="$PROJECT_DIR$/fixtools/io/fixfast.py" />
+      <change beforePath="$PROJECT_DIR$/fixtools/types/futures.py" afterPath="$PROJECT_DIR$/fixtools/types/futures.py" />
+      <change beforePath="$PROJECT_DIR$/fixtools/types/options.py" afterPath="$PROJECT_DIR$/fixtools/types/options.py" />
       <change beforePath="$PROJECT_DIR$/fixtools/util/parity.py" afterPath="$PROJECT_DIR$/fixtools/util/parity.py" />
+      <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" afterPath="$PROJECT_DIR$/fixtools/util/util.py" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" afterPath="$PROJECT_DIR$/requirements.txt" />
+      <change beforePath="$PROJECT_DIR$/scripts/pipelines.py" afterPath="$PROJECT_DIR$/scripts/pipelines.py" />
+      <change beforePath="$PROJECT_DIR$/scripts/run-fix.py" afterPath="$PROJECT_DIR$/scripts/run-fix.py" />
+      <change beforePath="$PROJECT_DIR$/scripts/run.py" afterPath="$PROJECT_DIR$/scripts/run.py" />
+      <change beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,19 +35,107 @@
     <option name="SHOW_EMPTY_GROUPS" value="false" />
     <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
   </component>
+  <component name="DockManager">
+    <window id="2">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="book.py" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="352">
+                    <caret line="115" column="43" lean-forward="false" selection-start-line="115" selection-start-column="43" selection-end-line="115" selection-end-column="43" />
+                    <folding>
+                      <element signature="e#108#140#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="parity.py" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/fixtools/util/parity.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="352">
+                    <caret line="119" column="23" lean-forward="false" selection-start-line="119" selection-start-column="23" selection-end-line="119" selection-end-column="23" />
+                    <folding>
+                      <element signature="e#25#56#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FavoritesManager">
     <favorites_list name="fixtools" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="parity.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/fixtools/util/parity.py">
+    <leaf>
+      <file leaf-file-name="fixfast.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="473">
-              <caret line="134" column="33" lean-forward="true" selection-start-line="134" selection-start-column="33" selection-end-line="134" selection-end-column="33" />
+            <state relative-caret-position="231">
+              <caret line="49" column="33" lean-forward="false" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="run-fix.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1093">
+              <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
               <folding>
-                <element signature="e#25#56#0" expanded="true" />
+                <element signature="e#194#215#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pipelines.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="231">
+              <caret line="104" column="31" lean-forward="false" selection-start-line="104" selection-start-column="31" selection-end-line="104" selection-end-column="31" />
+              <folding>
+                <element signature="e#87#96#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="run.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/run.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="280">
+              <caret line="86" column="35" lean-forward="false" selection-start-line="86" selection-start-column="35" selection-end-line="86" selection-end-column="35" />
+              <folding>
+                <element signature="e#194#215#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="book-search.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/book-search.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="627">
+              <caret line="33" column="45" lean-forward="false" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="options.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fixtools/types/options.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="314">
+              <caret line="18" column="97" lean-forward="false" selection-start-line="18" selection-start-column="97" selection-end-line="18" selection-end-column="97" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -45,10 +143,33 @@
       <file leaf-file-name="util.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="196" column="4" lean-forward="true" selection-start-line="196" selection-start-column="4" selection-end-line="196" selection-end-column="25" />
+            <state relative-caret-position="411">
+              <caret line="43" column="8" lean-forward="true" selection-start-line="43" selection-start-column="8" selection-end-line="43" selection-end-column="8" />
               <folding>
                 <element signature="e#60#81#0" expanded="true" />
+                <marker date="1519689571623" expanded="true" signature="211:315" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1519689571623" expanded="true" signature="5399:7052" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="5900:6154" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="6189:6444" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="7121:8093" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="7977:8075" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="8160:11441" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="8256:11415" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="8271:11360" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="8705:9975" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="8877:9372" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="9027:9372" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="9155:9335" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="9396:9975" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="9615:9975" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="9733:9929" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="9995:11360" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="10164:10673" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="10316:10673" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="10446:10634" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="10697:11360" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="10988:11360" ph="..." />
+                <marker date="1519689571623" expanded="true" signature="11108:11312" ph="..." />
               </folding>
             </state>
           </provider>
@@ -78,17 +199,29 @@
       <find>__day_filter__</find>
       <find>defaultdict</find>
       <find>(</find>
-      <find>__secfilter__</find>
       <find>num_orders</find>
       <find>contract</find>
+      <find>contracts_msgs</find>
+      <find>BookOut</find>
+      <find>__update__</find>
+      <find>__secfilter__</find>
+      <find>open_fix</find>
+      <find>data</find>
+      <find>=</find>
     </findStrings>
     <replaceStrings>
       <replace>)</replace>
       <replace>,</replace>
       <replace>(</replace>
+      <replace>=</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="jlroo &lt;jrodriguezorjuela@luc.edu&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
@@ -107,23 +240,25 @@
         <option value="$USER_HOME$/space/LOYOLA/GRAD/F17/COMP488/hw/hw-01/run.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py" />
         <option value="$PROJECT_DIR$/fixtools/io/pipeline.py" />
-        <option value="$PROJECT_DIR$/fixtools/core/book.py" />
         <option value="$PROJECT_DIR$/fixtools/io/pipelines.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/01-code03.py" />
         <option value="$USER_HOME$/space/LOYOLA/GRAD/F17/COMP488/machine-learning/projects/04-svm-classifier/01-code03.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
-        <option value="$PROJECT_DIR$/fixtools/types/futures.py" />
-        <option value="$PROJECT_DIR$/fixtools/types/options.py" />
         <option value="$PROJECT_DIR$/pipelines.py" />
         <option value="$USER_HOME$/Library/Preferences/PyCharm2017.2/scratches/scratch.py" />
-        <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/scripts/book-search.py" />
-        <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/setup.py" />
-        <option value="$PROJECT_DIR$/scripts/run.py" />
+        <option value="$PROJECT_DIR$/scripts/run-fix.py" />
+        <option value="$PROJECT_DIR$/fixtools/types/futures.py" />
+        <option value="$PROJECT_DIR$/fixtools/core/book.py" />
+        <option value="$PROJECT_DIR$/fixtools/types/options.py" />
         <option value="$PROJECT_DIR$/fixtools/util/util.py" />
+        <option value="$PROJECT_DIR$/scripts/pipelines.py" />
+        <option value="$PROJECT_DIR$/scripts/run.py" />
         <option value="$PROJECT_DIR$/fixtools/util/parity.py" />
       </list>
     </option>
@@ -134,11 +269,10 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-66" />
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
-    <option name="width" value="1986" />
-    <option name="height" value="1177" />
+    <option name="width" value="1890" />
+    <option name="height" value="1158" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -155,7 +289,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -172,24 +305,6 @@
               <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
               <item name="fixtools" type="462c0819:PsiDirectoryNode" />
               <item name="fixtools" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
-              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
-              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
-              <item name="io" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
-              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
-              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
-              <item name="types" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
-              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
-              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
               <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -201,6 +316,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -219,118 +335,6 @@
       <recent name="$PROJECT_DIR$/fixtools/core" />
       <recent name="$PROJECT_DIR$/fixtools/util" />
     </key>
-  </component>
-  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
-    <UpdatedFiles>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Updated from server" />
-        <option name="myStatusName" value="Changed on server" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="CHANGED_ON_SERVER" />
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Updated" />
-          <option name="myStatusName" value="Changed" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/fixtools/util/parity.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/scripts/run-fix.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/scripts/run.py</PATH>
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Created" />
-          <option name="myStatusName" value="Created" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="CREATED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Deleted" />
-          <option name="myStatusName" value="Deleted" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="true" />
-          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Restored" />
-          <option name="myStatusName" value="Will be restored" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="RESTORED" />
-        </FILE-GROUP>
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Modified" />
-        <option name="myStatusName" value="Modified" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MODIFIED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Skipped" />
-        <option name="myStatusName" value="Skipped" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SKIPPED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with conflicts" />
-        <option name="myStatusName" value="Will be merged with conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_CONFLICTS" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with tree conflicts" />
-        <option name="myStatusName" value="Merged with tree conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with property conflicts" />
-        <option name="myStatusName" value="Will be merged with property conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged" />
-        <option name="myStatusName" value="Will be merged" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Not in repository" />
-        <option name="myStatusName" value="Not in repository" />
-        <option name="mySupportsDeletion" value="true" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="UNKNOWN" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally added" />
-        <option name="myStatusName" value="Locally added" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_ADDED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally removed" />
-        <option name="myStatusName" value="Locally removed" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_REMOVED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Switched" />
-        <option name="myStatusName" value="Switched" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SWITCHED" />
-      </FILE-GROUP>
-    </UpdatedFiles>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -487,6 +491,14 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+    </configuration>
     <configuration default="true" type="tests" factoryName="Nosetests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -502,15 +514,6 @@
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;.&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method />
-    </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
-      <node-interpreter>project</node-interpreter>
-      <node-options />
-      <gulpfile />
-      <tasks />
-      <arguments />
-      <envs />
     </configuration>
     <recent_temporary>
       <list size="1">
@@ -742,7 +745,14 @@
       <option name="project" value="LOCAL" />
       <updated>1516734708664</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="modified error on put_call_parity function">
+      <created>1518807919776</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1518807919776</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TodoView">
@@ -755,20 +765,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-66" y="23" width="1986" height="1177" extended-state="0" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1920" height="1177" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3285068" sideWeight="0.50453174" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296875" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="0" y="0" width="310" height="700" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3285068" sideWeight="0.4954683" order="15" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3285068" sideWeight="0.50677085" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3285068" sideWeight="0.49322918" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3279503" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14350453" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12760417" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -781,7 +790,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Salesforce" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.246875" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="0" y="0" width="310" height="700" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32867783" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
@@ -793,6 +802,7 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="refactoring" />
     <MESSAGE value="Orderbook class added" />
     <MESSAGE value="Options build_books function added" />
@@ -810,36 +820,18 @@
     <MESSAGE value="fixed time_table function" />
     <MESSAGE value="added put_call_search function" />
     <MESSAGE value="modified error on put_call_parity function" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified error on put_call_parity function" />
+    <MESSAGE value="Version Update v2.0 - Modified API - New DataBook class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version Update v2.0 - Modified API - New DataBook class" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="2" column="5" lean-forward="false" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="36" lean-forward="false" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5434">
@@ -975,13 +967,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/fixdata" />
     <entry file="file://$PROJECT_DIR$/build/lib/fixtools/fixfast.py" />
-    <entry file="file://$PROJECT_DIR$/fixtools/core/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/types/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1000,13 +985,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="503">
           <caret line="247" column="4" lean-forward="false" selection-start-line="247" selection-start-column="4" selection-end-line="247" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/types/options.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1032,27 +1010,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-530">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/types/futures.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="27" column="25" lean-forward="true" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="627">
-          <caret line="33" column="39" lean-forward="false" selection-start-line="33" selection-start-column="39" selection-end-line="33" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="257">
@@ -1060,21 +1017,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" column="5" lean-forward="true" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/book-search.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="33" column="45" lean-forward="false" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="294">
@@ -1083,54 +1031,158 @@
           <second_editor />
         </state>
       </provider>
-      <provider editor-type-id="text-editor">
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/util/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
+    <entry file="file://$PROJECT_DIR$/fixtools/core/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3002">
-          <caret line="164" column="41" lean-forward="false" selection-start-line="164" selection-start-column="41" selection-end-line="164" selection-end-column="41" />
-          <folding>
-            <element signature="e#61#93#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="26" column="44" lean-forward="false" selection-start-line="26" selection-start-column="44" selection-end-line="26" selection-end-column="44" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="6" lean-forward="false" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
+        <state relative-caret-position="38">
+          <caret line="2" column="19" lean-forward="true" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="6" lean-forward="true" selection-start-line="8" selection-start-column="6" selection-end-line="8" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/book-search.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="33" column="45" lean-forward="false" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1093">
+          <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+          <folding>
+            <element signature="e#194#215#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/types/futures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="37" lean-forward="true" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/types/options.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="18" column="97" lean-forward="false" selection-start-line="18" selection-start-column="97" selection-end-line="18" selection-end-column="97" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="196" column="4" lean-forward="true" selection-start-line="196" selection-start-column="4" selection-end-line="196" selection-end-column="25" />
+        <state relative-caret-position="411">
+          <caret line="43" column="8" lean-forward="true" selection-start-line="43" selection-start-column="8" selection-end-line="43" selection-end-column="8" />
           <folding>
             <element signature="e#60#81#0" expanded="true" />
+            <marker date="1519689571623" expanded="true" signature="211:315" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1519689571623" expanded="true" signature="5399:7052" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="5900:6154" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="6189:6444" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="7121:8093" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="7977:8075" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="8160:11441" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="8256:11415" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="8271:11360" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="8705:9975" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="8877:9372" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="9027:9372" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="9155:9335" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="9396:9975" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="9615:9975" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="9733:9929" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="9995:11360" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="10164:10673" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="10316:10673" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="10446:10634" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="10697:11360" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="10988:11360" ph="..." />
+            <marker date="1519689571623" expanded="true" signature="11108:11312" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="104" column="31" lean-forward="false" selection-start-line="104" selection-start-column="31" selection-end-line="104" selection-end-column="31" />
+          <folding>
+            <element signature="e#87#96#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="86" column="35" lean-forward="false" selection-start-line="86" selection-start-column="35" selection-end-line="86" selection-end-column="35" />
+          <folding>
+            <element signature="e#194#215#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="49" column="33" lean-forward="false" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/parity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="473">
-          <caret line="134" column="33" lean-forward="true" selection-start-line="134" selection-start-column="33" selection-end-line="134" selection-end-column="33" />
+        <state relative-caret-position="352">
+          <caret line="119" column="23" lean-forward="false" selection-start-line="119" selection-start-column="23" selection-end-line="119" selection-end-column="23" />
           <folding>
             <element signature="e#25#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="115" column="43" lean-forward="false" selection-start-line="115" selection-start-column="43" selection-end-line="115" selection-end-column="43" />
+          <folding>
+            <element signature="e#108#140#0" expanded="true" />
           </folding>
         </state>
       </provider>

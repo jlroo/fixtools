@@ -1,5 +1,5 @@
-luigi
 ###### Requirements ######
+luigi
 dateutil
 gzip
 bzip2

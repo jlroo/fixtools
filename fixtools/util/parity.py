@@ -30,6 +30,14 @@ def options_table(path=None,
                 df = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
             dfs.append(__pd__.DataFrame.from_dict(df))
         options = __pd__.concat(dfs)
+        options = options.replace('NA' , __np__.nan)
+        if options:
+            return options
+        if path_out:
+            if path_out[-1] != "/":
+                path_out = path_out + "/"
+            fname = path_out + filename[:-5] + "OPTIONS.csv"
+            options.to_csv(fname , index=False)
 
     elif filename:
         fpath = path + filename
@@ -38,17 +46,14 @@ def options_table(path=None,
         with __mp__.Pool() as pool:
             df = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
         options = __pd__.DataFrame.from_dict(df)
-    
-    options = options.replace('NA',  __np__.nan)
-
-    if path_out:
-        if path_out[-1] != "/":
-            path_out = path_out + "/"
-        fname = path_out + filename[:-5] + "OPTIONS.csv"
-        options.to_csv(fname,  index=False)
-    
-    if return_table:
-        return options
+        options = options.replace('NA' , __np__.nan)
+        if return_table:
+            return options
+        if path_out:
+            if path_out[-1] != "/":
+                path_out = path_out + "/"
+            fname = path_out + filename[:-5] + "OPTIONS.csv"
+            options.to_csv(fname , index=False)
 
 
 def futures_table(path=None,
@@ -279,9 +284,9 @@ def put_call_parity(futures, options,
         fut_price = (fut_bid_price + fut_offer_price)/2
         put_price = (put_bid_price + put_offer_price)/2
         call_price = (call_bid_price + call_offer_price)/2
-        share_strike = fut_price * __np__.exp(-risk_rate*(exp_days/365)) 
-        share_pv_strike = share_strike - (k * __np__.exp(-risk_rate*(exp_days/365)))
-        share_strike = share_strike - k
+        share_strike = fut_price * __np__.exp(-risk_rate * (exp_days / 365))
+        share_pv_strike = share_strike - (float(k) * __np__.exp(-risk_rate * (exp_days / 365)))
+        share_strike = share_strike - float(k)
         put_call = call_price - put_price
         if put_call > share_pv_strike:
             diff = put_call - share_pv_strike
