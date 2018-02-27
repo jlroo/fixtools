@@ -13,31 +13,28 @@ from collections import defaultdict
 class DataBook:
     path_out = None
     __fileOut__ = None
-    security_desc = None
 
     def __init__( self , data , securities , chunksize=10 ** 4 ):
         self.data = data
         self.chunksize = chunksize
         self.securities = securities
         self.contracts_msgs = self.filter()
-        contract_ids = set(securities.keys())
-        self.security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+        self.contract_ids = set(securities.keys())
+        self.security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in self.contract_ids]
 
     def __getstate__( self ):
-        """ This is called before pickling. """
         state = self.__dict__.copy()
-        del state['security_desc']
+        del state['contract_ids']
         return state
 
     def __setstate__( self , state ):
-        """ This is called while unpickling. """
         self.__dict__.update(state)
 
     def __filter__( self , line ):
-        self.valid_contract = [sec if sec in line else None for sec in self.security_desc]
-        set_ids = filter(None , self.valid_contract)
+        valid_contract = [sec if sec in line else None for sec in self.security_desc]
+        set_ids = filter(None , valid_contract)
         security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
-        if b'35=X\x01' in line and any(self.valid_contract):
+        if b'35=X\x01' in line and any(valid_contract):
             return security_ids , line
 
     def filter( self ):
