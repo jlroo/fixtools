@@ -19,16 +19,8 @@ class DataBook:
         self.chunksize = chunksize
         self.securities = securities
         self.contracts_msgs = self.filter()
-        self.contract_ids = set(securities.keys())
-        self.security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in self.contract_ids]
-
-    def __getstate__( self ):
-        state = self.__dict__.copy()
-        del state['contract_ids']
-        return state
-
-    def __setstate__( self , state ):
-        self.__dict__.update(state)
+        contract_ids = set(securities.keys())
+        self.security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
 
     def __filter__( self , line ):
         valid_contract = [sec if sec in line else None for sec in self.security_desc]
