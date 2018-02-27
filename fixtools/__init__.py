@@ -1,7 +1,7 @@
 __docformat__ = 'restructuredtext'
 
 # Let users know if they're missing any of our hard dependencies
-hard_dependencies = ("gzip", "bz2")
+hard_dependencies = ("gzip" , "bz2" , "pandas" , "multiprocessing")
 missing_dependencies = []
 
 for dependency in hard_dependencies:
@@ -14,6 +14,7 @@ if missing_dependencies:
     raise ImportError("Missing required dependencies {0}".format(missing_dependencies))
 del hard_dependencies, dependency, missing_dependencies
 
+from fixtools.core.book import *
 from fixtools.util.util import *
 from fixtools.util.parity import *
 from fixtools.io.fixfast import *
