@@ -10,31 +10,31 @@ import multiprocessing as __mp__
 from collections import defaultdict
 
 
-def __filter__( line_desc ):
-    valid_contract = [sec if sec in line_desc[0] else None for sec in line_desc[1]]
+def __filter__( line ):
+    valid_contract = [sec if sec in line else None for sec in security_desc]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
-    if b'35=X\x01' in line_desc[0] and any(valid_contract):
-        return security_ids , line_desc[0]
+    if b'35=X\x01' in line and any(valid_contract):
+        return security_ids , line
 
 
 class DataBook:
     path_out = None
     __fileOut__ = None
-    __securityDesc__ = None
 
     def __init__( self , data , securities , chunksize=10 ** 4 ):
+        global security_desc
         self.data = data
         self.chunksize = chunksize
         self.securities = securities
         self.contracts_msgs = self.filter()
         contract_ids = set(securities.keys())
-        self.__securityDesc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+        security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
 
     def filter( self ):
         messages = defaultdict(list)
         with __mp__.Pool() as pool:
-            filtered = pool.map(__filter__ , (self.data , self.__securityDesc__) , self.chunksize)
+            filtered = pool.map(__filter__ , self.data , self.chunksize)
             for set_ids , line in filter(None , filtered):
                 for security_id in set_ids:
                     messages[security_id].append(line)
