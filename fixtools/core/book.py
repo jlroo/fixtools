@@ -10,7 +10,7 @@ import multiprocessing as __mp__
 from collections import defaultdict
 
 
-def __filter__( line_desc=tuple ):
+def __filter__( line_desc ):
     valid_contract = [sec if sec in line_desc[0] else None for sec in line_desc[1]]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
@@ -99,6 +99,7 @@ class OrderBook:
             prev_body = [temp + str(i).encode() for i in range(1, 4)]
             temp = temp.replace(b'\x01269=0', b'\x01269=1')
             prev_body = prev_body + [temp + str(i).encode() for i in range(1, 4)]
+
         if self.product in "fut|futures":
             self.top_order = 10
             prev_body = [temp + str(i).encode() for i in range(1, 11)]
