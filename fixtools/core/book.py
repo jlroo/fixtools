@@ -21,6 +21,7 @@ def __filter__( line_desc ):
 class DataBook:
     path_out = None
     __fileOut__ = None
+    __securityDesc__ = None
 
     def __init__( self , data , securities , chunksize=10 ** 4 ):
         self.data = data
@@ -82,12 +83,12 @@ class OrderBook:
     top_order = 0
     sec_desc_id = b''
 
-    def __init__(self, data, security_id, product):
+    def __init__( self , data , security_id , product ):
         self.data = data
         self.security_id = security_id
         self.product = product.lower()
 
-    def initial_book(self):
+    def initial_book( self ):
         self.sec_desc_id = b'\x0148=' + str(self.security_id).encode() + b'\x01'
         msg_type = lambda e: e is not None and b'35=X\x01' in e and self.sec_desc_id in e
         trade_type = lambda e: e is not None and e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
@@ -96,26 +97,26 @@ class OrderBook:
 
         if self.product in "opt|options":
             self.top_order = 3
-            prev_body = [temp + str(i).encode() for i in range(1, 4)]
-            temp = temp.replace(b'\x01269=0', b'\x01269=1')
-            prev_body = prev_body + [temp + str(i).encode() for i in range(1, 4)]
+            prev_body = [temp + str(i).encode() for i in range(1 , 4)]
+            temp = temp.replace(b'\x01269=0' , b'\x01269=1')
+            prev_body = prev_body + [temp + str(i).encode() for i in range(1 , 4)]
 
         if self.product in "fut|futures":
             self.top_order = 10
-            prev_body = [temp + str(i).encode() for i in range(1, 11)]
-            temp = temp.replace(b'\x01269=0', b'\x01269=1')
-            prev_body = prev_body + [temp + str(i).encode() for i in range(1, 11)]
+            prev_body = [temp + str(i).encode() for i in range(1 , 11)]
+            temp = temp.replace(b'\x01269=0' , b'\x01269=1')
+            prev_body = prev_body + [temp + str(i).encode() for i in range(1 , 11)]
 
-        msg = next(filter(open_msg, self.data), None)
+        msg = next(filter(open_msg , self.data) , None)
 
         if msg is not None:
             book_header = msg.split(b'\x01279')[0]
             book_end = b'\x0110' + msg.split(b'\x0110')[-1]
             msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
             msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
-            msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+            msg_body = iter(filter(lambda e: trade_type(e) , msg_body))
             # BOOK UPDATE
-            bids, offers = self.__update__(prev_body, msg_body)
+            bids , offers = self.__update__(prev_body , msg_body)
             book_body = bids + offers
             book_header += b''.join([e for e in book_body])
             self.book = book_header + book_end
@@ -125,14 +126,14 @@ class OrderBook:
             pass
         return self.book
 
-    def build_book(self):
+    def build_book( self ):
         self.book = self.initial_book()
         if self.book != b'':
             msg_seq_num = lambda line: int(line.split(b'\x0134=')[1].split(b'\x01')[0])
             book_seq_num = int(self.book.split(b'\x0134=')[1].split(b'\x01')[0])
             updates = lambda entry: entry is not None and msg_seq_num(entry) > book_seq_num
             trade_type = lambda e: e[e.find(b'\x01269=') + 5:e.find(b'\x01269=') + 6] in b'0|1'
-            messages = iter(filter(updates, self.data))
+            messages = iter(filter(updates , self.data))
             for msg in messages:
                 # PREVIOUS BOOK
                 prev_body = self.book.split(b'\x0110=')[0]
@@ -142,9 +143,9 @@ class OrderBook:
                 book_end = b'\x0110' + msg.split(b'\x0110')[-1]
                 msg_body = msg.split(b'\x0110=')[0].split(b'\x01279')[1:]
                 msg_body = [b'\x01279' + e for e in msg_body if self.sec_desc_id in e and b'\x01276' not in e]
-                msg_body = iter(filter(lambda e: trade_type(e), msg_body))
+                msg_body = iter(filter(lambda e: trade_type(e) , msg_body))
                 # BOOK UPDATE
-                bids, offers = self.__update__(prev_body, msg_body)
+                bids , offers = self.__update__(prev_body , msg_body)
                 book_body = bids + offers
                 if book_body == prev_body:
                     pass
@@ -157,8 +158,8 @@ class OrderBook:
             except AttributeError:
                 pass
 
-    def __update__(self, book_body, msg_body):
-        bids, offers = book_body[:len(book_body) // 2], book_body[len(book_body) // 2:]
+    def __update__( self , book_body , msg_body ):
+        bids , offers = book_body[:len(book_body) // 2] , book_body[len(book_body) // 2:]
         for entry in msg_body:
             try:
                 price_level = int(entry.split(b'\x011023=')[1])
@@ -172,9 +173,9 @@ class OrderBook:
                         if price_level == self.top_order:
                             bids[self.top_order - 1] = entry
                         else:
-                            bids.insert(price_level - 1, entry)
-                            for i in range(price_level, self.top_order):
-                                bids[i] = bids[i].replace(b'\x011023=' + str(i).encode(),
+                            bids.insert(price_level - 1 , entry)
+                            for i in range(price_level , self.top_order):
+                                bids[i] = bids[i].replace(b'\x011023=' + str(i).encode() ,
                                                           b'\x011023=' + str(i + 1).encode())
                             bids.pop()
                     else:  # b'\x01279=2' DELETE
@@ -183,8 +184,8 @@ class OrderBook:
                             bids[self.top_order - 1] = delete
                         else:
                             bids.pop(price_level - 1)
-                            for i in range(price_level, self.top_order):
-                                bids[i - 1] = bids[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
+                            for i in range(price_level , self.top_order):
+                                bids[i - 1] = bids[i - 1].replace(b'\x011023=' + str(i + 1).encode() ,
                                                                   b'\x011023=' + str(i).encode())
                             bids.append(delete)
                 else:  # OFFER tag 269=1
@@ -194,22 +195,22 @@ class OrderBook:
                         if price_level == self.top_order:
                             offers[self.top_order - 1] = entry
                         else:
-                            offers.insert(price_level - 1, entry)
-                            for i in range(price_level, self.top_order):
-                                offers[i] = offers[i].replace(b'\x011023=' + str(i).encode(),
+                            offers.insert(price_level - 1 , entry)
+                            for i in range(price_level , self.top_order):
+                                offers[i] = offers[i].replace(b'\x011023=' + str(i).encode() ,
                                                               b'\x011023=' + str(i + 1).encode())
                             offers.pop()
                     else:  # b'\x01279=2' DELETE
-                        temp = temp.replace(b'\x01269=0', b'\x01269=1')
+                        temp = temp.replace(b'\x01269=0' , b'\x01269=1')
                         delete = temp + str(self.top_order).encode()
                         if price_level == self.top_order:
                             offers[self.top_order - 1] = delete
                         else:
                             offers.pop(price_level - 1)
-                            for i in range(price_level, self.top_order):
-                                offers[i - 1] = offers[i - 1].replace(b'\x011023=' + str(i + 1).encode(),
+                            for i in range(price_level , self.top_order):
+                                offers[i - 1] = offers[i - 1].replace(b'\x011023=' + str(i + 1).encode() ,
                                                                       b'\x011023=' + str(i).encode())
                             offers.append(delete)
             except StopIteration:
                 continue
-        return bids, offers
+        return bids , offers
