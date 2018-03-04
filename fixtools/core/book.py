@@ -10,17 +10,37 @@ import multiprocessing as __mp__
 from collections import defaultdict
 
 
-class DataFilter:
-
+class _filter:
     def __init__( self , security_desc ):
         self.security_desc = security_desc
 
-    def filter( self , line ):
+    def data( self , line ):
         valid_contract = [sec if sec in line else None for sec in self.security_desc]
         set_ids = filter(None , valid_contract)
         security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
         if b'35=X\x01' in line and any(valid_contract):
             return security_ids , line
+
+
+class DataFilter:
+
+    def __init__( self , security_desc , data , chunksize ):
+        self.data = data
+        self.chunksize = chunksize
+        self.LinesFilter = _filter(security_desc)
+
+    def messages( self ):
+        msgs = defaultdict(list)
+        with __mp__.Pool() as pool:
+            filtered = pool.map(self.LinesFilter.data , self.data , self.chunksize)
+            for set_ids , line in filter(None , filtered):
+                for security_id in set_ids:
+                    msgs[security_id].append(line)
+        try:
+            self.data.seek(0)
+        except AttributeError:
+            pass
+        return msgs
 
 
 class DataBuild:
@@ -61,28 +81,26 @@ class DataBook:
         self.chunksize = chunksize
         self.securities = securities
         contract_ids = set(securities.keys())
-        self.security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-        self.filter_data = DataFilter(self.security_desc)
+        security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+        self.contracts_msgs = DataFilter(security_desc , data , chunksize).messages()
 
-    def filter( self ):
-        messages = defaultdict(list)
-        with __mp__.Pool() as pool:
-            filtered = pool.map(self.filter_data.filter , self.data , self.chunksize)
-            for set_ids , line in filter(None , filtered):
-                for security_id in set_ids:
-                    messages[security_id].append(line)
-        try:
-            self.data.seek(0)
-        except AttributeError:
-            pass
-        return messages
+    # def filter( self ):
+    #     messages = defaultdict(list)
+    #     with __mp__.Pool() as pool:
+    #         filtered = pool.map(self.filter_data.filter , self.data , self.chunksize)
+    #         for set_ids , line in filter(None , filtered):
+    #             for security_id in set_ids:
+    #                 messages[security_id].append(line)
+    #     try:
+    #         self.data.seek(0)
+    #     except AttributeError:
+    #         pass
+    #     return messages
 
     def create( self , path_out="" ):
-        path_out = path_out
         file_out = [True if path_out != "" else False][0]
-        contracts_msgs = self.filter()
         contracts = set(self.securities.keys())
-        build_data = DataBuild(self.securities , contracts_msgs , path_out , file_out)
+        build_data = DataBuild(self.securities , self.contracts_msgs , path_out , file_out)
         if file_out:
             with __mp__.Pool() as pool:
                 pool.map(build_data.build , contracts , self.chunksize)
