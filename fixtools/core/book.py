@@ -32,7 +32,7 @@ class DataFilter:
     def messages( self ):
         msgs = defaultdict(list)
         with __mp__.Pool() as pool:
-            filtered = pool.map(self.LinesFilter.data , self.data , self.chunksize)
+            filtered = pool.map(self.LinesFilter.data() , self.data , self.chunksize)
             for set_ids , line in filter(None , filtered):
                 for security_id in set_ids:
                     msgs[security_id].append(line)
@@ -84,19 +84,6 @@ class DataBook:
         security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
         self.contracts_msgs = DataFilter(security_desc , data , chunksize).messages()
 
-    # def filter( self ):
-    #     messages = defaultdict(list)
-    #     with __mp__.Pool() as pool:
-    #         filtered = pool.map(self.filter_data.filter , self.data , self.chunksize)
-    #         for set_ids , line in filter(None , filtered):
-    #             for security_id in set_ids:
-    #                 messages[security_id].append(line)
-    #     try:
-    #         self.data.seek(0)
-    #     except AttributeError:
-    #         pass
-    #     return messages
-
     def create( self , path_out="" ):
         file_out = [True if path_out != "" else False][0]
         contracts = set(self.securities.keys())
@@ -106,7 +93,7 @@ class DataBook:
                 pool.map(build_data.build , contracts , self.chunksize)
         else:
             with __mp__.Pool() as pool:
-                books = pool.map(build_data.build , contracts , self.chunksize)
+                books = pool.map(build_data.build() , contracts , self.chunksize)
             return books
         try:
             del build_data
