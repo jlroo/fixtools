@@ -137,10 +137,10 @@ class OrderBooks(luigi.Task):
             #                chunksize=self.chunksize)
 
             book_data = fx.DataBook(data=fixdata.data ,
-                                    securities=securities ,
+                                    securities_dict=securities ,
                                     chunksize=self.chunksize)
 
-            book_data.create(path_out=path)
+            book_data.write(path=path)
             
             for sec_desc in securities.values():
                 name = path + sec_desc.replace(" ", "-")

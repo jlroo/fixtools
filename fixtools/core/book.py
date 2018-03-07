@@ -10,96 +10,76 @@ import multiprocessing as __mp__
 from collections import defaultdict
 
 
-class _filter:
-    def __init__( self , security_desc ):
-        self.security_desc = security_desc
-
-    def data( self , line ):
-        valid_contract = [sec if sec in line else None for sec in self.security_desc]
-        set_ids = filter(None , valid_contract)
-        security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
-        if b'35=X\x01' in line and any(valid_contract):
-            return security_ids , line
+def __filter__( line ):
+    valid_contract = [sec if sec in line else None for sec in security_desc]
+    set_ids = filter(None , valid_contract)
+    security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
+    if b'35=X\x01' in line and any(valid_contract):
+        return security_ids , line
 
 
 class DataFilter:
 
-    def __init__( self , security_desc , data , chunksize ):
+    def __init__( self , data , chunksize ):
         self.data = data
         self.chunksize = chunksize
-        self.LinesFilter = _filter(security_desc)
 
     def messages( self ):
         msgs = defaultdict(list)
         with __mp__.Pool() as pool:
-            filtered = pool.map(self.LinesFilter.data() , self.data , self.chunksize)
+            filtered = pool.map(__filter__ , self.data , self.chunksize)
             for set_ids , line in filter(None , filtered):
                 for security_id in set_ids:
                     msgs[security_id].append(line)
         try:
-            self.data.seek(0)
+            self.data.close()
         except AttributeError:
             pass
         return msgs
 
 
-class DataBuild:
+def __write__( security_id ):
+    sec_desc = securities[security_id]
+    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+    book_obj = OrderBook(contracts_msgs[security_id] , security_id , product)
+    filename = securities[security_id].replace(" " , "-")
+    with open(path_out + filename , 'ab+') as book_out:
+        for book in book_obj.build_book():
+            book_out.write(book)
 
-    def __init__( self , securities , contracts_msgs , path_out , file_out ):
-        self.securities = securities
-        self.contracts_msgs = contracts_msgs
-        self.path_out = path_out
-        self.__fileOut__ = file_out
 
-    def __delete__( self , instance ):
-        del self.contracts_msgs
-        del self.securities
-
-    def build( self , security_id ):
-        sec_desc = self.securities[security_id]
-        product = ["opt" if len(sec_desc) < 7 else "fut"][0]
-        book_obj = OrderBook(self.contracts_msgs[security_id] , security_id , product)
-        filename = self.securities[security_id].replace(" " , "-")
-        if self.__fileOut__:
-            with open(self.path_out + filename , 'ab+') as book_out:
-                for book in book_obj.build_book():
-                    book_out.write(book)
-        else:
-            books = []
-            book_obj = OrderBook(self.contracts_msgs[security_id] , security_id , product)
-            for book in book_obj.build_book():
-                books.append(book)
-            return {security_id: books}
+def __build__( security_id ):
+    sec_desc = securities[security_id]
+    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+    books = []
+    book_obj = OrderBook(contracts_msgs[security_id] , security_id , product)
+    for book in book_obj.build_book():
+        books.append(book)
+    return {security_id: books}
 
 
 class DataBook:
-    path_out = None
-    __fileOut__ = None
 
-    def __init__( self , data , securities , chunksize=10 ** 4 ):
-        self.data = data
+    def __init__( self , data , securities_dict , chunksize=10 ** 4 ):
         self.chunksize = chunksize
-        self.securities = securities
-        contract_ids = set(securities.keys())
-        security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-        self.contracts_msgs = DataFilter(security_desc , data , chunksize).messages()
+        self.contract_ids = set(securities.keys())
+        global securities
+        securities = securities_dict
+        global security_desc
+        security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in self.contract_ids]
+        global contracts_msgs
+        contracts_msgs = DataFilter(data , chunksize).messages()
 
-    def create( self , path_out="" ):
-        file_out = [True if path_out != "" else False][0]
-        contracts = set(self.securities.keys())
-        build_data = DataBuild(self.securities , self.contracts_msgs , path_out , file_out)
-        if file_out:
-            with __mp__.Pool() as pool:
-                pool.map(build_data.build , contracts , self.chunksize)
-        else:
-            with __mp__.Pool() as pool:
-                books = pool.map(build_data.build() , contracts , self.chunksize)
-            return books
-        try:
-            del build_data
-            self.data.close()
-        except AttributeError:
-            pass
+    def write( self , path="" ):
+        global path_out
+        path_out = path
+        with __mp__.Pool() as pool:
+            pool.map(__write__ , self.contract_ids , self.chunksize)
+
+    def build( self ):
+        with __mp__.Pool() as pool:
+            books = pool.map(__build__ , self.contract_ids , self.chunksize)
+        return books
 
 
 class OrderBook:
