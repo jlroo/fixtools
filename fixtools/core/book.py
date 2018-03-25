@@ -57,13 +57,15 @@ def __build__( security_id ):
     return {security_id: books}
 
 
+__securities__ = {}
+__security_desc__ = []
+__contracts__ = {}
+
+
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
     contract_ids = set(securities.keys())
-    global __securities__
     __securities__ = securities
-    global __security_desc__
     __security_desc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    global __contracts__
     __contracts__ = data_filter(data , chunksize)
     if path != "":
         global path_out
