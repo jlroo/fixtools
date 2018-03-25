@@ -9,9 +9,13 @@ Created on Wed Apr  5 10:17:23 2017
 import multiprocessing as __mp__
 from collections import defaultdict
 
+__security_desc__
+__securities__
+__contracts__
+
 
 def __filter__( line ):
-    valid_contract = [sec if sec in line else None for sec in security_desc]
+    valid_contract = [sec if sec in line else None for sec in __security_desc__]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
     if b'35=X\x01' in line and any(valid_contract):
@@ -33,20 +37,20 @@ def data_filter( data , chunksize ):
 
 
 def __write__( security_id ):
-    sec_desc = securities_dict[security_id]
+    sec_desc = __securities__[security_id]
     product = ["opt" if len(sec_desc) < 7 else "fut"][0]
-    book_obj = OrderBook(contracts_msgs[security_id] , security_id , product)
-    filename = securities_dict[security_id].replace(" " , "-")
+    book_obj = OrderBook(__contracts__[security_id] , security_id , product)
+    filename = __securities__[security_id].replace(" " , "-")
     with open(path_out + filename , 'ab+') as book_out:
         for book in book_obj.build_book():
             book_out.write(book)
 
 
 def __build__( security_id ):
-    sec_desc = securities_dict[security_id]
+    sec_desc = __securities__[security_id]
     product = ["opt" if len(sec_desc) < 7 else "fut"][0]
     books = []
-    book_obj = OrderBook(contracts_msgs[security_id] , security_id , product)
+    book_obj = OrderBook(__contracts__[security_id] , security_id , product)
     for book in book_obj.build_book():
         books.append(book)
     return {security_id: books}
@@ -54,12 +58,12 @@ def __build__( security_id ):
 
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
     contract_ids = set(securities.keys())
-    global securities_dict
-    securities_dict = securities
-    global security_desc
-    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    global contracts_msgs
-    contracts_msgs = data_filter(data , chunksize)
+    global __securities__
+    __securities__ = securities
+    global __security_desc__
+    __security_desc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+    global __contracts__
+    __contracts__ = data_filter(data , chunksize)
     if path != "":
         global path_out
         path_out = path
