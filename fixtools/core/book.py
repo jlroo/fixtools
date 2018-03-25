@@ -9,12 +9,9 @@ Created on Wed Apr  5 10:17:23 2017
 import multiprocessing as __mp__
 from collections import defaultdict
 
-__security_desc__
-__securities__
-__contracts__
-
 
 def __filter__( line ):
+    global __security_desc__
     valid_contract = [sec if sec in line else None for sec in __security_desc__]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
@@ -37,6 +34,8 @@ def data_filter( data , chunksize ):
 
 
 def __write__( security_id ):
+    global __contracts__
+    global __securities__
     sec_desc = __securities__[security_id]
     product = ["opt" if len(sec_desc) < 7 else "fut"][0]
     book_obj = OrderBook(__contracts__[security_id] , security_id , product)
@@ -47,6 +46,8 @@ def __write__( security_id ):
 
 
 def __build__( security_id ):
+    global __contracts__
+    global __securities__
     sec_desc = __securities__[security_id]
     product = ["opt" if len(sec_desc) < 7 else "fut"][0]
     books = []
