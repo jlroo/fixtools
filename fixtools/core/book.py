@@ -36,11 +36,12 @@ def data_filter( data , chunksize ):
 def __write__( security_id ):
     global __contracts__
     global __securities__
+    global __path__
     sec_desc = __securities__[security_id]
     product = ["opt" if len(sec_desc) < 7 else "fut"][0]
     book_obj = OrderBook(__contracts__[security_id] , security_id , product)
     filename = __securities__[security_id].replace(" " , "-")
-    with open(path_out + filename , 'ab+') as book_out:
+    with open(__path__ + filename , 'ab+') as book_out:
         for book in book_obj.build_book():
             book_out.write(book)
 
@@ -57,9 +58,10 @@ def __build__( security_id ):
     return {security_id: books}
 
 
-__securities__ = {}
-__security_desc__ = []
-__contracts__ = {}
+__securities__ = dict
+__security_desc__ = list
+__contracts__ = defaultdict(list)
+__path__ = str
 
 
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
@@ -68,8 +70,8 @@ def data_book( data , securities , path="" , chunksize=10 ** 4 ):
     __security_desc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
     __contracts__ = data_filter(data , chunksize)
     if path != "":
-        global path_out
-        path_out = path
+        global __path__
+        __path__ = path
         with __mp__.Pool() as pool:
             pool.map(__write__ , contract_ids , chunksize)
     else:
