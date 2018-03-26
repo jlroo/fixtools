@@ -9,6 +9,11 @@ Created on Wed Apr  5 10:17:23 2017
 import multiprocessing as __mp__
 from collections import defaultdict
 
+__securities__
+__security_desc__
+__contracts__
+__path__
+
 
 def __filter__( line ):
     global __security_desc__
