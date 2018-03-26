@@ -11,7 +11,9 @@ from collections import defaultdict
 
 
 def __filter__( line ):
-    valid_contract = [sec if sec in line else None for sec in __security_desc__]
+    global __contractIDs__
+    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in __contractIDs__]
+    valid_contract = [sec if sec in line else None for sec in security_desc]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
     if b'35=X\x01' in line and any(valid_contract):
@@ -20,8 +22,8 @@ def __filter__( line ):
 
 def data_filter( data , contract_ids , chunksize ):
     msgs = defaultdict(list)
-    global __security_desc__
-    __security_desc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+    global __contractIDs__
+    __contractIDs__ = contract_ids
     with __mp__.Pool() as pool:
         filtered = pool.map(__filter__ , data , chunksize)
         for set_ids , line in filter(None , filtered):
