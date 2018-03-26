@@ -11,6 +11,7 @@ from collections import defaultdict
 
 __contractIDs__ = None
 
+
 def __filter__( line ):
     global __contractIDs__
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in __contractIDs__]
