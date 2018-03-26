@@ -9,6 +9,11 @@ Created on Wed Apr  5 10:17:23 2017
 import multiprocessing as __mp__
 from collections import defaultdict
 
+__securities__ = dict
+__security_desc__ = list
+__contracts__ = defaultdict(list)
+__path__ = str
+
 
 def __filter__( line ):
     global __security_desc__
@@ -58,13 +63,11 @@ def __build__( security_id ):
     return {security_id: books}
 
 
-__securities__ = dict
-__security_desc__ = list
-__contracts__ = defaultdict(list)
-__path__ = str
-
-
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
+    global __path__
+    global __contracts__
+    global __securities__
+    global __security_desc__
     contract_ids = set(securities.keys())
     __securities__ = securities
     __security_desc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
