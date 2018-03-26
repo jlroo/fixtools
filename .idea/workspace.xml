@@ -45,8 +45,8 @@
       <file leaf-file-name="book.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+            <state relative-caret-position="-66">
+              <caret line="35" column="0" lean-forward="true" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
               <folding>
                 <element signature="e#108#140#0" expanded="true" />
               </folding>
@@ -422,13 +422,6 @@
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
     </task>
-    <task id="LOCAL-00008" summary="expiration_day function added">
-      <created>1497901552704</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1497901552704</updated>
-    </task>
     <task id="LOCAL-00009" summary="expiration_day function added">
       <created>1497901854665</created>
       <option name="number" value="00009" />
@@ -765,7 +758,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522094827235</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="Version Update v2.0 - Modified API - New data_book function">
+      <created>1522095084603</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1522095084603</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1182,8 +1182,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+        <state relative-caret-position="-66">
+          <caret line="35" column="0" lean-forward="true" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
           <folding>
             <element signature="e#108#140#0" expanded="true" />
           </folding>

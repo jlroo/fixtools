@@ -9,14 +9,8 @@ Created on Wed Apr  5 10:17:23 2017
 import multiprocessing as __mp__
 from collections import defaultdict
 
-__securities__
-__security_desc__
-__contracts__
-__path__
-
 
 def __filter__( line ):
-    global __security_desc__
     valid_contract = [sec if sec in line else None for sec in __security_desc__]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
@@ -24,8 +18,10 @@ def __filter__( line ):
         return security_ids , line
 
 
-def data_filter( data , chunksize ):
+def data_filter( data , contract_ids , chunksize ):
     msgs = defaultdict(list)
+    global __security_desc__
+    __security_desc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
     with __mp__.Pool() as pool:
         filtered = pool.map(__filter__ , data , chunksize)
         for set_ids , line in filter(None , filtered):
@@ -39,9 +35,6 @@ def data_filter( data , chunksize ):
 
 
 def __write__( security_id ):
-    global __contracts__
-    global __securities__
-    global __path__
     sec_desc = __securities__[security_id]
     product = ["opt" if len(sec_desc) < 7 else "fut"][0]
     book_obj = OrderBook(__contracts__[security_id] , security_id , product)
@@ -52,8 +45,6 @@ def __write__( security_id ):
 
 
 def __build__( security_id ):
-    global __contracts__
-    global __securities__
     sec_desc = __securities__[security_id]
     product = ["opt" if len(sec_desc) < 7 else "fut"][0]
     books = []
@@ -67,13 +58,10 @@ def data_book( data , securities , path="" , chunksize=10 ** 4 ):
     global __path__
     global __contracts__
     global __securities__
-    global __security_desc__
     contract_ids = set(securities.keys())
     __securities__ = securities
-    __security_desc__ = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    __contracts__ = data_filter(data , chunksize)
+    __contracts__ = data_filter(data , contract_ids , chunksize)
     if path != "":
-        global __path__
         __path__ = path
         with __mp__.Pool() as pool:
             pool.map(__write__ , contract_ids , chunksize)
