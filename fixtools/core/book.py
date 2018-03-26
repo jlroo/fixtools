@@ -9,6 +9,7 @@ Created on Wed Apr  5 10:17:23 2017
 import multiprocessing as __mp__
 from collections import defaultdict
 
+__contractIDs__ = None
 
 def __filter__( line ):
     global __contractIDs__
