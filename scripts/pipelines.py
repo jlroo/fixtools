@@ -128,11 +128,11 @@ class OrderBooks(luigi.Task):
 
             desc_path = self.data_out + fut_code[2] + "/"
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
-            path = desc_path + filename
+            path_out = desc_path + filename
 
             fx.data_book(data=fixdata.data ,
                          securities=securities ,
-                         path=path ,
+                         path=path_out ,
                          chunksize=self.chunksize)
 
             for sec_desc in securities.values():

@@ -7,15 +7,12 @@ Created on Wed Apr  5 10:17:23 2017
 """
 
 import multiprocessing as __mp__
+from ctypes import c_char_p
 from collections import defaultdict
-
-__contractIDs__ = None
 
 
 def __filter__( line ):
-    global __contractIDs__
-    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in __contractIDs__]
-    valid_contract = [sec if sec in line else None for sec in security_desc]
+    valid_contract = [sec if sec in line else None for sec in __securityDesc__]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
     if b'35=X\x01' in line and any(valid_contract):
@@ -24,8 +21,9 @@ def __filter__( line ):
 
 def data_filter( data , contract_ids , chunksize ):
     msgs = defaultdict(list)
-    global __contractIDs__
-    __contractIDs__ = contract_ids
+    global __securityDesc__
+    array_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+    __securityDesc__ = __mp__.Array(c_char_p , array_desc)
     with __mp__.Pool() as pool:
         filtered = pool.map(__filter__ , data , chunksize)
         for set_ids , line in filter(None , filtered):
@@ -65,10 +63,13 @@ def data_book( data , securities , path="" , chunksize=10 ** 4 ):
     contract_ids = set(securities.keys())
     __securities__ = securities
     __contracts__ = data_filter(data , contract_ids , chunksize)
+    del data
     if path != "":
         __path__ = path
         with __mp__.Pool() as pool:
-            pool.map(__write__ , contract_ids , chunksize)
+            iterator = pool.imap(__write__ , contract_ids , chunksize)
+            for i in range(len(securities)):
+                iterator.next()
     else:
         with __mp__.Pool() as pool:
             books = pool.map(__build__ , contract_ids , chunksize)
