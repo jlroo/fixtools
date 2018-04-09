@@ -26,9 +26,9 @@ def data_filter( data , contract_ids , chunksize ):
     __securityDesc__ = __mp__.Array(c_char_p , array_desc)
     with __mp__.Pool() as pool:
         filtered = pool.map(__filter__ , data , chunksize)
-        for set_ids , line in filter(None , filtered):
-            for security_id in set_ids:
-                msgs[security_id].append(line)
+    for set_ids , line in filter(None , filtered):
+        for security_id in set_ids:
+            msgs[security_id].append(line)
     try:
         data.close()
     except AttributeError:
