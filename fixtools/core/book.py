@@ -7,13 +7,13 @@ Created on Wed Apr  5 10:17:23 2017
 """
 
 import multiprocessing as __mp__
-from ctypes import c_char_p , Structure , c_char , c_int
+from ctypes import Structure , c_char , c_int
 from collections import defaultdict
 
 
-def init_filter( __security_desc__ ):
+def init_filter( __securitydesc__ ):
     global security_desc
-    security_desc = __security_desc__
+    security_desc = __securitydesc__
 
 
 def __filter__( line ):
@@ -26,13 +26,12 @@ def __filter__( line ):
 
 def data_filter( data , contract_ids , chunksize ):
     msgs = defaultdict(list)
-    array_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    security_desc = __mp__.Array(c_char_p , array_desc)
+    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
     with __mp__.Pool(initializer=init_filter , initargs=(security_desc ,)) as pool:
-        filtered = pool.map(__filter__ , data , chunksize)
-    for set_ids , line in filter(None , filtered):
-        for security_id in set_ids:
-            msgs[security_id].append(line)
+        iterator = pool.imap(__filter__ , data , chunksize)
+        for set_ids , line in filter(None , iterator):
+            for security_id in set_ids:
+                msgs[security_id].append(line)
     try:
         data.close()
     except AttributeError:
@@ -78,7 +77,7 @@ class SECURITY(Structure):
 
 
 def __build__( security_id ):
-    sec_desc = [item.value for item in sec_array if item.key == security_id][0]
+    sec_desc = securities[security_id]
     product = ["opt" if len(sec_desc) > 5 else "fut"][0]
     books = []
     book_obj = OrderBook(contracts[security_id] , security_id , product)
@@ -88,7 +87,7 @@ def __build__( security_id ):
 
 
 def __write__( security_id ):
-    sec_desc = [item.value for item in sec_array if item.key == security_id][0]
+    sec_desc = securities[security_id]
     product = ["opt" if len(sec_desc) > 5 else "fut"][0]
     book_obj = OrderBook(contracts[security_id] , security_id , product)
     filename = sec_desc.replace(" " , "-")
@@ -108,21 +107,22 @@ def __dict_array__( securities ):
     return arr
 
 
-def init_data( __contracts__ , __sec_array__ ):
-    global contracts , sec_array
+def init_data( __contracts__ , __securities__ ):
+    global contracts , securities
     contracts = __contracts__
-    sec_array = __sec_array__
+    securities = __securities__
 
 
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
     global __path__
     contract_ids = set(securities.keys())
-    sec_array = __dict_array__(securities)
     contracts = data_filter(data , contract_ids , chunksize)
     if path != "":
         __path__ = path
-        with __mp__.Pool(initializer=init_data , initargs=(contracts , sec_array)) as pool:
-            pool.map(__write__ , contract_ids , chunksize)
+        with __mp__.Pool(initializer=init_data , initargs=(contracts , securities)) as pool:
+            iterator = pool.imap(__write__ , contract_ids , chunksize)
+            for it in range(len(contract_ids)):
+                iterator.next()
     else:
         with __mp__.Pool() as pool:
             books = pool.map(__build__ , contract_ids , chunksize)
