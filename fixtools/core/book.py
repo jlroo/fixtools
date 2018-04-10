@@ -7,37 +7,7 @@ Created on Wed Apr  5 10:17:23 2017
 """
 
 import multiprocessing as __mp__
-from ctypes import Structure , c_char , c_int
 from collections import defaultdict
-
-
-def init_filter( __security_desc__ ):
-    global security_desc
-    security_desc = __security_desc__
-
-
-def __filter__( line ):
-    valid_contract = [sec if sec in line else None for sec in security_desc]
-    set_ids = filter(None , valid_contract)
-    security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
-    if b'35=X\x01' in line and any(valid_contract):
-        return security_ids , line
-
-
-def data_filter( data , contract_ids , chunksize ):
-    msgs = defaultdict(list)
-    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    with __mp__.Pool(initializer=init_filter , initargs=(security_desc ,)) as pool:
-        filtered = pool.map(__filter__ , data , chunksize)
-        try:
-            data.close()
-        except AttributeError:
-            del data
-    for set_ids , line in filter(None , filtered):
-        for security_id in set_ids:
-            msgs[security_id].append(line)
-    return msgs
-
 
 """
 def __build__( security_id ):
@@ -69,6 +39,34 @@ def data_book( data , securities , path="" , chunksize=10 ** 4 ):
         return books
 
 """
+
+
+def init_filter( __security_desc__ ):
+    global security_desc
+    security_desc = __security_desc__
+
+
+def __filter__( line ):
+    valid_contract = [sec if sec in line else None for sec in security_desc]
+    set_ids = filter(None , valid_contract)
+    security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
+    if b'35=X\x01' in line and any(valid_contract):
+        return security_ids , line
+
+
+def data_filter( data , contract_ids , chunksize ):
+    msgs = defaultdict(list)
+    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+    with __mp__.Pool(initializer=init_filter , initargs=(security_desc ,)) as pool:
+        filtered = pool.map(__filter__ , data , chunksize)
+        try:
+            data.close()
+        except AttributeError:
+            del data
+    for set_ids , line in filter(None , filtered):
+        for security_id in set_ids:
+            msgs[security_id].append(line)
+    return msgs
 
 
 def __build__( security_id ):
