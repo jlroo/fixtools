@@ -73,7 +73,7 @@ def __filter__( line ):
         return security_ids , line
 
 
-def data_filter( data , contract_ids , chunksize ):
+def data_filter( data , contract_ids , path , chunksize ):
     msgs = defaultdict(list)
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
     with __mp__.Pool(initializer=init_filter , initargs=(security_desc ,)) as pool:
@@ -85,15 +85,17 @@ def data_filter( data , contract_ids , chunksize ):
     for set_ids , line in filter(None , filtered):
         for security_id in set_ids:
             msgs[security_id].append(line)
+            with open(path + security_id , 'ab+') as secdata:
+                secdata.write(line)
     return msgs
 
 
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
     contract_ids = set(securities.keys())
-    contracts = data_filter(data , contract_ids , chunksize)
+    contracts = data_filter(data , contract_ids , path , chunksize)
     if path != "":
         for security_id in contract_ids:
-            sec_desc = securities[security_id][0]
+            sec_desc = securities[security_id]
             product = ["opt" if len(sec_desc) > 5 else "fut"][0]
             book_obj = OrderBook(contracts[security_id] , security_id , product)
             filename = sec_desc.replace(" " , "-")
