@@ -38,6 +38,25 @@ def data_book( data , securities , path="" , chunksize=10 ** 4 ):
             books = pool.map(__build__ , contract_ids , chunksize)
         return books
 
+
+def __build__( security_id ):
+    sec_desc = [item.value for item in sec_array if item.key == security_id][0]
+    product = ["opt" if len(sec_desc) > 5 else "fut"][0]
+    books = []
+    book_obj = OrderBook(contracts[security_id] , security_id , product)
+    for book in book_obj.build_book():
+        books.append(book)
+    return {security_id: books}
+
+
+def __write__( security_id ):
+    sec_desc = securities[security_id][0]
+    product = ["opt" if len(sec_desc) > 5 else "fut"][0]
+    book_obj = OrderBook(contracts[security_id] , security_id , product)
+    filename = sec_desc.replace(" " , "-")
+    with open(__path__ + filename , 'ab+') as book_out:
+        for book in book_obj.build_book():
+            book_out.write(book)
 """
 
 
@@ -69,44 +88,18 @@ def data_filter( data , contract_ids , chunksize ):
     return msgs
 
 
-def __build__( security_id ):
-    sec_desc = [item.value for item in sec_array if item.key == security_id][0]
-    product = ["opt" if len(sec_desc) > 5 else "fut"][0]
-    books = []
-    book_obj = OrderBook(contracts[security_id] , security_id , product)
-    for book in book_obj.build_book():
-        books.append(book)
-    return {security_id: books}
-
-
-def __write__( security_id ):
-    sec_desc = securities[security_id][0]
-    product = ["opt" if len(sec_desc) > 5 else "fut"][0]
-    book_obj = OrderBook(contracts[security_id] , security_id , product)
-    filename = sec_desc.replace(" " , "-")
-    with open(__path__ + filename , 'ab+') as book_out:
-        for book in book_obj.build_book():
-            book_out.write(book)
-
-
-def init_data( __contracts__ , __securities__ ):
-    global contracts , securities
-    contracts = __contracts__
-    securities = __securities__
-
-
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
-    global __path__
     contract_ids = set(securities.keys())
     contracts = data_filter(data , contract_ids , chunksize)
     if path != "":
-        __path__ = path
-        with __mp__.Pool(initializer=init_data , initargs=(contracts , securities)) as pool:
-            pool.map(__write__ , contract_ids , chunksize)
-    else:
-        with __mp__.Pool() as pool:
-            books = pool.map(__build__ , contract_ids , chunksize)
-        return books
+        for security_id in contract_ids:
+            sec_desc = securities[security_id][0]
+            product = ["opt" if len(sec_desc) > 5 else "fut"][0]
+            book_obj = OrderBook(contracts[security_id] , security_id , product)
+            filename = sec_desc.replace(" " , "-")
+            with open(path + filename , 'ab+') as book_out:
+                for book in book_obj.build_book():
+                    book_out.write(book)
 
 
 class OrderBook:
