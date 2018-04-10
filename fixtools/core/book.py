@@ -85,7 +85,7 @@ def data_filter( data , contract_ids , path , chunksize ):
     for set_ids , line in filter(None , filtered):
         for security_id in set_ids:
             msgs[security_id].append(line)
-            with open(path + security_id , 'ab+') as secdata:
+            with open(path + str(security_id) , 'ab+') as secdata:
                 secdata.write(line)
     return msgs
 
