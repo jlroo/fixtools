@@ -7,12 +7,13 @@ Created on Wed Apr  5 10:17:23 2017
 """
 
 import multiprocessing as __mp__
+from ctypes import c_char_p , Structure , c_char , c_int
 from collections import defaultdict
 
 
-def init_filter( __securitydesc__ ):
+def init_filter( __security_desc__ ):
     global security_desc
-    security_desc = __securitydesc__
+    security_desc = __security_desc__
 
 
 def __filter__( line ):
@@ -25,16 +26,18 @@ def __filter__( line ):
 
 def data_filter( data , contract_ids , chunksize ):
     msgs = defaultdict(list)
-    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+    array_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+    security_desc = __mp__.Array(c_char_p , array_desc)
     with __mp__.Pool(initializer=init_filter , initargs=(security_desc ,)) as pool:
         filtered = pool.map(__filter__ , data , chunksize)
-        for set_ids , line in filter(None , filtered):
-            for security_id in set_ids:
-                msgs[security_id].append(line)
-    try:
-        data.close()
-    except AttributeError:
-        pass
+        try:
+            data.close()
+        except AttributeError:
+            del data
+    for set_ids , line in filter(None , filtered):
+        for security_id in set_ids:
+            msgs[security_id].append(line)
+
     return msgs
 
 
@@ -66,11 +69,17 @@ def data_book( data , securities , path="" , chunksize=10 ** 4 ):
         with __mp__.Pool() as pool:
             books = pool.map(__build__ , contract_ids , chunksize)
         return books
-    
+
+"""
+
+
+class SECURITY(Structure):
+    _fields_ = [("key" , c_int) ,
+                ("value" , c_char)]
 
 
 def __build__( security_id ):
-    sec_desc = securities[security_id]
+    sec_desc = [item.value for item in sec_array if item.key == security_id][0]
     product = ["opt" if len(sec_desc) > 5 else "fut"][0]
     books = []
     book_obj = OrderBook(contracts[security_id] , security_id , product)
@@ -80,7 +89,7 @@ def __build__( security_id ):
 
 
 def __write__( security_id ):
-    sec_desc = securities[security_id]
+    sec_desc = [item.value for item in sec_array if item.key == security_id][0]
     product = ["opt" if len(sec_desc) > 5 else "fut"][0]
     book_obj = OrderBook(contracts[security_id] , security_id , product)
     filename = sec_desc.replace(" " , "-")
@@ -88,21 +97,37 @@ def __write__( security_id ):
         for book in book_obj.build_book():
             book_out.write(book)
 
-"""
+
+def __dict_array__( securities ):
+    data = []
+    for k in securities.keys():
+        secs = SECURITY()
+        secs.key = k
+        secs.value = securities[k].encode()
+        data.append(secs)
+    arr = __mp__.Array(SECURITY , data)
+    return arr
+
+
+def init_data( __contracts__ , __sec_array__ ):
+    global contracts , sec_array
+    contracts = __contracts__
+    sec_array = __sec_array__
 
 
 def data_book( data , securities , path="" , chunksize=10 ** 4 ):
+    global __path__
     contract_ids = set(securities.keys())
+    sec_array = __dict_array__(securities)
     contracts = data_filter(data , contract_ids , chunksize)
     if path != "":
-        for security_id in contract_ids:
-            sec_desc = securities[security_id]
-            product = ["opt" if len(sec_desc) > 5 else "fut"][0]
-            book_obj = OrderBook(contracts[security_id] , security_id , product)
-            filename = sec_desc.replace(" " , "-")
-            with open(path + filename , 'ab+') as book_out:
-                for book in book_obj.build_book():
-                    book_out.write(book)
+        __path__ = path
+        with __mp__.Pool(initializer=init_data , initargs=(contracts , sec_array)) as pool:
+            pool.map(__write__ , contract_ids , chunksize)
+    else:
+        with __mp__.Pool() as pool:
+            books = pool.map(__build__ , contract_ids , chunksize)
+        return books
 
 
 class OrderBook:
