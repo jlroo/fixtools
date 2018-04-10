@@ -136,7 +136,7 @@ class OrderBooks(luigi.Task):
                          chunksize=self.chunksize)
 
             for sec_desc in securities.values():
-                name = path + sec_desc.replace(" ", "-")
+                name = path_out + sec_desc.replace(" " , "-")
                 contracts.write("%s\n" % name)
                 print("[DONE] " + file.strip() + " -- CONTRACT -- " + name)
                 

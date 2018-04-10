@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/pipelines.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="pipelines.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="pipelines.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2470">
-              <caret line="134" column="38" selection-start-line="134" selection-start-column="38" selection-end-line="134" selection-end-column="38" />
+            <state relative-caret-position="695">
+              <caret line="138" column="60" lean-forward="true" selection-start-line="138" selection-start-column="60" selection-end-line="138" selection-end-column="60" />
               <folding>
                 <element signature="e#87#96#0" expanded="true" />
               </folding>
@@ -42,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="book.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="book.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+            <state relative-caret-position="-310">
+              <caret line="14" column="35" lean-forward="true" selection-start-line="14" selection-start-column="35" selection-end-line="14" selection-end-column="35" />
               <folding>
                 <element signature="e#109#141#0" expanded="true" />
               </folding>
@@ -138,9 +138,9 @@
         <option value="$PROJECT_DIR$/fixtools/util/parity.py" />
         <option value="$PROJECT_DIR$/scripts/run.py" />
         <option value="$PROJECT_DIR$/fixtools/__init__.py" />
-        <option value="$PROJECT_DIR$/scripts/pipelines.py" />
         <option value="$PROJECT_DIR$/scripts/debug.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
+        <option value="$PROJECT_DIR$/scripts/pipelines.py" />
       </list>
     </option>
   </component>
@@ -408,27 +408,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00017" summary="refactor pipeline function">
-      <created>1507694982417</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1507694982417</updated>
-    </task>
-    <task id="LOCAL-00018" summary="refactor pipeline function">
-      <created>1507695472829</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1507695472829</updated>
-    </task>
-    <task id="LOCAL-00019" summary="refactor pipeline function">
-      <created>1507695657182</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1507695657182</updated>
     </task>
     <task id="LOCAL-00020" summary="refactor pipeline">
       <created>1507748519162</created>
@@ -752,7 +731,28 @@
       <option name="project" value="LOCAL" />
       <updated>1523330599350</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="Added initializer and global variables">
+      <created>1523369151598</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1523369151598</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Added initializer and global variables">
+      <created>1523369495007</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1523369495007</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Added initializer and global variables">
+      <created>1523369586609</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1523369586610</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TodoView">
@@ -851,7 +851,8 @@
     <MESSAGE value="Version Update v2.0 - Modified API - New data_book function" />
     <MESSAGE value="Added Array() and yield iterator" />
     <MESSAGE value="modified data_book and mp functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified data_book and mp functions" />
+    <MESSAGE value="Added initializer and global variables" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added initializer and global variables" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1144,22 +1145,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
+    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2470">
-          <caret line="134" column="38" selection-start-line="134" selection-start-column="38" selection-end-line="134" selection-end-column="38" />
+        <state relative-caret-position="-310">
+          <caret line="14" column="35" lean-forward="true" selection-start-line="14" selection-start-column="35" selection-end-line="14" selection-end-column="35" />
           <folding>
-            <element signature="e#87#96#0" expanded="true" />
+            <element signature="e#109#141#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+    <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+        <state relative-caret-position="695">
+          <caret line="138" column="60" lean-forward="true" selection-start-line="138" selection-start-column="60" selection-end-line="138" selection-end-column="60" />
           <folding>
-            <element signature="e#109#141#0" expanded="true" />
+            <element signature="e#87#96#0" expanded="true" />
           </folding>
         </state>
       </provider>
