@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/debug.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,26 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="pipelines.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
+      <file leaf-file-name="debug.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/scripts/debug.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="140" column="33" selection-start-line="140" selection-start-column="33" selection-end-line="140" selection-end-column="33" />
-              <folding>
-                <element signature="e#87#96#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="book.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="87" column="29" selection-start-line="87" selection-start-column="29" selection-end-line="87" selection-end-column="29" />
-              <folding>
-                <element signature="e#109#141#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="205">
+              <caret line="75" column="23" selection-start-line="75" selection-start-column="23" selection-end-line="75" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -138,9 +123,9 @@
         <option value="$PROJECT_DIR$/fixtools/util/parity.py" />
         <option value="$PROJECT_DIR$/scripts/run.py" />
         <option value="$PROJECT_DIR$/fixtools/__init__.py" />
-        <option value="$PROJECT_DIR$/scripts/debug.py" />
         <option value="$PROJECT_DIR$/scripts/pipelines.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
+        <option value="$PROJECT_DIR$/scripts/debug.py" />
       </list>
     </option>
   </component>
@@ -150,10 +135,10 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="1920" />
-    <option name="height" value="1177" />
+    <option name="width" value="1440" />
+    <option name="height" value="877" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -407,20 +392,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00022" summary="modified build_books function chunksize">
-      <created>1508212786191</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1508212786191</updated>
-    </task>
-    <task id="LOCAL-00023" summary="build_books function modified - del contracts_msgs">
-      <created>1508213489304</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1508213489304</updated>
     </task>
     <task id="LOCAL-00024" summary="modified parity and fixfast code">
       <created>1513996128659</created>
@@ -751,7 +722,21 @@
       <option name="project" value="LOCAL" />
       <updated>1523371363769</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="data_filter write filtered data out">
+      <created>1523387359229</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1523387359229</updated>
+    </task>
+    <task id="LOCAL-00072" summary="data_filter write filtered data out">
+      <created>1523388453661</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1523388453661</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TodoView">
@@ -764,51 +749,36 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="1177" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="7" />
-      <window_info anchor="bottom" id="Messages" order="9" weight="0.32941177" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50677085" side_tool="true" weight="0.3285068" />
       <window_info anchor="bottom" id="Database Changes" order="16" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="3" weight="0.32941177" />
-      <window_info anchor="bottom" id="Version Control" order="15" sideWeight="0.49322918" weight="0.32819584" />
+      <window_info anchor="bottom" id="Version Control" order="15" sideWeight="0.49322918" weight="0.3285068" />
       <window_info anchor="bottom" id="Python Console" order="13" weight="0.3279503" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.32941177" />
       <window_info anchor="bottom" id="Terminal" order="14" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1015625" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20416667" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="right" id="SciView" order="5" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="right" x="0" y="0" width="310" height="700" id="Documentation" order="0" weight="0.246875" />
       <window_info anchor="bottom" id="Salesforce" order="12" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Debug Logs" order="10" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13541667" />
-      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="3" weight="0.32941177" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" id="Data View" order="6" />
-      <window_info anchor="right" id="SciView" order="5" />
       <window_info anchor="right" id="Commander" order="1" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="7" />
-      <window_info anchor="bottom" id="Version Control" order="15" sideWeight="0.49322918" weight="0.3285068" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.32867783" />
-      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="right" x="0" y="0" width="310" height="700" id="Documentation" order="0" weight="0.246875" />
-      <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="bottom" id="Execute Anonymous" order="11" />
-      <window_info anchor="bottom" id="Terminal" order="14" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50677085" side_tool="true" weight="0.3285068" />
-      <window_info anchor="bottom" id="Database Changes" order="16" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="1" />
-      <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
       <window_info anchor="bottom" id="Messages" order="9" weight="0.32941177" />
-      <window_info anchor="bottom" id="Python Console" order="13" weight="0.3279503" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -853,7 +823,8 @@
     <MESSAGE value="Added initializer and global variables" />
     <MESSAGE value="fixed pipeline path_out variable" />
     <MESSAGE value="modified data_book" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified data_book" />
+    <MESSAGE value="data_filter write filtered data out" />
+    <option name="LAST_COMMIT_MESSAGE" value="data_filter write filtered data out" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -884,9 +855,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
           <caret line="32" column="39" lean-forward="true" selection-start-line="32" selection-start-column="39" selection-end-line="32" selection-end-column="39" />
-          <folding>
-            <element signature="e#109#141#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -904,9 +872,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1026">
           <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
-          <folding>
-            <element signature="e#109#141#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1139,16 +1104,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/debug.py">
+    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-825">
-          <caret line="57" selection-start-line="57" selection-end-line="57" />
+        <state relative-caret-position="496">
+          <caret line="92" column="47" selection-start-line="92" selection-start-column="47" selection-end-line="92" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
+        <state relative-caret-position="433">
           <caret line="140" column="33" selection-start-line="140" selection-start-column="33" selection-end-line="140" selection-end-column="33" />
           <folding>
             <element signature="e#87#96#0" expanded="true" />
@@ -1156,13 +1121,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+    <entry file="file://$PROJECT_DIR$/scripts/debug.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="87" column="29" selection-start-line="87" selection-start-column="29" selection-end-line="87" selection-end-column="29" />
-          <folding>
-            <element signature="e#109#141#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="205">
+          <caret line="75" column="23" selection-start-line="75" selection-start-column="23" selection-end-line="75" selection-end-column="23" />
         </state>
       </provider>
     </entry>
