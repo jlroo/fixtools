@@ -4,92 +4,61 @@ import datetime as __datetime__
 import pandas as __pd__
 import numpy as __np__
 import multiprocessing as __mp__
+from os.path import getsize
 from collections import defaultdict
 from fixtools.util.util import expiration_date,  open_fix
-from fixtools.io.fixfast import FixDict
+from fixtools.io.fixfast import FixDict, files_tree
 
 
-def options_table(path=None,
-                  files=None,
-                  filename=None,
-                  num_orders=1,
-                  chunksize=32000,
-                  path_out=None,
-                  return_table=True):
-    
+def book_table( path=None, 
+                path_out=None, 
+                file_name=None, 
+                product="futures|options", 
+                num_orders=1, 
+                chunksize=38000, 
+                read_ram=True):
+
     if path[-1] != "/":
         path = path + "/"
-        
-    if files:
-        dfs = []
-        for filename in files:
-            fpath = path + filename
-            fixdata = open_fix(fpath, compression=False)
-            fix_dict = FixDict(num_orders)
+    dfs = []
+    for item in iter(file_name):
+        file_path = path + item
+        if getsize(file_path)==0:
+            dfs.append(__pd__.DataFrame())
+        else:
+            fix_dict = FixDict(num_orders = num_orders)
+            fixdata = open_fix(file_path, compression=False)
+            if read_ram:
+                data = fixdata.data.readlines()
+            else:
+                data = fixdata.data
             with __mp__.Pool() as pool:
-                df = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
-            dfs.append(__pd__.DataFrame.from_dict(df))
-        options = __pd__.concat(dfs)
-        options = options.replace('NA' , __np__.nan)
-        if options:
-            return options
-        if path_out:
-            if path_out[-1] != "/":
-                path_out = path_out + "/"
-            fname = path_out + filename[:-5] + "OPTIONS.csv"
-            options.to_csv(fname , index=False)
-
-    elif filename:
-        fpath = path + filename
-        fixdata = open_fix(fpath, compression=False)
-        fix_dict = FixDict(num_orders)
-        with __mp__.Pool() as pool:
-            df = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
-        options = __pd__.DataFrame.from_dict(df)
-        options = options.replace('NA' , __np__.nan)
-        if return_table:
-            return options
-        if path_out:
-            if path_out[-1] != "/":
-                path_out = path_out + "/"
-            fname = path_out + filename[:-5] + "OPTIONS.csv"
-            options.to_csv(fname , index=False)
-
-
-def futures_table(path=None,
-                  filename=None,
-                  num_orders=1,
-                  chunksize=32000,
-                  path_out=None,
-                  return_table=True):
-
-    if path[-1] != "/":
-        path = path + "/"
-
-    fpath = path + filename
-    fixdata = open_fix(fpath, compression=False)
-    fix_dict = FixDict(num_orders)
-    with __mp__.Pool() as pool:
-        futures = pool.map(fix_dict.to_dict, fixdata.data, chunksize=chunksize)
-    futures = __pd__.DataFrame.from_dict(futures)
-    futures = futures.replace('NA',  __np__.nan)
-
+                df = pool.map(fix_dict.to_dict, data, chunksize = chunksize)
+                dfs.append(__pd__.DataFrame.from_dict(df))
+            try:
+                data.close()
+            except AttributeError:
+                pass
+    try:
+        contract_book = __pd__.concat(dfs)
+        contract_book = contract_book.replace('NA' , __np__.nan)
+    except ValueError:
+        contract_book = __pd__.DataFrame()
     if path_out:
         if path_out[-1] != "/":
             path_out = path_out + "/"
-        fname = path_out + filename + ".csv"
-        futures.to_csv(fname,  index=False)
-
-    if return_table:
-        return futures
-
+        if product in "opt|options":
+            file_name = path_out + file_name[0][:-5] + "OPTIONS.csv"
+        elif product in "fut|futures":
+            file_name = path_out + file_name[0] + ".csv"
+        contract_book.to_csv(file_name , index=False)  
+    return contract_book
 
 def __timemap__(item):
     sending_time = item[9]
     date = __datetime__.datetime.strptime(str(sending_time), "%Y%m%d%H%M%S%f")
     ymd = int(str(date)[0:10].replace("-",  ""))
     return ymd, date.hour, sending_time
-
 
 def time_table(futures, options, chunksize=32000):
     with __mp__.Pool() as pool:
@@ -113,11 +82,82 @@ def time_table(futures, options, chunksize=32000):
             grouped["options"][ymd][item[1]].append(item[2])
     return grouped
 
+def search_csv( path = None,
+                path_out = None,
+                df_rates = None,
+                df_futures = None,
+                df_options = None,
+                columns = None,
+                chunksize = 48000):
 
-def search_out(result, 
-               timestamp, 
-               path_out, 
-               ordered=['share_strike', 'put_call',
+    fixfiles = files_tree(path)
+    for key in fixfiles.keys():
+        opt_file = fixfiles[key]['options'][0]
+        options = __pd__.read_csv(path + opt_file)
+        fut_file = fixfiles[key]['futures'][0]
+        futures = __pd__.read_csv(path + fut_file)
+        times = time_table(futures , options , chunksize = chunksize)
+        for date in times['futures'].keys():
+            for hour in times['futures'][date].keys():
+                timestamp = str(times['futures'][date][hour][-1])
+                result = put_call_parity(futures, options, df_rates, timestamp)
+                if not result == {}:
+                    search_out(result , timestamp , path_out , ordered = columns)
+                    print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
+    if df_futures and df_options:
+        times = time_table(df_futures , df_options , chunksize = chunksize)
+        for date in times['futures'].keys():
+            for hour in times['futures'][date].keys():
+                timestamp = str(times['futures'][date][hour][-1])
+                parity_result = put_call_parity(df_futures, df_options, df_rates, timestamp)
+                if not parity_result == {}:
+                    search_out(parity_result , timestamp , path_out , ordered = columns)
+
+def search_fix( path = None, 
+                path_out = None,
+                path_search = None, 
+                df_rates = None,  
+                columns = None,
+                num_orders = 1,
+                chunksize=48000,
+                read_ram = True,
+                parity_check = False):
+
+    fixfiles = files_tree(path)   
+    for key in fixfiles.keys():
+        if key == 29:    
+            opt_files = fixfiles[key]['options']
+            options = book_table(path = path, 
+                                    path_out = path_out, 
+                                    file_name = opt_files, 
+                                    product = "options", 
+                                    num_orders = num_orders,  
+                                    chunksize = chunksize, 
+                                    read_ram = read_ram)            
+            print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
+            fut_file = fixfiles[key]['futures']
+            futures = book_table(path = path, 
+                                    path_out = path_out, 
+                                    file_name = opt_files, 
+                                    product = "futures", 
+                                    num_orders = num_orders,  
+                                    chunksize = chunksize, 
+                                    read_ram = read_ram)            
+            print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
+            if parity_check:
+                if not futures.empty and not options.empty:
+                    search_csv( path_out = path_search, 
+                                df_rates = df_rates,
+                                df_futures = futures, 
+                                df_options = options, 
+                                columns = columns, 
+                                chunksize = chunksize)
+                    print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + " -- PARITY CHECK")
+
+def search_out(result =  None, 
+               timestamp =  None, 
+               path_out = None, 
+               ordered = ['share_strike', 'put_call',
                           'share_pv_strike', 'put_call_diff',
                           'strike_price', 'trade_date',
                           'exp_date', 'exp_days', 'fut_bid_price',
@@ -136,9 +176,10 @@ def search_out(result,
                           'opt_p_sec_id', 'opt_c_sec_id', 
                           'fut_sec_desc', 'opt_p_desc', 
                           'opt_c_desc']):
+
     if path_out[-1] != "/":
         path_out = path_out + "/"
-    fname = path_out + str(timestamp) + ".csv"
+    file_name = path_out + str(timestamp) + ".csv"
     df = []
     for k in result.keys():
         df.append(__pd__.DataFrame.from_dict(result[k],  orient='index'))
@@ -149,8 +190,7 @@ def search_out(result,
     df['fut_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['fut_sending_time']]
     if ordered:
         df = df[ordered]
-    df.to_csv(fname, index=False, quotechar='"')
-
+    df.to_csv(file_name, index=False, quotechar='"')
 
 def __putcall__(item, codes):
     sec_desc = str(item['security_desc'])
@@ -182,7 +222,6 @@ def __putcall__(item, codes):
               "opt_p_offer_level": item['offer_level']}
     return dd
 
-
 def put_call_table(item, codes):
     sec_desc = str(item['security_desc'])
     trade_day = str(item['trade_date'])
@@ -207,7 +246,6 @@ def put_call_table(item, codes):
     for col in columns:
         dd[col] = __np__.nan
     return dd
-
 
 def put_call_query(futures, options, timestamp,
                    month_codes=None, level_limit=1):
@@ -249,7 +287,6 @@ def put_call_query(futures, options, timestamp,
             table[price][level_limit - 1].update(dd)
     del table["fut"]
     return table
-
 
 def put_call_parity(futures, options, 
                     rates_table, timestamp, 

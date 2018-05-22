@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Sun Mar 25 16:44:25 2018
@@ -124,29 +125,32 @@ def data_book( data , securities , path=None , chunksize=32000 ):
         return books
 
 
-path = "E:/analyticslab/2010M/XCME_MD_ES_20100412_20100416.gz"
-# path = "E:/2010M/XCME_MD_ES_20100517_20100521.gz"
-# path = "E:/2010M/XCME_MD_ES_20100531_20100604.gz"
+if __name__ == "__main__":
 
-fixdata = fx.open_fix(path=path)
-dates = fixdata.dates
-year_code = "0"
-securities = fx.liquid_securities(fixdata , year_code=year_code)
+    path = "/run/media/analyticslab/INTEL SSD/analyticslab/2009-data/XCME_MD_ES_20090309_20090313.gz"
+    #path = "E:/analyticslab/2010M/XCME_MD_ES_20100412_20100416.gz"
+    # path = "E:/2010M/XCME_MD_ES_20100517_20100521.gz"
+    # path = "E:/2010M/XCME_MD_ES_20100531_20100604.gz"
 
-opt_code = fx.most_liquid(dates=dates ,
-                          instrument="ES" ,
-                          product="OPT" ,
-                          year_code=year_code)
+    fixdata = fx.open_fix(path=path)
+    dates = fixdata.dates
+    year_code = "9"
+    securities = fx.liquid_securities(fixdata , year_code=year_code)
 
-fut_code = fx.most_liquid(dates=dates ,
-                          instrument="ES" ,
-                          product="FUT" ,
-                          year_code=year_code)
+    opt_code = fx.most_liquid(dates=dates ,
+                            instrument="ES" ,
+                            product="OPT" ,
+                            year_code=year_code)
 
-data_out = "E:/analyticslab/pipeline/2010/"
-desc_path = data_out + fut_code[2] + "/"
-filename = "XCME" + "-" + fut_code[2] + opt_code[2] + "-"
-path_out = desc_path + filename
-chunksize = 38000
+    fut_code = fx.most_liquid(dates=dates ,
+                            instrument="ES" ,
+                            product="FUT" ,
+                            year_code=year_code)
 
-data_book(data=fixdata.data , securities=securities , path=path_out , chunksize=chunksize)
+    data_out = "/run/media/analyticslab/INTEL SSD/analyticslab/2009/"
+    desc_path = data_out + fut_code[2] + "/"
+    filename = "XCME" + "-" + fut_code[2] + opt_code[2] + "-"
+    path_out = desc_path + filename
+    chunksize = 38000
+
+    data_book(data=fixdata.data , securities=securities , path=path_out , chunksize=chunksize)

@@ -95,7 +95,7 @@ class OrderBooks(luigi.Task):
     data_pipe = luigi.Parameter()
     data_year = luigi.Parameter()
     year_code = luigi.Parameter()
-    chunksize = luigi.IntParameter(default=31000)   # 10**5
+    chunksize = luigi.IntParameter(default=32000)
     src_name = luigi.Parameter(default="files.txt")
     filename = luigi.Parameter(default="books.txt")
     data_out = ""
@@ -110,36 +110,29 @@ class OrderBooks(luigi.Task):
         with self.input()[0].open('r') as infile:
             files = sorted(infile.read().splitlines())
         contracts = self.output().open('w')
-
         for k, file in enumerate(files):
             fixdata = fx.open_fix(path=file.strip())
             dates = fixdata.dates
             securities = fx.liquid_securities(fixdata, year_code=self.year_code)
-
             opt_code = fx.most_liquid(dates=dates,
                                       instrument="ES",
                                       product="OPT",
                                       year_code=self.year_code)
-
             fut_code = fx.most_liquid(dates=dates,
                                       instrument="ES",
                                       product="FUT",
                                       year_code=self.year_code)
-
             desc_path = self.data_out + fut_code[2] + "/"
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
             path_out = desc_path + filename
-
             fx.data_book(data=fixdata.data ,
                          securities=securities ,
                          path=path_out ,
                          chunksize=self.chunksize)
-
             for sec_desc in securities.values():
-                name = path + sec_desc.replace(" ", "-")
+                name = path_out + sec_desc.replace(" ", "-")
                 contracts.write("%s\n" % name)
                 print("[DONE] " + file.strip() + " -- CONTRACT -- " + name)
-                
         contracts.close()
 
     def output(self):
