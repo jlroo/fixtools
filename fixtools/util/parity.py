@@ -10,13 +10,13 @@ from fixtools.util.util import expiration_date,  open_fix
 from fixtools.io.fixfast import FixDict, files_tree
 
 
-def book_table( path=None, 
-                path_out=None, 
-                file_name=None, 
-                product="futures|options", 
-                num_orders=1, 
-                chunksize=38000, 
-                read_ram=True):
+def book_table( path = None, 
+                path_out = None, 
+                file_name = None, 
+                product = "futures|options", 
+                num_orders = 1, 
+                chunksize = 38000, 
+                read_ram = True):
 
     if path[-1] != "/":
         path = path + "/"
@@ -119,40 +119,39 @@ def search_fix( path = None,
                 df_rates = None,  
                 columns = None,
                 num_orders = 1,
-                chunksize=48000,
+                chunksize = 48000,
                 read_ram = True,
                 parity_check = False):
 
     fixfiles = files_tree(path)   
     for key in fixfiles.keys():
-        if key == 29:    
-            opt_files = fixfiles[key]['options']
-            options = book_table(path = path, 
-                                    path_out = path_out, 
-                                    file_name = opt_files, 
-                                    product = "options", 
-                                    num_orders = num_orders,  
-                                    chunksize = chunksize, 
-                                    read_ram = read_ram)            
-            print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
-            fut_file = fixfiles[key]['futures']
-            futures = book_table(path = path, 
-                                    path_out = path_out, 
-                                    file_name = opt_files, 
-                                    product = "futures", 
-                                    num_orders = num_orders,  
-                                    chunksize = chunksize, 
-                                    read_ram = read_ram)            
-            print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
-            if parity_check:
-                if not futures.empty and not options.empty:
-                    search_csv( path_out = path_search, 
-                                df_rates = df_rates,
-                                df_futures = futures, 
-                                df_options = options, 
-                                columns = columns, 
-                                chunksize = chunksize)
-                    print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + " -- PARITY CHECK")
+        opt_files = fixfiles[key]['options']
+        options = book_table(path = path, 
+                                path_out = path_out, 
+                                file_name = opt_files, 
+                                product = "options", 
+                                num_orders = num_orders,  
+                                chunksize = chunksize, 
+                                read_ram = read_ram)            
+        print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
+        fut_file = fixfiles[key]['futures']
+        futures = book_table(path = path, 
+                                path_out = path_out, 
+                                file_name = opt_files, 
+                                product = "futures", 
+                                num_orders = num_orders,  
+                                chunksize = chunksize, 
+                                read_ram = read_ram)            
+        print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
+        if parity_check:
+            if not futures.empty and not options.empty:
+                search_csv( path_out = path_search, 
+                            df_rates = df_rates,
+                            df_futures = futures, 
+                            df_options = options, 
+                            columns = columns, 
+                            chunksize = chunksize)
+                print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + " -- PARITY CHECK")
 
 def search_out(result =  None, 
                timestamp =  None, 
@@ -247,8 +246,12 @@ def put_call_table(item, codes):
         dd[col] = __np__.nan
     return dd
 
-def put_call_query(futures, options, timestamp,
-                   month_codes=None, level_limit=1):
+def put_call_query( futures = None,
+                    options = None, 
+                    timestamp = None, 
+                    month_codes = None, 
+                    level_limit = 1):
+
     if month_codes is None:
         month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z"
     month_codes = month_codes.lower()
@@ -288,12 +291,16 @@ def put_call_query(futures, options, timestamp,
     del table["fut"]
     return table
 
-def put_call_parity(futures, options, 
-                    rates_table, timestamp, 
-                    month_codes=None, level_limit=1):
-    table = put_call_query(futures, options, 
-                           timestamp, month_codes, 
-                           level_limit=level_limit)
+def put_call_parity(futures = None,
+                    options = None, 
+                    rates_table = None,
+                    timestamp = None, 
+                    month_codes=None, 
+                    level_limit=1):
+
+    table = put_call_query( futures = futures, options = options, 
+                            timestamp = timestamp, month_codes = month_codes,
+                            level_limit = level_limit)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
     date = __datetime__.datetime(int(timestamp[0:4]), int(timestamp[4:6]), int(timestamp[6:8]))
