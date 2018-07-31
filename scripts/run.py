@@ -14,25 +14,6 @@ import fixtools as fx
 import pandas as pd
 
 
-def search_csv():
-    path = "/data/cme/output/"
-    out_query = "/data/cme/search/"
-    fixfiles = fx.files_tree(path)
-    for key in fixfiles.keys():
-        opt_file = fixfiles[key]['options'][0]
-        options = pd.read_csv(path+opt_file)
-        fut_file = fixfiles[key]['futures'][0]
-        futures = pd.read_csv(path+fut_file)
-        times = fx.time_table(futures, options)
-        for date in times['futures'].keys():
-            for hour in times['futures'][date].keys():
-                timestamp = str(times['futures'][date][hour][-1])
-                result = fx.put_call_query(futures, options, timestamp)
-                if not result == {}:
-                    fx.search_out(result, timestamp, out_query)
-                    print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
-
-
 def put_call_csv():
     path = "/home/jlroo/data/output/"
     out_query = "/home/jlroo/data/parity/"
@@ -54,44 +35,17 @@ def put_call_csv():
         options = pd.read_csv(path+opt_file)
         fut_file = fixfiles[key]['futures'][0]
         futures = pd.read_csv(path+fut_file)
-        times = fx.time_table(futures , options , chunksize=32000)
+        times = fx.time_table(futures=futures , options=options , chunksize=48000)
         for date in times['futures'].keys():
             for hour in times['futures'][date].keys():
                 timestamp = str(times['futures'][date][hour][-1])
-                result = fx.put_call_parity(futures, options, rates_table,timestamp)
+                result = fx.put_call_parity(futures=futures , options=options , rates_table=rates_table ,
+                                            timestamp=timestamp , level_limit=1)
                 if not result == {}:
-                    fx.search_out(result , timestamp , out_query , ordered=columns)
+                    fx.search_out(result=result , timestamp=timestamp , path_out=out_query , ordered=columns)
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
-
-def search_fix():
-    path = "/data/cme/pipeline/2010/H/"
-    out_table = "/data/cme/output/"
-    out_query = "/data/cme/search/"
-    fixfiles = fx.files_tree(path)
-
-    for key in fixfiles.keys():
-
-        opt_files = fixfiles[key]['options']
-        options = fx.options_table(path=path , files=opt_files , filename=None , num_orders=1 , chunksize=32000 ,
-                                   path_out=out_table , return_table=True)
-
-        fut_file = fixfiles[key]['futures'][0]
-        futures = fx.futures_table(path=path , filename=fut_file , num_orders=1 , chunksize=32000 ,
-                                   path_out=out_table , return_table=True)
-
-        times = fx.time_table(futures, options)
-
-        for date in times['futures'].keys():
-            for hour in times['futures'][date].keys():
-                timestamp = str(times['futures'][date][hour][-1])
-                result = fx.put_call_query(futures, options, timestamp)
-                if not result == {}:
-                    fx.search_out(result, timestamp, out_query)
-                    print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
 
 
 if __name__ == "__main__":
-    #search_csv()
-    #search_fix()
-    #put_call_csv()
+    put_call_csv()

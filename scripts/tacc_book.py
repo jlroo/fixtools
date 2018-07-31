@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Wed Apr  5 10:17:23 2017
-
+Created on Fri Jul 20 11:35:00 2018
 @author: jlroo
+
 """
 
 import multiprocessing as __mp__
@@ -30,6 +28,12 @@ def __write__( security_id ):
             book_out.write(book)
 
 
+"""
+Parallel 
+
+"""
+
+
 def __filter__( line ):
     valid_contract = [sec if sec in line else None for sec in __securityDesc__]
     set_ids = filter(None , valid_contract)
@@ -43,10 +47,17 @@ def _set_desc( security_desc ):
     __securityDesc__ = security_desc
 
 
+"""
+Parallel 
+
+"""
+
+
 def data_filter( data , contract_ids , chunksize ):
     msgs = defaultdict(list)
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    with __mp__.Pool(initializer= _set_desc , initargs=(security_desc ,)) as pool:
+    # parallel
+    with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
         filtered = pool.map(__filter__ , data , chunksize)
         for set_ids , line in filter(None , filtered):
             for security_id in set_ids:
@@ -67,11 +78,19 @@ def _set_writes( securities , contracts , path ):
     __securities__ = securities
 
 
+"""
+Parallel 
+
+"""
+
+
 def data_book( data , securities , path=None , chunksize=32000 ):
     contract_ids = set(securities.keys())
+    # parallel filter data
     contracts = data_filter(data , contract_ids , chunksize)
     if path:
-        with __mp__.Pool(initializer= _set_writes , initargs=(securities , contracts , path)) as pool:
+        # parallel build books
+        with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
             pool.map(__write__ , contract_ids , chunksize)
     else:
         with __mp__.Pool() as pool:

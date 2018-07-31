@@ -1,52 +1,16 @@
 """
-Created on Fri Jul 22 17:33:13 2016
+Created on Fri Jul 20 11:35:00 2018
 @author: jlroo
+
 """
 
-import bz2 as __bz2__
-import calendar as __calendar__
 import datetime as __datetime__
-import gzip as __gzip__
-from fixtools.io.fixfast import FixData
+import calendar as __calendar__
 
 
-# 					Def FixData
-#
-# This class returns that number a report of the fix data
-# contracts and volume.
-
-def open_fix(path, period="weekly", compression=True):
-    if period.lower() not in ("weekly", "daily", "monthly"):
-        raise ValueError("Supported time period: weekly or daily")
-    src = {"path": path, "period": period.lower()}
-    if compression is False:
-        if path[-4:].lower in (".zip", ".tar"):
-            raise ValueError("Supported compressions gzip, bz2 or bytes data")
-        else:
-            fixfile = open(path, 'rb')
-    else:
-        if path[-3:] == ".gz":
-            fixfile = __gzip__.open(path, 'rb')
-        elif path[-4:] == ".bz2":
-            fixfile = __bz2__.BZ2File(path, 'rb')
-        else:
-            raise ValueError("Supported files gzip,bz2, uncompress bytes file. \
-            For uncompressed files change compression flag to False.")
-    return FixData(fixfile, src)
-
-
-def data_dates(fixdata, period="weekly"):
-    peek = fixdata.data.peek(1).split(b"\n")[0]
-    day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
-    start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
-    if period == "weekly":
-        dates = [start + __datetime__.timedelta(days=i) for i in range(6)]
-        return dates
-
-
-def settlement_day(date, week_number, day_of_week):
-    weekday = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6}
-    date = __datetime__.datetime(date.year, date.month, date.day)
+def settlement_day( date , week_number , day_of_week ):
+    weekday = {'monday': 0 , 'tuesday': 1 , 'wednesday': 2 , 'thursday': 3 , 'friday': 4 , 'saturday': 5 , 'sunday': 6}
+    date = __datetime__.datetime(date.year , date.month , date.day)
     if date.weekday() == weekday[day_of_week.lower()]:
         if date.day // 7 == (week_number - 1):
             return True
@@ -58,14 +22,14 @@ def expiration_date( year=None , month=None , week=None , day=None ):
         day = "friday"
     weekday = {'monday': 0 , 'tuesday': 1 , 'wednesday': 2 ,
                'thursday': 3 , 'friday': 4 , 'saturday': 5 , 'sunday': 6}
-    weeks = __calendar__.monthcalendar(year, month)
+    weeks = __calendar__.monthcalendar(year , month)
     exp_day = week - 1
     if weeks[0][-1] == 1:
         exp_week = week
     else:
         exp_week = week - 1
     for dd in weeks[exp_week]:
-        date = __datetime__.datetime(year, month, dd)
+        date = __datetime__.datetime(year , month , dd)
         if date.weekday() == weekday[day.lower()]:
             if date.day // 7 == exp_day:
                 return date
@@ -74,12 +38,12 @@ def expiration_date( year=None , month=None , week=None , day=None ):
 def contract_code( month=None , codes=None , cme_codes=None ):
     if not cme_codes:
         codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
-    month_codes = {k[0]: k[1] for k in enumerate(codes.rsplit(","), 1)}
+    month_codes = {k[0]: k[1] for k in enumerate(codes.rsplit(",") , 1)}
     codes_hash = {}
     for index in month_codes:
         if index % 3 == 0:
             codes_hash[index] = (
-                month_codes[index], {index - 2: month_codes[index - 2], index - 1: month_codes[index - 1]})
+                month_codes[index] , {index - 2: month_codes[index - 2] , index - 1: month_codes[index - 1]})
     if month % 3 == 0:
         return codes_hash[month][0]
     if month % 3 == 1:
@@ -88,7 +52,7 @@ def contract_code( month=None , codes=None , cme_codes=None ):
         return codes_hash[month + 1][1][month]
 
 
-def most_liquid( data_line , instrument=None , product=None , code_year=None , cme_codes=True , other_codes="" ):
+def most_liquid( data_line , instrument=None , product=None , code_year=None , cme_codes=True , other_codes=None ):
     day0 = data_line[data_line.find(b'\x0152=') + 4:data_line.find(b'\x0152=') + 12]
     start = __datetime__.datetime(year=int(day0[:4]) , month=int(day0[4:6]) , day=int(day0[6:8]))
     dates = [start + __datetime__.timedelta(days=i) for i in range(6)]
@@ -96,29 +60,29 @@ def most_liquid( data_line , instrument=None , product=None , code_year=None , c
     if not cme_codes:
         codes = other_codes
     sec_code = ""
-    date = __datetime__.datetime(year=dates[0].year, month=dates[0].month, day=dates[0].day)
+    date = __datetime__.datetime(year=dates[0].year , month=dates[0].month , day=dates[0].day)
     exp_week = filter(lambda day: settlement_day(day , 3 , 'friday') , dates)
     expired = True if date.day > 16 else False
     if exp_week is not None or expired:
-        if product.lower() in ("fut", "futures"):
+        if product.lower() in ("fut" , "futures"):
             if date.month % 3 == 0:
-                sec_code = contract_code(date.month + 3, codes)
+                sec_code = contract_code(date.month + 3 , codes)
             if date.month % 3 == 1:
-                sec_code = contract_code(date.month + 2, codes)
+                sec_code = contract_code(date.month + 2 , codes)
             if date.month % 3 == 2:
-                sec_code = contract_code(date.month + 1, codes)
-        if product.lower() in ("opt", "options"):
-            sec_code = contract_code(date.month + 1, codes)
+                sec_code = contract_code(date.month + 1 , codes)
+        if product.lower() in ("opt" , "options"):
+            sec_code = contract_code(date.month + 1 , codes)
     else:
-        if product.lower() in ("fut", "futures"):
+        if product.lower() in ("fut" , "futures"):
             if date.month % 3 == 0:
-                sec_code = contract_code(date.month, codes)
+                sec_code = contract_code(date.month , codes)
             if date.month % 3 == 1:
-                sec_code = contract_code(date.month + 2, codes)
+                sec_code = contract_code(date.month + 2 , codes)
             if date.month % 3 == 2:
-                sec_code = contract_code(date.month + 1, codes)
-        if product.lower() in ("opt", "options"):
-            sec_code = contract_code(date.month, codes)
+                sec_code = contract_code(date.month + 1 , codes)
+        if product.lower() in ("opt" , "options"):
+            sec_code = contract_code(date.month , codes)
     sec_desc = instrument + sec_code + code_year
     return sec_desc
 
@@ -185,10 +149,10 @@ def contracts( description ):
     return securities
 
 
-def liquid_securities( fixdata=None , instrument=None , group_code=None , code_year=None ,
+def liquid_securities( fixdata=None , instrument=None , group_code=None , year_code=None ,
                        products=None , cme_codes=True , max_lines=50000 ):
     if products is None:
-        products = ["FUT", "OPT"]
+        products = ["FUT" , "OPT"]
     if instrument is None:
         instrument = "ES"
     if group_code is None:
@@ -197,9 +161,75 @@ def liquid_securities( fixdata=None , instrument=None , group_code=None , code_y
     securities = contracts(description)
     liquid = {}
     fix_line = fixdata[0].split(b"\n")[0]
-    fut = most_liquid(fix_line , instrument , products[0] , code_year , cme_codes)
-    opt = most_liquid(fix_line , instrument , products[1] , code_year , cme_codes)
+    fut = most_liquid(fix_line , instrument , products[0] , year_code , cme_codes)
+    opt = most_liquid(fix_line , instrument , products[1] , year_code , cme_codes)
     liquid.update(securities[fut][products[0]])
     for price in securities[opt]["PAIRS"].keys():
         liquid.update(securities[opt]['PAIRS'][price])
     return liquid
+
+
+def line_filter( line ):
+    valid_contract = [sec if sec in line else None for sec in security_desc]
+    if b'35=X\x01' in line and any(valid_contract):
+        set_ids = filter(None , valid_contract)
+        security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
+        return security_ids , line
+
+
+if __name__ == "__main__":
+    from pyspark import SparkConf , SparkContext
+    import tacc_utils as tx
+
+    # In Jupyter you have to stop the current context first
+    sc.stop()
+
+    # Create new config
+    conf = (SparkConf()
+            .set("spark.driver.maxResultSize" , "23g"))
+
+    # Create new context
+    sc = SparkContext(conf=conf)
+
+    path = "cme/01/XCME_MD_ES_20100104_20100108"
+    fixfile = sc.textFile(path)
+    data_lines = fixfile.take(10000)
+
+    year_code = '0'
+    opt_code = tx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , year_code=year_code)
+    fut_code = tx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" , year_code=year_code)
+    liquid_secs = tx.liquid_securities(data_lines , year_code='0')
+    contract_ids = set(liquid_secs.keys())
+    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+
+"""    
+    import os
+    path = "/Users/jlroo/space/09-RESEARCH/emini-sp/data/raw/2010/XCME_MD_ES_20100104_20100108"
+    data = []
+    with open(path, 'rb') as file:
+        for cnt, line in enumerate(file):
+            if cnt == 500000:
+                break
+            data.append(line)
+
+    folder = "/Users/jlroo/space/09-RESEARCH/emini-sp/data/raw/"
+    files = os.listdir(folder)
+    for k , file in enumerate(files):
+        data_out = "/Users/jlroo/cme/"
+        year_code = '0'
+        opt_code = most_liquid(data_line=data_line, instrument="ES", product="OPT", year_code=year_code)
+        fut_code = most_liquid(data_line=data_line, instrument="ES", product="FUT", year_code=year_code)
+        liquid_secs = liquid_securities(data_lines, year_code='0')
+        contract_ids = set(liquid_secs.keys())
+        security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+        filtered = data.filter(line_filter)
+        # <!--- spark parallel section --->
+        #
+        # data_book(data=fixdata.data , securities=securities , path=path_out , chunksize=chunksize)
+        #
+        # <!--- spark parallel section -->
+        for sec_desc in liquid_secs.values():
+            name = path_out + sec_desc.replace(" " , "-")
+            print("[DONE]  -- CONTRACT -- " + name)
+
+"""

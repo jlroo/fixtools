@@ -14,10 +14,7 @@ import fixtools as fx
 import pandas as pd
 
 if __name__ == "__main__":
-
-    #path = "/run/media/analyticslab/INTEL SSD/analyticslab/pipeline-2009/2009/M/"
-    #path = "/run/media/analyticslab/INTEL SSD/analyticslab/pipeline-2009/2009/Z/"
-    path = "/run/media/analyticslab/2EB4D45BB4D4275D/cme-data/U/"
+    path = "/run/media/analyticslab/INTEL SSD/analyticslab/pipeline-2009/2009/M/"
     path_out = "/run/media/analyticslab/INTEL SSD/analyticslab/output/"
     path_search = "/run/media/analyticslab/INTEL SSD/analyticslab/parity/"
     rates = "/run/media/analyticslab/INTEL SSD/analyticslab/rates/tbill-rates.csv"

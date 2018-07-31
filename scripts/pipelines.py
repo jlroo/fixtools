@@ -112,6 +112,16 @@ class OrderBooks(luigi.Task):
         contracts = self.output().open('w')
         for k, file in enumerate(files):
             fixdata = fx.open_fix(path=file.strip())
+            data_lines = fixdata.data.readlines(10000)
+            fixdata.data.seek(0)
+            opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" ,
+                                      code_year=self.year_code)
+            fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" ,
+                                      code_year=self.year_code)
+            liquid_secs = fx.liquid_securities(data_lines , code_year=self.year_code)
+            contract_ids = set(liquid_secs.keys())
+
+            """
             dates = fixdata.dates
             securities = fx.liquid_securities(fixdata, year_code=self.year_code)
             opt_code = fx.most_liquid(dates=dates,
@@ -122,14 +132,13 @@ class OrderBooks(luigi.Task):
                                       instrument="ES",
                                       product="FUT",
                                       year_code=self.year_code)
+            """
+
             desc_path = self.data_out + fut_code[2] + "/"
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
             path_out = desc_path + filename
-            fx.data_book(data=fixdata.data ,
-                         securities=securities ,
-                         path=path_out ,
-                         chunksize=self.chunksize)
-            for sec_desc in securities.values():
+            fx.data_book(data=fixdata.data , securities=contract_ids , path=path_out , chunksize=self.chunksize)
+            for sec_desc in liquid_secs:
                 name = path_out + sec_desc.replace(" ", "-")
                 contracts.write("%s\n" % name)
                 print("[DONE] " + file.strip() + " -- CONTRACT -- " + name)
