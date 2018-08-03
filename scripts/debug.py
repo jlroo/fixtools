@@ -88,7 +88,8 @@ if __name__ == "__main__":
     contract_ids = liquid_secs.keys()
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
 
-    contracts = fx.data_filter(fixdata.data , contract_ids , int(args.process) , args.chunksize)
+    contracts = fx.data_filter(fixdata.data , contract_ids , int(args.process) , int(args.chunksize))
+
     manager = Manager().dict(contracts)
 
     # pool = ThreadPool()
