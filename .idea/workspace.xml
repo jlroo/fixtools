@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="refactor util.py, modified most_liquid, contract_code, contracts">
-      <change afterPath="$PROJECT_DIR$/scripts/run-book.py" afterDir="false" />
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="update utils file from fixdata to data_line">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/util/util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/tacc_book.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run-spark.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/tacc_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run-book.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run-book.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -42,27 +38,27 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="md" value="1" />
-          <entry key="py" value="27" />
+          <entry key="py" value="29" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Markdown" value="1" />
-          <entry key="Python" value="27" />
+          <entry key="Python" value="29" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="15" />
-          <entry key="py" value="319" />
-          <entry key="txt" value="98" />
+          <entry key="py" value="425" />
+          <entry key="txt" value="206" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="113" />
-          <entry key="Python" value="319" />
+          <entry key="PLAIN_TEXT" value="221" />
+          <entry key="Python" value="425" />
         </counts>
       </usages-collector>
     </session>
@@ -73,10 +69,19 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/run-spark.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3591">
+              <caret line="189" column="25" selection-start-line="189" selection-start-column="25" selection-end-line="189" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="139" column="35" selection-start-line="139" selection-start-column="35" selection-end-line="139" selection-end-column="35" />
+            <state relative-caret-position="407">
+              <caret line="139" column="111" lean-forward="true" selection-start-line="139" selection-start-column="87" selection-end-line="139" selection-end-column="111" />
               <folding>
                 <element signature="e#87#96#0" expanded="true" />
               </folding>
@@ -99,11 +104,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/run-book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="608">
-              <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
+            <state relative-caret-position="588">
+              <caret line="31" column="46" lean-forward="true" selection-start-line="31" selection-start-column="46" selection-end-line="31" selection-end-column="46" />
               <folding>
                 <element signature="e#109#130#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="365">
+              <caret line="190" column="24" lean-forward="true" selection-start-line="190" selection-start-column="24" selection-end-line="190" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -215,9 +229,9 @@
         <option value="$PROJECT_DIR$/scripts/tacc_book.py" />
         <option value="$PROJECT_DIR$/scripts/tacc_utils.py" />
         <option value="$PROJECT_DIR$/scripts/pipelines.py" />
-        <option value="$PROJECT_DIR$/fixtools/util/util.py" />
         <option value="$PROJECT_DIR$/scripts/run-spark.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
+        <option value="$PROJECT_DIR$/fixtools/util/util.py" />
         <option value="$PROJECT_DIR$/scripts/run-book.py" />
       </list>
     </option>
@@ -395,20 +409,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00026" summary="modified parity and fixfast code">
-      <created>1513998901320</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1513998901320</updated>
-    </task>
-    <task id="LOCAL-00027" summary="refactor parity,fixfast,utility added classes and better performance">
-      <created>1515700837112</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1515700837112</updated>
     </task>
     <task id="LOCAL-00028" summary="fixed time_table function">
       <created>1515814490640</created>
@@ -739,7 +739,21 @@
       <option name="project" value="LOCAL" />
       <updated>1533000713044</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="added run-book.py run single book">
+      <created>1533262332976</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1533262332977</updated>
+    </task>
+    <task id="LOCAL-00076" summary="update utils file from fixdata to data_line">
+      <created>1533264716586</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1533264716586</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="TodoView">
@@ -831,8 +845,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Orderbook class added" />
-    <MESSAGE value="Options build_books function added" />
     <MESSAGE value="refactoring, fixfast module added" />
     <MESSAGE value="expiration_day function added" />
     <MESSAGE value="added separated build_books functions" />
@@ -856,7 +868,9 @@
     <MESSAGE value="modified data_book" />
     <MESSAGE value="data_filter write filtered data out" />
     <MESSAGE value="refactor util.py, modified most_liquid, contract_code, contracts" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor util.py, modified most_liquid, contract_code, contracts" />
+    <MESSAGE value="added run-book.py run single book" />
+    <MESSAGE value="update utils file from fixdata to data_line" />
+    <option name="LAST_COMMIT_MESSAGE" value="update utils file from fixdata to data_line" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -960,13 +974,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="167" column="22" selection-start-line="167" selection-start-column="22" selection-end-line="167" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/book-search.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-182">
@@ -991,13 +998,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run-spark.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="189" column="25" selection-start-line="189" selection-start-column="25" selection-end-line="189" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="266">
@@ -1017,18 +1017,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="139" column="35" selection-start-line="139" selection-start-column="35" selection-end-line="139" selection-end-column="35" />
+        <state relative-caret-position="407">
+          <caret line="139" column="111" lean-forward="true" selection-start-line="139" selection-start-column="87" selection-end-line="139" selection-end-column="111" />
           <folding>
             <element signature="e#87#96#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/run-spark.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3591">
+          <caret line="189" column="25" selection-start-line="189" selection-start-column="25" selection-end-line="189" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="365">
+          <caret line="190" column="24" lean-forward="true" selection-start-line="190" selection-start-column="24" selection-end-line="190" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
+        <state relative-caret-position="588">
+          <caret line="31" column="46" lean-forward="true" selection-start-line="31" selection-start-column="46" selection-end-line="31" selection-end-column="46" />
           <folding>
             <element signature="e#109#130#0" expanded="true" />
           </folding>

@@ -16,7 +16,8 @@ def main():
     parser.add_argument('--file' , dest='file_path' , help='Fix data file input')
     parser.add_argument('--year_code' , dest='year_code' , help='Fix data year code')
     parser.add_argument('--data_out' , dest='data_out' , help='Fix books path out')
-    parser.add_argument('--compression' , default=False , type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument('--compression' , dest='compression' , default=False ,
+                        type=lambda x: (str(x).lower() == 'true') , help='True/False flag compression')
     parser.add_argument('--chunksize' , dest='chunksize' , help='Data chunksize')
 
     args = parser.parse_args()
