@@ -8,6 +8,7 @@ Created on Sun Mar 25 16:44:25 2018
 
 import fixtools as fx
 import multiprocessing as __mp__
+import time
 
 
 def set_secdesc( security_desc ):
@@ -28,7 +29,7 @@ def line_map( line ):
     set_ids = filter(None , valid_contract)
     security_ids = [int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids]
     if any(valid_contract):
-        pairs = [(id , line) for id in security_ids]
+        pairs = {secid: line for secid in security_ids}
         return pairs
 
 if __name__ == "__main__":
@@ -49,6 +50,15 @@ if __name__ == "__main__":
     ## 1MB L2 per core; 33MB L3 per socket.
     ## Each socket can cache up to 57MB (sum of L2 and L3 capacity).
 
+    ## KNL Compute Node
+    ## 68 cores on a single socket
+    ## Cache: 	32KB L1 data cache per core;
+    ## 1MB L2 per two-core tile.
+    ## MCDRAM operates as 16GB direct-mapped L3.
+
+    start = time.time()
     pool = __mp__.Pool(processes=24 , initializer=set_secdesc , initargs=(security_desc ,))
-    result = pool.map(line_filter , fixdata.data , 32000)
+    result = pool.map(line_map , fixdata.data , 1000)
     pool.close()
+    end = time.time()
+    print("Total time:" , str(end - start))

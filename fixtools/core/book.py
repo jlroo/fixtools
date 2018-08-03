@@ -63,18 +63,6 @@ def data_filter( data , contract_ids , chunksize ):
                 msgs[security_id].append(line)
         pool.close()
         pool.terminate()
-
-        """
-        from contextlib import closing
-        with closing(__mp__.Pool(initializer=_set_desc , initargs=(security_desc ,))) as pool:
-            filtered = pool.map(__filter__ , data , chunksize)
-            for set_ids , line in filter(None , filtered):
-                for security_id in set_ids:
-                    msgs[security_id].append(line)
-            pool.close()
-            pool.join()
-            pool.terminate()
-        """
     try:
         data.close()
     except AttributeError:
