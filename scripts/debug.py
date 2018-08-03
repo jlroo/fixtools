@@ -9,6 +9,7 @@ Created on Sun Mar 25 16:44:25 2018
 import fixtools as fx
 from fixtools import OrderBook
 import multiprocessing as __mp__
+from multiprocessing import Manager
 import time
 from multiprocessing.pool import ThreadPool
 import argparse
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_out' , dest='data_out' , help='Fix books path out')
     parser.add_argument('--compression' , dest='compression' , help='Compression (False default)')
     parser.add_argument('--process' , dest='process' , help='Number of threads')
-    parser.add_argument('--book_process' , dest='process' , help='Number of threads')
+    parser.add_argument('--book_process' , dest='book_process' , help='Number of threads')
     parser.add_argument('--chunksize' , dest='chunksize' , help='Data chunksize')
     parser.add_argument('--line_filter' , dest='func_parallel' , action='store_const' ,
                         const=line_filter , help='Function to return a tuple (security_ids,line)')
@@ -87,12 +88,13 @@ if __name__ == "__main__":
     contract_ids = liquid_secs.keys()
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
 
-    contracts = fx.data_filter(fixdata.data , contract_ids , args.process , args.chunksize)
+    contracts = fx.data_filter(fixdata.data , contract_ids , int(args.process) , args.chunksize)
+    manager = Manager().dict(contracts)
 
     # pool = ThreadPool()
 
     pool = __mp__.Pool(processes=int(args.book_process) , initializer=_set_writes ,
-                       initargs=(liquid_secs , contracts , args.path_out))
+                       initargs=(liquid_secs , manager , args.path_out))
     pool.map(__write__ , contract_ids)
     pool.close()
 
