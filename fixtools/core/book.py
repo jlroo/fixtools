@@ -62,7 +62,6 @@ def data_filter( data , contract_ids , chunksize ):
             for security_id in set_ids:
                 msgs[security_id].append(line)
         pool.close()
-        pool.join()
         pool.terminate()
 
         """
@@ -109,7 +108,6 @@ def data_book( data=None , securities=None , path=None , chunksize=32000 ):
             pool = __mp__.Pool()
             pool.map(__write__ , contract_ids , chunksize)
             pool.close()
-            pool.join()
             pool.terminate()
             """
             from contextlib import closing
