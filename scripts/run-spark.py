@@ -4,101 +4,10 @@ Created on Fri Jul 20 11:35:00 2018
 
 """
 
-import multiprocessing as __mp__
-from collections import defaultdict
+import fixtools as fx
 
 
-def __build__( security_id ):
-    sec_desc = __securities__[security_id]
-    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
-    books = []
-    book_obj = OrderBook(__contracts__[security_id] , security_id , product)
-    for book in book_obj.build_book():
-        books.append(book)
-    return {security_id: books}
-
-
-def __write__( security_id ):
-    sec_desc = __securities__[security_id]
-    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
-    book_obj = OrderBook(__contracts__[security_id] , security_id , product)
-    filename = __securities__[security_id].replace(" " , "-")
-    with open(__path__ + filename , 'ab+') as book_out:
-        for book in book_obj.build_book():
-            book_out.write(book)
-
-
-"""
-Parallel 
-
-"""
-
-
-def __filter__( line ):
-    valid_contract = [sec if sec in line else None for sec in __securityDesc__]
-    set_ids = filter(None , valid_contract)
-    security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
-    if b'35=X\x01' in line and any(valid_contract):
-        return security_ids , line
-
-
-def _set_desc( security_desc ):
-    global __securityDesc__
-    __securityDesc__ = security_desc
-
-
-"""
-Parallel 
-
-"""
-
-
-def data_filter( data , contract_ids , chunksize ):
-    msgs = defaultdict(list)
-    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    # parallel
-    with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
-        filtered = pool.map(__filter__ , data , chunksize)
-        for set_ids , line in filter(None , filtered):
-            for security_id in set_ids:
-                msgs[security_id].append(line)
-    try:
-        data.close()
-    except AttributeError:
-        pass
-    return msgs
-
-
-def _set_writes( securities , contracts , path ):
-    global __path__
-    __path__ = path
-    global __contracts__
-    __contracts__ = contracts
-    global __securities__
-    __securities__ = securities
-
-
-"""
-Parallel 
-
-"""
-
-
-def data_book( data , securities , path=None , chunksize=32000 ):
-    contract_ids = set(securities.keys())
-    # parallel filter data
-    contracts = data_filter(data , contract_ids , chunksize)
-    if path:
-        # parallel build books
-        with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
-            pool.map(__write__ , contract_ids , chunksize)
-    else:
-        with __mp__.Pool() as pool:
-            books = pool.map(__build__ , contract_ids , chunksize)
-        return books
-
-
-class OrderBook:
+class orderBook:
     book = b''
     top_order = 0
     sec_desc_id = b''
@@ -127,7 +36,8 @@ class OrderBook:
             temp = temp.replace(b'\x01269=0' , b'\x01269=1')
             prev_body = prev_body + [temp + str(i).encode() for i in range(1 , 11)]
 
-        msg = next(filter(open_msg , self.data) , None)
+        # msg = next(filter(open_msg , self.data) , None)
+        msg = next(iter(filter(open_msg , self.data)) , None)
 
         if msg is not None:
             book_header = msg.split(b'\x01279')[0]
@@ -234,3 +144,59 @@ class OrderBook:
             except StopIteration:
                 continue
         return bids , offers
+
+
+def line_filter( line ):
+    valid_contract = [sec if sec in line else None for sec in security_desc]
+    set_ids = filter(None , valid_contract)
+    if b'35=X\x01' in line and any(valid_contract):
+        return line
+
+
+def line_map( line ):
+    valid_contract = [sec if sec in line else None for sec in security_desc]
+    set_ids = filter(None , valid_contract)
+    security_ids = [int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids]
+    if any(valid_contract):
+        pairs = [(id , line) for id in security_ids]
+        return pairs
+
+
+def create_books( security_id ):
+    books = []
+    sec_desc = liquid_secs[security_id]
+    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+    book_obj = orderBook(data[security_id] , security_id , product)
+    for book in book_obj.build_book():
+        books.append(book)
+    blob = "\n".join([item for item in books])
+    return (security_id , blob)
+
+
+path = "hdfs:///user/jlroo/cme/01/XCME_MD_ES_20091207_2009121"
+fixfile = sc.textFile(path)
+year_code = '0'
+data_line = fixfile.take(1)
+data_lines = fixfile.take(10000)
+opt_code = fx.most_liquid(data_line=data_line[0] , instrument="ES" , product="OPT" , code_year=year_code)
+fut_code = fx.most_liquid(data_line=data_line[0] , instrument="ES" , product="FUT" , code_year=year_code)
+liquid_secs = fx.liquid_securities(data_lines , code_year=year_code)
+contract_ids = liquid_secs.keys()
+security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+
+filtered = fixfile.filter(line_filter)
+pairs = filtered.flatMap(line_map)
+
+fixdata = pairs.toDF(["security_id" , "fixline"])
+
+data = {}
+
+for secid in contract_ids:
+    data[secid] = fixdata.filter(fixdata.security_id.like(str(secid))).rdd.map(lambda x: x.fixline).collect()
+
+contracts_map = sc.parallelize(contract_ids)
+books_map = contracts_map.map(create_books)
+
+result = books_map.toDF(["contract" , "books"])
+
+result.write.partitionBy("contract").text("books")

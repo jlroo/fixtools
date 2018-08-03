@@ -88,12 +88,13 @@ def contract_code( month=None , codes=None , cme_codes=None ):
         return codes_hash[month + 1][1][month]
 
 
-def most_liquid( data_line , instrument=None , product=None , code_year=None , cme_codes=True , other_codes="" ):
+def most_liquid( data_line , instrument=None , product=None , code_year=None , cme_codes=None , other_codes=None ):
     day0 = data_line[data_line.find(b'\x0152=') + 4:data_line.find(b'\x0152=') + 12]
     start = __datetime__.datetime(year=int(day0[:4]) , month=int(day0[4:6]) , day=int(day0[6:8]))
     dates = [start + __datetime__.timedelta(days=i) for i in range(6)]
-    codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
-    if not cme_codes:
+    if cme_codes:
+        codes = "F,G,H,J,K,M,N,Q,U,V,X,Z,F,G,H,J,K,M,N,Q,U,V,X,Z"
+    else:
         codes = other_codes
     sec_code = ""
     date = __datetime__.datetime(year=dates[0].year, month=dates[0].month, day=dates[0].day)
@@ -185,8 +186,8 @@ def contracts( description ):
     return securities
 
 
-def liquid_securities( fixdata=None , instrument=None , group_code=None , code_year=None ,
-                       products=None , cme_codes=True , max_lines=50000 ):
+def liquid_securities( fixdata=None , instrument=None , group_code=None , code_year=None , products=None ,
+                       cme_codes=True , max_lines=50000 ):
     if products is None:
         products = ["FUT", "OPT"]
     if instrument is None:

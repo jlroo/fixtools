@@ -67,11 +67,11 @@ def _set_writes( securities , contracts , path ):
     __securities__ = securities
 
 
-def data_book( data , securities , path=None , chunksize=32000 ):
+def data_book( data=None , securities=None , path=None , chunksize=32000 ):
     contract_ids = set(securities.keys())
     contracts = data_filter(data , contract_ids , chunksize)
     if path:
-        with __mp__.Pool(initializer= _set_writes , initargs=(securities , contracts , path)) as pool:
+        with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
             pool.map(__write__ , contract_ids , chunksize)
     else:
         with __mp__.Pool() as pool:
