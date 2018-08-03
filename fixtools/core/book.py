@@ -54,7 +54,9 @@ def data_filter( data , contract_ids , chunksize ):
                 for security_id in set_ids:
                     msgs[security_id].append(line)
     else:
-        pool = __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,))
+        global __securityDesc__
+        __securityDesc__ = security_desc
+        pool = __mp__.Pool()
         filtered = pool.map(__filter__ , data , chunksize)
         for set_ids , line in filter(None , filtered):
             for security_id in set_ids:
@@ -98,7 +100,13 @@ def data_book( data=None , securities=None , path=None , chunksize=32000 ):
             with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
                 pool.map(__write__ , contract_ids , chunksize)
         else:
-            pool = __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path))
+            global __path__
+            __path__ = path
+            global __contracts__
+            __contracts__ = contracts
+            global __securities__
+            __securities__ = securities
+            pool = __mp__.Pool()
             pool.map(__write__ , contract_ids , chunksize)
             pool.close()
             pool.join()
@@ -110,7 +118,6 @@ def data_book( data=None , securities=None , path=None , chunksize=32000 ):
                 pool.close()
                 pool.terminate()
             """
-
     else:
         if sys.version_info[0] > 3.2:
             with __mp__.Pool() as pool:

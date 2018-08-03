@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified book.py added support for python &lt; 3.3 for multiprocessing library">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="added pool.closed(), pool.join() and terminate">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -49,15 +50,15 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="15" />
-          <entry key="py" value="497" />
-          <entry key="txt" value="331" />
+          <entry key="py" value="539" />
+          <entry key="txt" value="385" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="346" />
-          <entry key="Python" value="497" />
+          <entry key="PLAIN_TEXT" value="400" />
+          <entry key="Python" value="539" />
         </counts>
       </usages-collector>
     </session>
@@ -94,8 +95,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="658">
-              <caret line="101" lean-forward="true" selection-start-line="101" selection-end-line="101" />
+            <state relative-caret-position="579">
+              <caret line="58" column="28" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
               <folding>
                 <element signature="e#108#140#0" expanded="true" />
               </folding>
@@ -384,20 +385,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00032" summary="Version Update v2.0 - Modified API - New DataBook class">
-      <created>1519690246585</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1519690246585</updated>
-    </task>
-    <task id="LOCAL-00033" summary="Version Update v2.0 - Modified API - New DataBook class">
-      <created>1519691252753</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1519691252753</updated>
     </task>
     <task id="LOCAL-00034" summary="Version Update v2.0 - Modified API - New DataBook class">
       <created>1519691867626</created>
@@ -728,7 +715,21 @@
       <option name="project" value="LOCAL" />
       <updated>1533266303515</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="added pool.closed() to mp">
+      <created>1533266706217</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1533266706217</updated>
+    </task>
+    <task id="LOCAL-00082" summary="added pool.closed(), pool.join() and terminate">
+      <created>1533267060388</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1533267060388</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="TodoView">
@@ -820,8 +821,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="added separated build_books functions" />
-    <MESSAGE value="commands to process one week of data" />
     <MESSAGE value="refactor pipeline function" />
     <MESSAGE value="refactor pipeline" />
     <MESSAGE value="modified build_books function, added data_dates function" />
@@ -845,7 +844,9 @@
     <MESSAGE value="update utils file from fixdata to data_line" />
     <MESSAGE value="modified fixfast FixData class from peek to readline" />
     <MESSAGE value="modified book.py added support for python &lt; 3.3 for multiprocessing library" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified book.py added support for python &lt; 3.3 for multiprocessing library" />
+    <MESSAGE value="added pool.closed() to mp" />
+    <MESSAGE value="added pool.closed(), pool.join() and terminate" />
+    <option name="LAST_COMMIT_MESSAGE" value="added pool.closed(), pool.join() and terminate" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1016,8 +1017,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
-          <caret line="101" lean-forward="true" selection-start-line="101" selection-end-line="101" />
+        <state relative-caret-position="579">
+          <caret line="58" column="28" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
           <folding>
             <element signature="e#108#140#0" expanded="true" />
           </folding>
