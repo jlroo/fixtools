@@ -95,7 +95,9 @@ class OrderBooks(luigi.Task):
     data_pipe = luigi.Parameter()
     data_year = luigi.Parameter()
     year_code = luigi.Parameter()
-    chunksize = luigi.IntParameter(default=32000)
+    processes = luigi.Parameter()
+    compression = luigi.BooleanParameter(default=False)
+    chunksize = luigi.IntParameter(default=32)
     src_name = luigi.Parameter(default="files.txt")
     filename = luigi.Parameter(default="books.txt")
     data_out = ""
@@ -106,12 +108,13 @@ class OrderBooks(luigi.Task):
         return [FixFiles(self.data_pipe + files)]
 
     def run(self):
+
         self.data_out = self.data_pipe + self.data_year + "/"
         with self.input()[0].open('r') as infile:
             files = sorted(infile.read().splitlines())
         contracts = self.output().open('w')
         for k, file in enumerate(files):
-            fixdata = fx.open_fix(path=file.strip())
+            fixdata = fx.open_fix(path=file.strip() , compression=self.compression)
             data_lines = fixdata.data.readlines(10000)
             fixdata.data.seek(0)
             opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" ,
@@ -119,25 +122,11 @@ class OrderBooks(luigi.Task):
             fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" ,
                                       code_year=self.year_code)
             liquid_secs = fx.liquid_securities(data_lines , code_year=self.year_code)
-            contract_ids = set(liquid_secs.keys())
-
-            """
-            dates = fixdata.dates
-            securities = fx.liquid_securities(fixdata, year_code=self.year_code)
-            opt_code = fx.most_liquid(dates=dates,
-                                      instrument="ES",
-                                      product="OPT",
-                                      year_code=self.year_code)
-            fut_code = fx.most_liquid(dates=dates,
-                                      instrument="ES",
-                                      product="FUT",
-                                      year_code=self.year_code)
-            """
-
             desc_path = self.data_out + fut_code[2] + "/"
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
             path_out = desc_path + filename
-            fx.data_book(data=fixdata.data , securities=contract_ids , path=path_out , chunksize=self.chunksize)
+            fx.data_book(data=fixdata.data , securities=liquid_secs , path=path_out ,
+                         processes=self.processes , chunksize=self.chunksize)
             for sec_desc in liquid_secs:
                 name = path_out + sec_desc.replace(" ", "-")
                 contracts.write("%s\n" % name)

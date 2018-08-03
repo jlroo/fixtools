@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="changed book.py file for python 2.7 multiprocessing">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified debug.py file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/debug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/pipelines.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,28 +39,28 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="md" value="1" />
-          <entry key="py" value="41" />
+          <entry key="py" value="43" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Markdown" value="1" />
-          <entry key="Python" value="41" />
+          <entry key="Python" value="43" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="15" />
-          <entry key="py" value="1619" />
-          <entry key="txt" value="594" />
+          <entry key="py" value="1796" />
+          <entry key="txt" value="620" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="609" />
-          <entry key="Python" value="1775" />
+          <entry key="PLAIN_TEXT" value="635" />
+          <entry key="Python" value="1952" />
         </counts>
       </usages-collector>
     </session>
@@ -69,11 +70,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="407">
-              <caret line="139" column="111" lean-forward="true" selection-start-line="139" selection-start-column="87" selection-end-line="139" selection-end-column="111" />
+            <state relative-caret-position="504">
+              <caret line="128" column="76" selection-start-line="128" selection-start-column="76" selection-end-line="128" selection-end-column="76" />
               <folding>
                 <element signature="e#87#96#0" expanded="true" />
               </folding>
@@ -84,8 +85,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1748">
-              <caret line="92" column="87" selection-start-line="92" selection-start-column="78" selection-end-line="92" selection-end-column="87" />
+            <state relative-caret-position="367">
+              <caret line="87" column="69" selection-start-line="87" selection-start-column="67" selection-end-line="87" selection-end-column="69" />
               <folding>
                 <element signature="e#108#140#0" expanded="true" />
               </folding>
@@ -94,36 +95,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
-              <folding>
-                <element signature="e#60#81#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/debug.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="677">
-              <caret line="100" column="56" lean-forward="true" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
+            <state relative-caret-position="-471">
+              <caret line="42" selection-start-line="42" selection-end-line="43" selection-end-column="80" />
               <folding>
                 <element signature="e#119#140#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/run-book.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
-              <folding>
-                <element signature="e#272#293#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -221,14 +198,14 @@
         <option value="$PROJECT_DIR$/scripts/tacc.book.py" />
         <option value="$PROJECT_DIR$/scripts/tacc_book.py" />
         <option value="$PROJECT_DIR$/scripts/tacc_utils.py" />
-        <option value="$PROJECT_DIR$/scripts/pipelines.py" />
         <option value="$PROJECT_DIR$/scripts/run-spark.py" />
         <option value="$PROJECT_DIR$/fixtools/util/util.py" />
         <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
         <option value="$PROJECT_DIR$/scripts/run-mpi.py" />
         <option value="$PROJECT_DIR$/scripts/run-book.py" />
-        <option value="$PROJECT_DIR$/fixtools/core/book.py" />
         <option value="$PROJECT_DIR$/scripts/debug.py" />
+        <option value="$PROJECT_DIR$/fixtools/core/book.py" />
+        <option value="$PROJECT_DIR$/scripts/pipelines.py" />
       </list>
     </option>
   </component>
@@ -411,20 +388,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00040" summary="Version Update v2.0 - Modified API - New DataBook class">
-      <created>1519703840840</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1519703840840</updated>
-    </task>
-    <task id="LOCAL-00041" summary="Version Update v2.0 - Modified API - New DataBook class">
-      <created>1519703846535</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1519703846535</updated>
     </task>
     <task id="LOCAL-00042" summary="Version Update v2.0 - Modified API - New DataBook class">
       <created>1519704581183</created>
@@ -755,7 +718,21 @@
       <option name="project" value="LOCAL" />
       <updated>1533314020244</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="changed book.py file for python 2.7 multiprocessing">
+      <created>1533321428855</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1533321428855</updated>
+    </task>
+    <task id="LOCAL-00090" summary="modified debug.py file">
+      <created>1533321516404</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1533321516404</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TodoView">
@@ -771,7 +748,7 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15593705" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15593705" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
@@ -847,7 +824,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="refactor parity,fixfast,utility added classes and better performance" />
     <MESSAGE value="fixed time_table function" />
     <MESSAGE value="added put_call_search function" />
     <MESSAGE value="modified error on put_call_parity function" />
@@ -872,7 +848,8 @@
     <MESSAGE value="update debug file for" />
     <MESSAGE value="added iter to opening book function. Also to functions in debug file" />
     <MESSAGE value="changed book.py file for python 2.7 multiprocessing" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed book.py file for python 2.7 multiprocessing" />
+    <MESSAGE value="modified debug.py file" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified debug.py file" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1017,12 +994,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
+    <entry file="file://$PROJECT_DIR$/scripts/run-book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
-          <caret line="139" column="111" lean-forward="true" selection-start-line="139" selection-start-column="87" selection-end-line="139" selection-end-column="111" />
+        <state relative-caret-position="216">
+          <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
           <folding>
-            <element signature="e#87#96#0" expanded="true" />
+            <element signature="e#272#293#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1037,32 +1014,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run-book.py">
+    <entry file="file://$PROJECT_DIR$/scripts/debug.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
+        <state relative-caret-position="-471">
+          <caret line="42" selection-start-line="42" selection-end-line="43" selection-end-column="80" />
           <folding>
-            <element signature="e#272#293#0" expanded="true" />
+            <element signature="e#119#140#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1748">
-          <caret line="92" column="87" selection-start-line="92" selection-start-column="78" selection-end-line="92" selection-end-column="87" />
+        <state relative-caret-position="367">
+          <caret line="87" column="69" selection-start-line="87" selection-start-column="67" selection-end-line="87" selection-end-column="69" />
           <folding>
             <element signature="e#108#140#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/debug.py">
+    <entry file="file://$PROJECT_DIR$/scripts/pipelines.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="677">
-          <caret line="100" column="56" lean-forward="true" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
+        <state relative-caret-position="504">
+          <caret line="128" column="76" selection-start-line="128" selection-start-column="76" selection-end-line="128" selection-end-column="76" />
           <folding>
-            <element signature="e#119#140#0" expanded="true" />
+            <element signature="e#87#96#0" expanded="true" />
           </folding>
         </state>
       </provider>
