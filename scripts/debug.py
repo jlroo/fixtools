@@ -9,6 +9,7 @@ Created on Sun Mar 25 16:44:25 2018
 import fixtools as fx
 import multiprocessing as __mp__
 import time
+import argparse
 
 
 def set_secdesc( security_desc ):
@@ -32,33 +33,41 @@ def line_map( line ):
         pairs = {secid: line for secid in security_ids}
         return pairs
 
+
 if __name__ == "__main__":
-    path = "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
-    fixdata = fx.open_fix(path , compression=False)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file' , dest='file_path' , help='Fix data file input')
+    parser.add_argument('--year_code' , dest='year_code' , help='Fix data year code')
+    parser.add_argument('--data_out' , dest='data_out' , help='Fix books path out')
+    parser.add_argument('--compression' , dest='compression' , help='Compression (False default)')
+    parser.add_argument('--process' , dest='chunksize' , help='Number of threads')
+    parser.add_argument('--chunksize' , dest='chunksize' , help='Data chunksize')
+    parser.add_argument('--line_filter' , dest='func_parallel' , action='store_const' ,
+                        const=line_filter , help='Function to return a tuple (security_ids,line)')
+    parser.add_argument('--line_map' , dest='func_parallel' , action='store_const' ,
+                        const=line_map , help='Function to return a dict {secs:line}')
+
+    args = parser.parse_args()
+
+    compression = False
+    if args.compression:
+        compression = True
+
+    fixdata = fx.open_fix(path=args.file_path , compression=compression)
     data_lines = fixdata.data.readlines(10000)
     fixdata.data.seek(0)
-    year_code = "0"
-    opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , code_year=year_code)
-    fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" , code_year=year_code)
-    liquid_secs = fx.liquid_securities(data_lines , code_year=year_code)
+    opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , code_year=args.year_code)
+    fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" , code_year=args.year_code)
+    liquid_secs = fx.liquid_securities(data_lines , code_year=args.year_code)
     contract_ids = set(liquid_secs.keys())
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
 
-    ## SKX Compute Nodes
-    ## 48 cores on two sockets (24 cores/socket)
-    ## Cache: 	32KB L1 data cache per core;
-    ## 1MB L2 per core; 33MB L3 per socket.
-    ## Each socket can cache up to 57MB (sum of L2 and L3 capacity).
-
-    ## KNL Compute Node
-    ## 68 cores on a single socket
-    ## Cache: 	32KB L1 data cache per core;
-    ## 1MB L2 per two-core tile.
-    ## MCDRAM operates as 16GB direct-mapped L3.
-
     start = time.time()
-    pool = __mp__.Pool(processes=24 , initializer=set_secdesc , initargs=(security_desc ,))
-    result = pool.map(line_map , fixdata.data , 1000)
+    pool = __mp__.Pool(processes=int(args.process) , initializer=set_secdesc , initargs=(security_desc ,))
+    result = pool.map(args.func_parallel , fixdata.data , int(args.chunksize))
     pool.close()
     end = time.time()
-    print("Total time:" , str(end - start))
+
+    print("\t total_time \t threads \t  chunksize" + "\n")
+    print("\t" + str(end - start) + "\t" + args.process + "\t" + args.chunksize + "\n")
