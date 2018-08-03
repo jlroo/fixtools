@@ -95,7 +95,7 @@ class OrderBooks(luigi.Task):
     data_pipe = luigi.Parameter()
     data_year = luigi.Parameter()
     year_code = luigi.Parameter()
-    processes = luigi.Parameter()
+    processes = luigi.IntParameter()
     compression = luigi.Parameter(default=False)
     chunksize = luigi.IntParameter(default=32)
     src_name = luigi.Parameter(default="files.txt")
