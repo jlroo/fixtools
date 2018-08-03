@@ -162,8 +162,8 @@ class FixData:
     def __init__(self, fixfile, src):
         self.data = fixfile
         self.path = src["path"]
-        if b'\x0152=' in self.data.peek(1):
-            peek = self.data.peek(1).split(b"\n")[0]
+        if b'\x0152=' in self.data.readline():
+            peek = self.data.readline().split(b"\n")[0]
             day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
             if src["period"] == "weekly":
                 start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))

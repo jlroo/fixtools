@@ -5,6 +5,8 @@
 Created on Sun Nov  5 09:53:03 2017
 
 @author: jlroo
+
+python run-book.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" --year_code "0" --data_out "/scratch/05191/jlroo/data" --chunksize 38000
 """
 
 import fixtools as fx
