@@ -30,11 +30,10 @@ def main():
     opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , code_year=args.year_code)
     fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" , code_year=args.year_code)
     liquid_secs = fx.liquid_securities(data_lines , code_year=args.year_code)
-    contract_ids = set(liquid_secs.keys())
 
     filename = fut_code[2] + opt_code[2] + "-"
     path_out = args.data_out + filename
-    fx.data_book(data=fixdata.data , securities=contract_ids , path=path_out , chunksize=int(args.chunksize))
+    fx.data_book(data=fixdata.data , securities=liquid_secs , path=path_out , chunksize=int(args.chunksize))
 
 
 if __name__ == '__main__':
