@@ -60,6 +60,7 @@ def data_filter( data , contract_ids , chunksize ):
             for set_ids , line in filter(None , filtered):
                 for security_id in set_ids:
                     msgs[security_id].append(line)
+            pool.close()
             pool.terminate()
     try:
         data.close()
@@ -88,6 +89,7 @@ def data_book( data=None , securities=None , path=None , chunksize=32000 ):
             from contextlib import closing
             with closing(__mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path))) as pool:
                 pool.map(__write__ , contract_ids , chunksize)
+                pool.close()
                 pool.terminate()
 
     else:
@@ -98,6 +100,8 @@ def data_book( data=None , securities=None , path=None , chunksize=32000 ):
             from contextlib import closing
             with closing(__mp__.Pool()) as pool:
                 books = pool.map(__build__ , contract_ids , chunksize)
+                pool.close()
+                pool.terminate()
         return books
 
 
