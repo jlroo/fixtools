@@ -146,7 +146,7 @@ class OrderBook:
             temp = temp.replace(b'\x01269=0' , b'\x01269=1')
             prev_body = prev_body + [temp + str(i).encode() for i in range(1 , 11)]
 
-        msg = next(filter(open_msg , self.data) , None)
+        msg = next(iter(filter(open_msg , self.data)) , None)
 
         if msg is not None:
             book_header = msg.split(b'\x01279')[0]
