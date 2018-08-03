@@ -7,8 +7,10 @@ Created on Sun Mar 25 16:44:25 2018
 """
 
 import fixtools as fx
+from fixtools import OrderBook
 import multiprocessing as __mp__
 import time
+from multiprocessing.pool import ThreadPool
 import argparse
 
 
@@ -34,14 +36,36 @@ def line_map( line ):
         return pairs
 
 
+def __write__( security_id ):
+    sec_desc = __securities__[security_id]
+    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+    book_obj = OrderBook(__contracts__[security_id] , security_id , product)
+    filename = __securities__[security_id].replace(" " , "-")
+    with open(__path__ + filename , 'ab+') as book_out:
+        for book in book_obj.build_book():
+            book_out.write(book)
+
+
+def _set_writes( securities , contracts , path ):
+    global __path__
+    __path__ = path
+    global __contracts__
+    __contracts__ = contracts
+    global __securities__
+    __securities__ = securities
+
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--file' , dest='file_path' , help='Fix data file input')
+    parser.add_argument('--path_out' , dest='path_out' , help='Fix data file output')
     parser.add_argument('--year_code' , dest='year_code' , help='Fix data year code')
     parser.add_argument('--data_out' , dest='data_out' , help='Fix books path out')
     parser.add_argument('--compression' , dest='compression' , help='Compression (False default)')
     parser.add_argument('--process' , dest='process' , help='Number of threads')
+    parser.add_argument('--book_process' , dest='process' , help='Number of threads')
     parser.add_argument('--chunksize' , dest='chunksize' , help='Data chunksize')
     parser.add_argument('--line_filter' , dest='func_parallel' , action='store_const' ,
                         const=line_filter , help='Function to return a tuple (security_ids,line)')
@@ -60,20 +84,29 @@ if __name__ == "__main__":
     opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , code_year=args.year_code)
     fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" , code_year=args.year_code)
     liquid_secs = fx.liquid_securities(data_lines , code_year=args.year_code)
-    contract_ids = set(liquid_secs.keys())
+    contract_ids = liquid_secs.keys()
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+
+    contracts = fx.data_filter(fixdata.data , contract_ids , args.process , args.chunksize)
+
+    # pool = ThreadPool()
+
+    pool = __mp__.Pool(processes=int(args.book_process) , initializer=_set_writes ,
+                       initargs=(liquid_secs , contracts , args.path_out))
+    pool.map(__write__ , contract_ids)
+    pool.close()
+
+"""
 
     start = time.time()
     pool = __mp__.Pool(processes=int(args.process) , initializer=set_secdesc , initargs=(security_desc ,))
     result = pool.map(args.func_parallel , fixdata.data , int(args.chunksize))
     pool.close()
     end = time.time()
-
+    
     print("total_time \t threads \t  chunksize")
     print(str(end - start) + "\t" + args.process + "\t" + args.chunksize)
     print(next(iter(filter(None , result))))
-
-"""
 
 # python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" 
 # --year_code 0 --process 72 --chunksize 3000 --line_filter
