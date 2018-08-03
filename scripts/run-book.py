@@ -16,9 +16,12 @@ def main():
     parser.add_argument('--file' , dest='file_path' , help='Fix data file input')
     parser.add_argument('--year_code' , dest='year_code' , help='Fix data year code')
     parser.add_argument('--data_out' , dest='data_out' , help='Fix books path out')
+    parser.add_argument('--compression' , default=False , type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument('--chunksize' , dest='chunksize' , help='Data chunksize')
+
     args = parser.parse_args()
 
-    fixdata = fx.open_fix(path=args.file_path)
+    fixdata = fx.open_fix(path=args.file_path , compression=args.compression)
     data_lines = fixdata.data.readlines(10000)
     fixdata.data.seek(0)
     opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , code_year=args.year_code)
@@ -28,7 +31,7 @@ def main():
 
     filename = fut_code[2] + opt_code[2] + "-"
     path_out = args.data_out + filename
-    fx.data_book(data=fixdata.data , securities=contract_ids , path=path_out)
+    fx.data_book(data=fixdata.data , securities=contract_ids , path=path_out , chunksize=int(args.chunksize))
 
 
 if __name__ == '__main__':

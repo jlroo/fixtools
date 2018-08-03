@@ -35,8 +35,8 @@ def open_fix(path, period="weekly", compression=True):
     return FixData(fixfile, src)
 
 
-def data_dates(fixdata, period="weekly"):
-    peek = fixdata.data.peek(1).split(b"\n")[0]
+def data_dates( data_line , period="weekly" ):
+    peek = data_line.split(b"\n")[0]
     day0 = peek[peek.find(b'\x0152=') + 4:peek.find(b'\x0152=') + 12]
     start = __datetime__.datetime(year=int(day0[:4]), month=int(day0[4:6]), day=int(day0[6:8]))
     if period == "weekly":
