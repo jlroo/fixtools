@@ -95,7 +95,8 @@ if __name__ == "__main__":
     pool = __mp__.Pool(processes=process, initializer=set_secdesc, initargs=(security_desc,))
     result = pool.map(line_filter, fixdata.data, chunksize)
     pool.close()
-"""
-
+    
 # python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
 # --year_code 0 --process 72 --chunksize 3000 --line_map
+
+"""
