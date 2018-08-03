@@ -8,6 +8,7 @@ Created on Wed Apr  5 10:17:23 2017
 
 import multiprocessing as __mp__
 from collections import defaultdict
+import sys
 
 
 def __build__( security_id ):
@@ -46,11 +47,20 @@ def _set_desc( security_desc ):
 def data_filter( data , contract_ids , chunksize ):
     msgs = defaultdict(list)
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    with __mp__.Pool(initializer= _set_desc , initargs=(security_desc ,)) as pool:
-        filtered = pool.map(__filter__ , data , chunksize)
-        for set_ids , line in filter(None , filtered):
-            for security_id in set_ids:
-                msgs[security_id].append(line)
+    if sys.version_info[0] > 3.2:
+        with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
+            filtered = pool.map(__filter__ , data , chunksize)
+            for set_ids , line in filter(None , filtered):
+                for security_id in set_ids:
+                    msgs[security_id].append(line)
+    else:
+        from contextlib import closing
+        with closing(__mp__.Pool(initializer=_set_desc , initargs=(security_desc ,))) as pool:
+            filtered = pool.map(__filter__ , data , chunksize)
+            for set_ids , line in filter(None , filtered):
+                for security_id in set_ids:
+                    msgs[security_id].append(line)
+            pool.terminate()
     try:
         data.close()
     except AttributeError:
@@ -71,11 +81,23 @@ def data_book( data=None , securities=None , path=None , chunksize=32000 ):
     contract_ids = set(securities.keys())
     contracts = data_filter(data , contract_ids , chunksize)
     if path:
-        with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
-            pool.map(__write__ , contract_ids , chunksize)
+        if sys.version_info[0] > 3.2:
+            with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
+                pool.map(__write__ , contract_ids , chunksize)
+        else:
+            from contextlib import closing
+            with closing(__mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path))) as pool:
+                pool.map(__write__ , contract_ids , chunksize)
+                pool.terminate()
+
     else:
-        with __mp__.Pool() as pool:
-            books = pool.map(__build__ , contract_ids , chunksize)
+        if sys.version_info[0] > 3.2:
+            with __mp__.Pool() as pool:
+                books = pool.map(__build__ , contract_ids , chunksize)
+        else:
+            from contextlib import closing
+            with closing(__mp__.Pool()) as pool:
+                books = pool.map(__build__ , contract_ids , chunksize)
         return books
 
 
