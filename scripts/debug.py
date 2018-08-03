@@ -74,6 +74,9 @@ if __name__ == "__main__":
     print(next(iter(filter(None , result))))
 
 """
+
+# python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" 
+# --year_code 0 --process 72 --chunksize 3000 --line_filter
     compression = False
     file_path = "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
     year_code = "0"

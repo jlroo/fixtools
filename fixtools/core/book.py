@@ -31,7 +31,7 @@ def __write__( security_id ):
             book_out.write(book)
 
 
-def __filter__( line ):
+def filter_tuple( line ):
     valid_contract = [sec if sec in line else None for sec in __securityDesc__]
     set_ids = filter(None , valid_contract)
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
@@ -39,30 +39,36 @@ def __filter__( line ):
         return security_ids , line
 
 
+def __filter__( line ):
+    valid_contract = [sec if sec in line else None for sec in __securityDesc__]
+    set_ids = iter(filter(None , valid_contract))
+    security_ids = [int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids]
+    if any(valid_contract):
+        pairs = {secid: line for secid in security_ids}
+        return pairs
+
+
 def _set_desc( security_desc ):
     global __securityDesc__
     __securityDesc__ = security_desc
 
 
-def data_filter( data , contract_ids , chunksize ):
+def data_filter( data , contract_ids , threads , chunksize ):
     msgs = defaultdict(list)
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
     if sys.version_info[0] > 3.2:
         with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
             filtered = pool.map(__filter__ , data , chunksize)
-            for set_ids , line in filter(None , filtered):
-                for security_id in set_ids:
-                    msgs[security_id].append(line)
+            for item in iter(filter(None , filtered)):
+                for key in item.keys():
+                    msgs[key].append(item[key])
     else:
-        global __securityDesc__
-        __securityDesc__ = security_desc
-        pool = __mp__.Pool()
+        pool = __mp__.Pool(processes=threads , initializer=_set_desc , initargs=(security_desc ,))
         filtered = pool.map(__filter__ , data , chunksize)
-        for set_ids , line in filter(None , filtered):
-            for security_id in set_ids:
-                msgs[security_id].append(line)
+        for item in iter(filter(None , filtered)):
+            for key in item.keys():
+                msgs[key].append(item[key])
         pool.close()
-        pool.terminate()
     try:
         data.close()
     except AttributeError:
@@ -79,41 +85,25 @@ def _set_writes( securities , contracts , path ):
     __securities__ = securities
 
 
-def data_book( data=None , securities=None , path=None , chunksize=32000 ):
+def data_book( data=None , securities=None , path=None , threads=12 , chunksize=3100 ):
     contract_ids = set(securities.keys())
-    contracts = data_filter(data , contract_ids , chunksize)
+    contracts = data_filter(data , contract_ids , threads , chunksize)
     if path:
         if sys.version_info[0] > 3.2:
             with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
                 pool.map(__write__ , contract_ids , chunksize)
         else:
-            global __path__
-            __path__ = path
-            global __contracts__
-            __contracts__ = contracts
-            global __securities__
-            __securities__ = securities
-            pool = __mp__.Pool()
+            pool = __mp__.Pool(processes=threads , initializer=_set_writes , initargs=(securities , contracts , path))
             pool.map(__write__ , contract_ids , chunksize)
             pool.close()
-            pool.terminate()
-            """
-            from contextlib import closing
-            with closing(__mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path))) as pool:
-                pool.map(__write__ , contract_ids , chunksize)
-                pool.close()
-                pool.terminate()
-            """
     else:
         if sys.version_info[0] > 3.2:
             with __mp__.Pool() as pool:
                 books = pool.map(__build__ , contract_ids , chunksize)
         else:
-            from contextlib import closing
-            with closing(__mp__.Pool()) as pool:
-                books = pool.map(__build__ , contract_ids , chunksize)
-                pool.close()
-                pool.terminate()
+            pool = __mp__.Pool(processes=threads)
+            books = pool.map(__build__ , contract_ids , chunksize)
+            pool.close()
         return books
 
 
