@@ -54,9 +54,9 @@ def _set_desc( security_desc ):
 
 
 def data_filter( data=None , contract_ids=None , processes=None , chunksize=None ):
-    msgs = defaultdict(list)
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
     if sys.version_info[0] > 3.2:
+        msgs = defaultdict(list)
         with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
             filtered = pool.map(__filter__ , data , chunksize)
             for item in iter(filter(None , filtered)):
