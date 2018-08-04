@@ -63,7 +63,7 @@ def data_filter( data=None , contract_ids=None , processes=None , chunksize=None
                 for key in item.keys():
                     msgs[key].append(item[key])
     else:
-        msgs = {}
+        msgs = __mp__.Manager().dict()
         pool = __mp__.Pool(processes=processes , initializer=_set_desc , initargs=(security_desc ,))
         filtered = pool.map(__filter__ , data , chunksize)
         for item in iter(filter(None , filtered)):
