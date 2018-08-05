@@ -9,13 +9,13 @@ Created on Sun Mar 25 16:44:25 2018
 import fixtools as fx
 from fixtools import OrderBook
 import multiprocessing as __mp__
-from multiprocessing import Manager
 import time
-from multiprocessing.pool import ThreadPool
+import sys
+from collections import defaultdict
 import argparse
 
 
-def set_secdesc( security_desc ):
+def _set_desc( security_desc ):
     global __securityDesc__
     __securityDesc__ = security_desc
 
@@ -25,7 +25,7 @@ def line_filter( line ):
     set_ids = iter(filter(None , valid_contract))
     security_ids = set(int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids)
     if b'35=X\x01' in line and any(valid_contract):
-        return (security_ids , line)
+        return security_ids , line
 
 
 def line_map( line ):
@@ -55,6 +55,42 @@ def _set_writes( securities , contracts , path ):
     global __securities__
     __securities__ = securities
 
+
+def __filter__( line ):
+    valid_contract = [sec if sec in line else None for sec in __securityDesc__]
+    set_ids = iter(filter(None , valid_contract))
+    security_ids = [int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids]
+    if any(valid_contract):
+        pairs = {secid: line for secid in security_ids}
+        return pairs
+
+
+def data_filter( data=None , contract_ids=None , processes=None , chunksize=None ):
+    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
+    if sys.version_info[0] > 3.2:
+        msgs = defaultdict(list)
+        with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
+            filtered = pool.map(__filter__ , data , chunksize)
+            for item in iter(filter(None , filtered)):
+                for key in item.keys():
+                    msgs[key].append(item[key])
+    else:
+        msgs = __mp__.Manager().dict()
+        pool = __mp__.Pool(processes=processes , initializer=_set_desc , initargs=(security_desc ,))
+        filtered = pool.map(__filter__ , data , chunksize)
+        for item in iter(filter(None , filtered)):
+            for key in item.keys():
+                if key not in msgs.keys():
+                    msgs[key] = []
+                    msgs[key].append(item[key])
+                else:
+                    msgs[key].append(item[key])
+        pool.close()
+    try:
+        data.close()
+    except AttributeError:
+        pass
+    return msgs
 
 
 if __name__ == "__main__":
@@ -88,28 +124,21 @@ if __name__ == "__main__":
     contract_ids = liquid_secs.keys()
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
 
-    contracts = fx.data_filter(fixdata.data , contract_ids , int(args.process) , int(args.chunksize))
+    contracts = data_filter(fixdata.data , contract_ids , int(args.process) , int(args.chunksize))
 
-    manager = Manager().dict(contracts)
-
-    # pool = ThreadPool()
-
-    pool = __mp__.Pool(processes=int(args.book_process) , initializer=_set_writes ,
-                       initargs=(liquid_secs , manager , args.path_out))
-    pool.map(__write__ , contract_ids)
-    pool.close()
-
+    print(contracts)
+    
 """
 
     start = time.time()
-    pool = __mp__.Pool(processes=int(args.process) , initializer=set_secdesc , initargs=(security_desc ,))
-    result = pool.map(args.func_parallel , fixdata.data , int(args.chunksize))
+    pool = __mp__.Pool(processes=int(args.process), initializer=set_secdesc, initargs=(security_desc,))
+    result = pool.map(args.func_parallel, fixdata.data, int(args.chunksize))
     pool.close()
     end = time.time()
     
     print("total_time \t threads \t  chunksize")
     print(str(end - start) + "\t" + args.process + "\t" + args.chunksize)
-    print(next(iter(filter(None , result))))
+    print(next(iter(filter(None, result))))
 
 # python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" 
 # --year_code 0 --process 72 --chunksize 3000 --line_filter
@@ -117,11 +146,11 @@ if __name__ == "__main__":
     file_path = "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
     year_code = "0"
     chunksize = 3000
-    fixdata = fx.open_fix(path=file_path , compression=compression)
+    fixdata = fx.open_fix(path=file_path, compression=compression)
     data_lines = fixdata.data.readlines(10000)
     fixdata.data.seek(0)
-    opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , code_year=year_code)
-    fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" , code_year=year_code)
+    opt_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="OPT", code_year=year_code)
+    fut_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="FUT", code_year=year_code)
     liquid_secs = fx.liquid_securities(data_lines, code_year=year_code)
     contract_ids = set(liquid_secs.keys())
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
@@ -134,5 +163,8 @@ if __name__ == "__main__":
     
 # python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
 # --year_code 0 --process 72 --chunksize 3000 --line_map
+
+#python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" 
+#--path_out "/home1/05191/jlroo/cme/books/" --year_code 0 --process 72 --chunksize 32 --book_process 12
 
 """
