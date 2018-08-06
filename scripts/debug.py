@@ -56,7 +56,17 @@ def _set_writes( securities , contracts , path ):
     __securities__ = securities
 
 
-def __filter__( line ):
+def __globaldict( msgs , filtered ):
+    for item in iter(filter(None , filtered)):
+        for key in item.keys():
+            if not msgs.has_key(key):
+                msgs[key] = []
+                msgs[key] = msgs[key] + [item[key]]
+            else:
+                msgs[key] = msgs[key] + [item[key]]
+
+
+def __msgsfilter__( line ):
     valid_contract = [sec if sec in line else None for sec in __securityDesc__]
     set_ids = iter(filter(None , valid_contract))
     security_ids = [int(sec.split(b'\x0148=')[1].split(b'\x01')[0]) for sec in set_ids]
@@ -70,14 +80,20 @@ def data_filter( data=None , contract_ids=None , processes=None , chunksize=None
     if sys.version_info[0] > 3.2:
         msgs = defaultdict(list)
         with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
-            filtered = pool.map(__filter__ , data , chunksize)
+            filtered = pool.map(__msgsfilter__ , data , chunksize)
             for item in iter(filter(None , filtered)):
                 for key in item.keys():
                     msgs[key].append(item[key])
     else:
+        # msgs = {}
         msgs = __mp__.Manager().dict()
         pool = __mp__.Pool(processes=processes , initializer=_set_desc , initargs=(security_desc ,))
-        filtered = pool.map(__filter__ , data , chunksize)
+        filtered = pool.map(__msgsfilter__ , data , chunksize)
+        pool.close()
+        p = __mp__.Process(target=__globaldict , args=(msgs , filtered))
+        p.start()
+        p.join()
+        """
         for item in iter(filter(None , filtered)):
             for key in item.keys():
                 if key not in msgs.keys():
@@ -86,6 +102,7 @@ def data_filter( data=None , contract_ids=None , processes=None , chunksize=None
                 else:
                     msgs[key].append(item[key])
         pool.close()
+        """
     try:
         data.close()
     except AttributeError:
@@ -126,7 +143,12 @@ if __name__ == "__main__":
 
     contracts = data_filter(fixdata.data , contract_ids , int(args.process) , int(args.chunksize))
 
-    print(contracts)
+    print(dir(contracts))
+    print(type(contracts))
+    print(contract_ids)
+    print(contracts.keys())
+    print([len(contracts[k]) for k in contracts.keys()])
+    print(len(contracts[296281]))
     
 """
 
@@ -139,32 +161,14 @@ if __name__ == "__main__":
     print("total_time \t threads \t  chunksize")
     print(str(end - start) + "\t" + args.process + "\t" + args.chunksize)
     print(next(iter(filter(None, result))))
-
-# python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" 
-# --year_code 0 --process 72 --chunksize 3000 --line_filter
-    compression = False
-    file_path = "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
-    year_code = "0"
-    chunksize = 3000
-    fixdata = fx.open_fix(path=file_path, compression=compression)
-    data_lines = fixdata.data.readlines(10000)
-    fixdata.data.seek(0)
-    opt_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="OPT", code_year=year_code)
-    fut_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="FUT", code_year=year_code)
-    liquid_secs = fx.liquid_securities(data_lines, code_year=year_code)
-    contract_ids = set(liquid_secs.keys())
-    security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    
-    process = 72
-    chunksize = 1200
-    pool = __mp__.Pool(processes=process, initializer=set_secdesc, initargs=(security_desc,))
-    result = pool.map(line_filter, fixdata.data, chunksize)
-    pool.close()
     
 # python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
 # --year_code 0 --process 72 --chunksize 3000 --line_map
 
 #python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" 
 #--path_out "/home1/05191/jlroo/cme/books/" --year_code 0 --process 72 --chunksize 32 --book_process 12
+
+#python debug.py --file "/home/analyticslab/XCME_MD_ES_20091228_20100101" 
+#--year_code 0 --process 72 --chunksize 32 --book_process 12
 
 """

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="added Manager from mp to book.py data_filter">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified debug file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/debug.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -52,16 +52,16 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="15" />
           <entry key="md" value="14" />
-          <entry key="py" value="2271" />
-          <entry key="txt" value="907" />
+          <entry key="py" value="2457" />
+          <entry key="txt" value="936" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="14" />
-          <entry key="PLAIN_TEXT" value="922" />
-          <entry key="Python" value="2427" />
+          <entry key="PLAIN_TEXT" value="951" />
+          <entry key="Python" value="2613" />
         </counts>
       </usages-collector>
     </session>
@@ -83,11 +83,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="473">
-              <caret line="65" column="38" lean-forward="true" selection-start-line="65" selection-start-column="38" selection-end-line="65" selection-end-column="38" />
+            <state relative-caret-position="433">
+              <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="53" />
               <folding>
                 <element signature="e#108#140#0" expanded="true" />
               </folding>
@@ -95,11 +95,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/debug.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="90" column="13" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="13" />
+            <state relative-caret-position="788">
+              <caret line="150" column="33" selection-start-line="150" selection-start-column="33" selection-end-line="150" selection-end-column="33" />
               <folding>
                 <element signature="e#119#140#0" expanded="true" />
               </folding>
@@ -143,14 +143,14 @@
       <find>DataFilter</find>
       <find>getsize</find>
       <find>.contracts</find>
-      <find>)</find>
+      <find>,</find>
     </findStrings>
     <replaceStrings>
       <replace>(</replace>
       <replace>=</replace>
-      <replace>,</replace>
       <replace>contracts</replace>
       <replace>)</replace>
+      <replace>,</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -205,8 +205,8 @@
         <option value="$PROJECT_DIR$/scripts/run-book.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/scripts/pipelines.py" />
-        <option value="$PROJECT_DIR$/scripts/debug.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
+        <option value="$PROJECT_DIR$/scripts/debug.py" />
       </list>
     </option>
   </component>
@@ -389,20 +389,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00051" summary="Version Update v2.0 - Modified API - New data_book function">
-      <created>1521994917975</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1521994917975</updated>
-    </task>
-    <task id="LOCAL-00052" summary="Version Update v2.0 - Modified API - New data_book function">
-      <created>1521998978255</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1521998978255</updated>
     </task>
     <task id="LOCAL-00053" summary="Version Update v2.0 - Modified API - New data_book function">
       <created>1522016418651</created>
@@ -733,7 +719,21 @@
       <option name="project" value="LOCAL" />
       <updated>1533426561233</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <task id="LOCAL-00100" summary="added Manager from mp to book.py data_filter">
+      <created>1533426634452</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1533426634452</updated>
+    </task>
+    <task id="LOCAL-00101" summary="modified debug file">
+      <created>1533509008133</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1533509008133</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="TodoView">
@@ -746,10 +746,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15593705" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.11608094" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
@@ -825,8 +825,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="fixed pipeline path_out variable" />
-    <MESSAGE value="modified data_book" />
     <MESSAGE value="data_filter write filtered data out" />
     <MESSAGE value="refactor util.py, modified most_liquid, contract_code, contracts" />
     <MESSAGE value="added run-book.py run single book" />
@@ -850,7 +848,9 @@
     <MESSAGE value="added mp manager" />
     <MESSAGE value="added int to chunksize" />
     <MESSAGE value="modified book data_filter from default dict to dict" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified book data_filter from default dict to dict" />
+    <MESSAGE value="added Manager from mp to book.py data_filter" />
+    <MESSAGE value="modified debug file" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified debug file" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1032,22 +1032,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/debug.py">
+    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="90" column="13" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="13" />
+        <state relative-caret-position="433">
+          <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="53" />
           <folding>
-            <element signature="e#119#140#0" expanded="true" />
+            <element signature="e#108#140#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+    <entry file="file://$PROJECT_DIR$/scripts/debug.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="473">
-          <caret line="65" column="38" lean-forward="true" selection-start-line="65" selection-start-column="38" selection-end-line="65" selection-end-column="38" />
+        <state relative-caret-position="788">
+          <caret line="150" column="33" selection-start-line="150" selection-start-column="33" selection-end-line="150" selection-end-column="33" />
           <folding>
-            <element signature="e#108#140#0" expanded="true" />
+            <element signature="e#119#140#0" expanded="true" />
           </folding>
         </state>
       </provider>
