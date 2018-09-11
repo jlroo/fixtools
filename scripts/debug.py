@@ -77,7 +77,7 @@ def __msgsfilter__( line ):
 
 def data_filter( data=None , contract_ids=None , processes=None , chunksize=None ):
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    if sys.version_info[0] > 3.2:
+    if sys.version_info[0] > 2.7:
         msgs = defaultdict(list)
         with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
             filtered = pool.map(__msgsfilter__ , data , chunksize)
@@ -117,7 +117,8 @@ if __name__ == "__main__":
     parser.add_argument('--path_out' , dest='path_out' , help='Fix data file output')
     parser.add_argument('--year_code' , dest='year_code' , help='Fix data year code')
     parser.add_argument('--data_out' , dest='data_out' , help='Fix books path out')
-    parser.add_argument('--compression' , dest='compression' , help='Compression (False default)')
+    parser.add_argument('--compression', dest='compression', action='store_true')
+    parser.add_argument('--no-compression', dest='compression', action='store_false')
     parser.add_argument('--process' , dest='process' , help='Number of threads')
     parser.add_argument('--book_process' , dest='book_process' , help='Number of threads')
     parser.add_argument('--chunksize' , dest='chunksize' , help='Data chunksize')
@@ -125,31 +126,30 @@ if __name__ == "__main__":
                         const=line_filter , help='Function to return a tuple (security_ids,line)')
     parser.add_argument('--line_map' , dest='func_parallel' , action='store_const' ,
                         const=line_map , help='Function to return a dict {secs:line}')
-
+    parser.set_defaults(compression=True)
     args = parser.parse_args()
-
-    compression = False
-    if args.compression:
-        compression = True
-
-    fixdata = fx.open_fix(path=args.file_path , compression=compression)
-    data_lines = fixdata.data.readlines(10000)
+    fixdata = fx.open_fix(path=args.file_path , compression=args.compression)
+    data_lines = []
+    for n,line in enumerate(fixdata.data):
+        if n >=10000:
+            break
+        data_lines.append(line)
     fixdata.data.seek(0)
     opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" , code_year=args.year_code)
     fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" , code_year=args.year_code)
     liquid_secs = fx.liquid_securities(data_lines , code_year=args.year_code)
     contract_ids = liquid_secs.keys()
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-
+    start = time.time()
     contracts = data_filter(fixdata.data , contract_ids , int(args.process) , int(args.chunksize))
+    end = time.time()
 
-    print(dir(contracts))
-    print(type(contracts))
-    print(contract_ids)
-    print(contracts.keys())
-    print([len(contracts[k]) for k in contracts.keys()])
-    print(len(contracts[296281]))
-    
+    print("total_time \t threads \t  chunksize")
+    print(str(end - start) + "\t" + args.process + "\t" + args.chunksize)
+    #print(contract_ids)
+    #print(contracts.keys())
+    #print([len(contracts[k]) for k in contracts.keys()])
+
 """
 
     start = time.time()
@@ -162,13 +162,11 @@ if __name__ == "__main__":
     print(str(end - start) + "\t" + args.process + "\t" + args.chunksize)
     print(next(iter(filter(None, result))))
     
-# python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121"
-# --year_code 0 --process 72 --chunksize 3000 --line_map
+#python debug.py --file "/home/cme/data/xcme/2010/XCME_MD_ES_20091228_20100101" --year_code 0 --process 40 --chunksize 31 --line_map
 
-#python debug.py --file "/work/05191/jlroo/stampede2/2010/XCME_MD_ES_20091207_2009121" 
-#--path_out "/home1/05191/jlroo/cme/books/" --year_code 0 --process 72 --chunksize 32 --book_process 12
+#python debug.py --file "/home/cme/data/xcme/2010/XCME_MD_ES_20091228_20100101" 
+# --path_out "/home1/05191/jlroo/cme/books/" --year_code 0 --process 72 --chunksize 32 --book_process 12
 
-#python debug.py --file "/home/analyticslab/XCME_MD_ES_20091228_20100101" 
-#--year_code 0 --process 72 --chunksize 32 --book_process 12
+#python debug.py --file "/home/cme/data/xcme/2010/XCME_MD_ES_20091228_20100101" --year_code 0 --process 40 --chunksize 32 --book_process 12
 
 """

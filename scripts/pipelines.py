@@ -22,9 +22,10 @@ class FindFiles(luigi.Task):
     file_name = luigi.Parameter(default="files.txt")
 
     def run(self):
-        data_date = datetime.datetime(year=int(self.data_start_date[:4]),
-                                  month=int(self.data_start_date[4:6]),
-                                  day=int(self.data_start_date[6:8]))
+        data_start_date = str(self.data_start_date)
+        data_date = datetime.datetime(year=int(data_start_date[:4]),
+                                  month=int(data_start_date[4:6]),
+                                  day=int(data_start_date[6:8]))
         start_date = data_date - datetime.timedelta(days=31)
         end_date = start_date + datetime.timedelta(days=365)
         data_start = {start_date.year, start_date.month}
@@ -47,7 +48,7 @@ class FindFiles(luigi.Task):
                 out.write('\n'.join(out_files))
 
     def output(self):
-        name = self.data_start_date[:4] + "-" + str(self.file_name)
+        name = str(self.data_start_date)[:4] + "-" + str(self.file_name)
         name = self.data_out + name
         target = luigi.LocalTarget(name)
         return target
@@ -68,9 +69,10 @@ class CMEPipeline(luigi.Task):
 
     def run(self):
         self.year = str(self.data_start_date)[0:4]
+        data_months = str(self.data_months).split(",")
         if not os.path.exists(self.data_out):
             os.makedirs(self.data_out)
-        for month in self.data_months.split(","):
+        for month in data_months:
             if not os.path.exists(self.data_out + self.year + "/" + month):
                 os.makedirs(self.data_out + self.year + "/" + month)
 
@@ -96,11 +98,12 @@ class OrderBooks(luigi.Task):
     data_year = luigi.Parameter()
     year_code = luigi.Parameter()
     processes = luigi.IntParameter()
-    compression = luigi.Parameter(default=False)
-    chunksize = luigi.IntParameter(default=32)
+    compression = luigi.BoolParameter(default=True)
+    chunksize_filter = luigi.IntParameter(default=25600)
+    chunksize_book = luigi.IntParameter(default=10)
     src_name = luigi.Parameter(default="files.txt")
     filename = luigi.Parameter(default="books.txt")
-    data_out = ""
+    data_out = luigi.Parameter(default="")
 
     def requires(self):
         self.data_pipe = str([item + "/" if item[-1] != "/" else item for item in [self.data_pipe]][0])
@@ -108,29 +111,32 @@ class OrderBooks(luigi.Task):
         return [FixFiles(self.data_pipe + files)]
 
     def run(self):
-
-        self.data_out = self.data_pipe + self.data_year + "/"
-        with self.input()[0].open('r') as infile:
-            files = sorted(infile.read().splitlines())
+        if self.data_out=="":
+            self.data_out = self.data_pipe + self.data_year + "/"
+        with self.input()[0].open('r') as data_files:
+            files = sorted(data_files.read().splitlines())
         contracts = self.output().open('w')
-        for k, file in enumerate(files):
-            fixdata = fx.open_fix(path=file.strip() , compression=self.compression)
-            data_lines = fixdata.data.readlines(10000)
+        for k, infile in enumerate(files):
+            fixdata = fx.open_fix(path=infile.strip() , compression=self.compression)
+            data_lines = []
+            for n,line in enumerate(fixdata.data):
+                if n >=10000:
+                    break
+                data_lines.append(line)
             fixdata.data.seek(0)
-            opt_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="OPT" ,
-                                      code_year=self.year_code)
-            fut_code = fx.most_liquid(data_line=data_lines[0] , instrument="ES" , product="FUT" ,
-                                      code_year=self.year_code)
-            liquid_secs = fx.liquid_securities(data_lines , code_year=self.year_code)
+            opt_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="OPT", code_year=self.year_code)
+            fut_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="FUT", code_year=self.year_code)
+            liquid_secs = fx.liquid_securities(data_lines, code_year=self.year_code)
             desc_path = self.data_out + fut_code[2] + "/"
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
             path_out = desc_path + filename
-            fx.data_book(data=fixdata.data , securities=liquid_secs , path=path_out ,
-                         processes=self.processes , chunksize=self.chunksize)
-            for sec_desc in liquid_secs:
-                name = path_out + sec_desc.replace(" ", "-")
-                contracts.write("%s\n" % name)
-                print("[DONE] " + file.strip() + " -- CONTRACT -- " + name)
+            fx.data_book(   data=fixdata.data, securities=liquid_secs, 
+                            path=path_out, processes=self.processes, 
+                            chunksize_filter=self.chunksize_filter, chunksize_book=self.chunksize_book)
+            for secid in liquid_secs.keys():
+                name = path_out + liquid_secs[secid].replace(" ", "-")
+                contracts.write("[DONE] " + infile.strip() + " -- CONTRACT -- " + name + "\n")
+                print("[DONE] " + infile.strip() + " -- CONTRACT -- " + name)
         contracts.close()
 
     def output(self):

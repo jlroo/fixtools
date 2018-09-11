@@ -1,0 +1,48 @@
+data_filter Performance
+total_time		threads	chunksize
+93.8545663356781	40	8
+83.68238186836243	40	16
+78.8949146270752	40	32
+77.58681559562683	40	64
+76.53174185752869	40	128
+76.0869493484497	40	256
+75.53971815109253	40	512
+76.47508716583252	40	1024
+75.00180578231812	40	2048
+76.84382104873657	40	4096
+74.48974871635437	40	8293
+74.57527565956116	40	16382
+73.39300918579102	40	25600*
+74.74272394180298	40	32768
+76.64053416252136	40	52000
+78.86329007148743	40	65536
+
+*L3 cache
+
+CPU Information
+
+Architecture:		x86_64
+CPU op-mode(s):		32-bit, 64-bit
+Byte Order:		Little Endian
+CPU(s):			40
+On-line CPU(s) list:	0-39
+Thread(s) per core:	2
+Core(s) per socket:	10
+Socket(s):		2
+NUMA node(s):		2
+Vendor ID:		GenuineIntel
+CPU family:		6
+Model:			79
+Model name:		Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+Stepping:		1
+CPU MHz:		1200.036
+CPU max MHz:		3100.0000
+CPU min MHz:		1200.0000
+BogoMIPS:		4389.61
+Virtualization:		VT-x
+L1d cache:		32K
+L1i cache:		32K
+L2 cache:		256K
+L3 cache:		25600K
+NUMA node0 CPU(s):	0-9,20-29
+NUMA node1 CPU(s):	10-19,30-39

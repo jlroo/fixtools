@@ -55,7 +55,7 @@ def _set_desc( security_desc ):
 
 def data_filter( data=None , contract_ids=None , processes=None , chunksize=None ):
     security_desc = [b'\x0148=' + str(sec_id).encode() + b'\x01' for sec_id in contract_ids]
-    if sys.version_info[0] > 3.2:
+    if sys.version_info[0] > 2.7:
         msgs = defaultdict(list)
         with __mp__.Pool(initializer=_set_desc , initargs=(security_desc ,)) as pool:
             filtered = pool.map(__filter__ , data , chunksize)
@@ -90,24 +90,36 @@ def _set_writes( securities , contracts , path ):
     __securities__ = securities
 
 
-def data_book( data=None , securities=None , path=None , processes=12 , chunksize=32 ):
+def data_book(data=None, securities=None, path=None, processes=None, chunksize_filter=None, chunksize_book=None):
     contract_ids = securities.keys()
-    contracts = data_filter(data , contract_ids , processes , chunksize)
+    contracts = data_filter(data=data, contract_ids=contract_ids, processes=processes, chunksize=chunksize_filter)
     if path:
-        if sys.version_info[0] > 3.2:
+        if sys.version_info[0] > 2.7:
             with __mp__.Pool(initializer=_set_writes , initargs=(securities , contracts , path)) as pool:
-                pool.map(__write__ , contract_ids , chunksize)
+                if chunksize_book is None:
+                    pool.map(__write__ , contract_ids)
+                else:
+                    pool.map(__write__ , contract_ids , chunksize_book)
         else:
             pool = __mp__.Pool(processes=processes , initializer=_set_writes , initargs=(securities , contracts , path))
-            pool.map(__write__ , contract_ids , chunksize)
+            if chunksize_book is None:
+                pool.map(__write__ , contract_ids)
+            else:
+                pool.map(__write__ , contract_ids , chunksize_book)
             pool.close()
     else:
-        if sys.version_info[0] > 3.2:
+        if sys.version_info[0] > 2.7:
             with __mp__.Pool() as pool:
-                books = pool.map(__build__ , contract_ids , chunksize)
+                if chunksize_book is None:
+                    books = pool.map(__build__ , contract_ids)
+                else:
+                    books = pool.map(__build__ , contract_ids , chunksize_book)
         else:
             pool = __mp__.Pool(processes=processes)
-            books = pool.map(__build__ , contract_ids , chunksize)
+            if chunksize_book is None:
+                books = pool.map(__build__ , contract_ids)
+            else:
+                books = pool.map(__build__ , contract_ids , chunksize_book)
             pool.close()
         return books
 
