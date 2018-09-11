@@ -39,12 +39,10 @@ def put_call_csv():
         for date in times['futures'].keys():
             for hour in times['futures'][date].keys():
                 timestamp = str(times['futures'][date][hour][-1])
-                result = fx.put_call_parity(futures=futures , options=options , rates_table=rates_table ,
-                                            timestamp=timestamp , level_limit=1)
+                result = fx.put_call_parity(futures=futures , options=options , rates_table=rates_table , timestamp=timestamp , level_limit=1)
                 if not result == {}:
                     fx.search_out(result=result , timestamp=timestamp , path_out=out_query , ordered=columns)
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
-
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ import datetime as __datetime__
 import pandas as __pd__
 import numpy as __np__
 import multiprocessing as __mp__
+import pickle
 from os.path import getsize
 from collections import defaultdict
 from fixtools.util.util import expiration_date , open_fix
@@ -66,7 +67,7 @@ def __timemap__(item):
     return ymd, date.hour, sending_time
 
 
-def time_table(futures, options, chunksize=32000):
+def time_table(futures, options, chunksize=25600):
     with __mp__.Pool() as pool:
         fut_times = pool.map(__timemap__, futures.as_matrix(), chunksize=chunksize)
     grouped = {"futures": {}, "options": {}}
@@ -94,18 +95,20 @@ def search_csv( path=None ,
                 df_rates=None ,
                 df_futures=None ,
                 df_options=None ,
+                times_dict=None ,
                 columns=None ,
-                chunksize=48000 ):
+                chunksize=25600 ):
     fixfiles = files_tree(path)
     for key in fixfiles.keys():
         opt_file = fixfiles[key]['options'][0]
         options = __pd__.read_csv(path + opt_file)
         fut_file = fixfiles[key]['futures'][0]
         futures = __pd__.read_csv(path + fut_file)
-        times = time_table(futures , options , chunksize=chunksize)
-        for date in times['futures'].keys():
-            for hour in times['futures'][date].keys():
-                timestamp = str(times['futures'][date][hour][-1])
+        if times_dict is None:
+            times_dict = time_table(futures , options , chunksize=chunksize)
+        for date in times_dict['futures'].keys():
+            for hour in times_dict['futures'][date].keys():
+                timestamp = str(times_dict['futures'][date][hour][-1])
                 result = put_call_parity(futures, options, df_rates, timestamp)
                 if not result == {}:
                     search_out(result , timestamp , path_out , ordered=columns)
@@ -122,7 +125,8 @@ def search_csv( path=None ,
 
 def search_fix( path=None ,
                 path_out=None ,
-                path_search=None ,
+                path_parity=None ,
+                path_times=None,
                 df_rates=None ,
                 columns=None ,
                 num_orders=1 ,
@@ -130,6 +134,8 @@ def search_fix( path=None ,
                 read_ram=True ,
                 parity_check=False ):
     fixfiles = files_tree(path)
+    if path_times is None:
+        path_times = ""
     for key in fixfiles.keys():
         opt_files = fixfiles[key]['options']
         options = book_table(path=path ,
@@ -151,10 +157,15 @@ def search_fix( path=None ,
         print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
         if parity_check:
             if not futures.empty and not options.empty:
-                search_csv(path_out=path_search ,
+                times = time_table(futures , options , chunksize=chunksize)
+                filename = path_times + str(key).zfill(3) + " -- " + fut_file[0] + '.pickle'
+                with open( filename, 'wb') as handle:
+                    pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                search_csv(path_out=path_parity ,
                            df_rates=df_rates ,
                            df_futures=futures ,
                            df_options=options ,
+                           times_dict=times ,
                            columns=columns ,
                            chunksize=chunksize)
                 print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + " -- PARITY CHECK")
@@ -295,12 +306,8 @@ def put_call_query( futures=None , options=None , timestamp=None , month_codes=N
     return table
 
 
-def put_call_parity( futures=None , options=None , rates_table=None , timestamp=None , month_codes=None ,
-                     level_limit=1 ):
-    table = put_call_query(futures=futures , options=options ,
-                           timestamp=timestamp , month_codes=month_codes ,
-                           level_limit=level_limit)
-
+def put_call_parity( futures=None , options=None , rates_table=None , timestamp=None , month_codes=None , level_limit=1 ):
+    table = put_call_query(futures=futures , options=options , timestamp=timestamp , month_codes=month_codes , level_limit=level_limit)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
     date = __datetime__.datetime(int(timestamp[0:4]) , int(timestamp[4:6]) , int(timestamp[6:8]))
