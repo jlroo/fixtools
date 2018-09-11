@@ -13,7 +13,7 @@ import sys
 
 def __build__( security_id ):
     sec_desc = __securities__[security_id]
-    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+    product = ["opt" if len(sec_desc) > 7 else "fut"][0]
     books = []
     book_obj = OrderBook(__contracts__[security_id] , security_id , product)
     for book in book_obj.build_book():
@@ -23,7 +23,7 @@ def __build__( security_id ):
 
 def __write__( security_id ):
     sec_desc = __securities__[security_id]
-    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+    product = ["opt" if len(sec_desc) > 7 else "fut"][0]
     book_obj = OrderBook(__contracts__[security_id] , security_id , product)
     filename = __securities__[security_id].replace(" " , "-")
     with open(__path__ + filename , 'ab+') as book_out:

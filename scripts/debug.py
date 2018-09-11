@@ -39,7 +39,7 @@ def line_map( line ):
 
 def __write__( security_id ):
     sec_desc = __securities__[security_id]
-    product = ["opt" if len(sec_desc) < 7 else "fut"][0]
+    product = ["opt" if len(sec_desc) > 7 else "fut"][0]
     book_obj = OrderBook(__contracts__[security_id] , security_id , product)
     filename = __securities__[security_id].replace(" " , "-")
     with open(__path__ + filename , 'ab+') as book_out:
