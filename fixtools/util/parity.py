@@ -73,7 +73,7 @@ def time_table(futures, options, chunksize=25600):
         futures = futures.values
         options = options.values
     else:
-        fututes = futures.as_matrix()
+        futures = futures.as_matrix()
         options = options.as_matrix()
     with __mp__.Pool() as pool:
         fut_times = pool.map(__timemap__, futures, chunksize=chunksize)
