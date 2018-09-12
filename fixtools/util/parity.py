@@ -20,7 +20,7 @@ def book_table( path=None ,
                 read_ram=True ):
     if product is None:
         raise ValueError("Product cant be None. Types: futures or options")
-    elif product not in "opt|options" or product not in "fut|futures":
+    elif product not in "opt|options" and product not in "fut|futures":
         raise ValueError("Product Types: futures or options")
 
     if path[-1] != "/":
