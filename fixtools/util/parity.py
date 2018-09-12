@@ -153,7 +153,7 @@ def search_fix( path=None ,
                              num_orders=num_orders, chunksize=chunksize, read_ram=read_ram)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
         times = time_table(futures , options , chunksize=chunksize)
-        filename = path_times + str(key).zfill(3) + " -- " + fut_file[0] + '.pickle'
+        filename = path_times + fut_file[0] + '.pickle'
         with open( filename, 'wb') as handle:
             pickle.dump(times, handle, protocol=pickle.HIGHEST_PROTOCOL)
         if parity_check:
