@@ -10,6 +10,7 @@ from collections import defaultdict
 from fixtools.util.util import expiration_date , open_fix
 from fixtools.io.fixfast import FixDict , files_tree
 
+#TODO: look into FixDict class on fixfast.py make it more robust
 
 def book_table( path=None ,
                 path_out=None ,
@@ -22,7 +23,6 @@ def book_table( path=None ,
         raise ValueError("Product cant be None. Types: futures or options")
     elif product not in "opt|options" and product not in "fut|futures":
         raise ValueError("Product Types: futures or options")
-
     if path[-1] != "/":
         path = path + "/"
     dfs = []
@@ -31,6 +31,7 @@ def book_table( path=None ,
         if getsize(file_path) == 0:
             dfs.append(__pd__.DataFrame())
         else:
+            # Fixdict class
             fix_dict = FixDict(num_orders=num_orders)
             fixdata = open_fix(file_path , compression=False)
             if read_ram:
@@ -138,36 +139,21 @@ def search_fix( path=None ,
         path_times = ""
     for key in fixfiles.keys():
         opt_files = fixfiles[key]['options']
-        options = book_table(path=path ,
-                             path_out=path_out ,
-                             file_name=opt_files ,
-                             product="options" ,
-                             num_orders=num_orders ,
-                             chunksize=chunksize ,
-                             read_ram=read_ram)
+        options = book_table(path=path, path_out=path_out, file_name=opt_files , product="options",
+                             num_orders=num_orders, chunksize=chunksize, read_ram=read_ram)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
         fut_file = fixfiles[key]['futures']
-        futures = book_table(path=path ,
-                             path_out=path_out ,
-                             file_name=fut_file ,
-                             product="futures" ,
-                             num_orders=num_orders ,
-                             chunksize=chunksize ,
-                             read_ram=read_ram)
+        futures = book_table(path=path, path_out=path_out, file_name=fut_file, product="futures",
+                             num_orders=num_orders, chunksize=chunksize, read_ram=read_ram)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
+        times = time_table(futures , options , chunksize=chunksize)
+        filename = path_times + str(key).zfill(3) + " -- " + fut_file[0] + '.pickle'
+        with open( filename, 'wb') as handle:
+            pickle.dump(times, handle, protocol=pickle.HIGHEST_PROTOCOL)
         if parity_check:
             if not futures.empty and not options.empty:
-                times = time_table(futures , options , chunksize=chunksize)
-                filename = path_times + str(key).zfill(3) + " -- " + fut_file[0] + '.pickle'
-                with open( filename, 'wb') as handle:
-                    pickle.dump(times, handle, protocol=pickle.HIGHEST_PROTOCOL)
-                search_csv(path_out=path_parity ,
-                           df_rates=df_rates ,
-                           df_futures=futures ,
-                           df_options=options ,
-                           times_dict=times ,
-                           columns=columns ,
-                           chunksize=chunksize)
+                search_csv(path_out=path_parity, df_rates=df_rates, df_futures=futures, df_options=options,
+                           times_dict=times, columns=columns, chunksize=chunksize)
                 print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + " -- PARITY CHECK")
 
 
