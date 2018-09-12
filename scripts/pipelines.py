@@ -71,7 +71,14 @@ class CMEPipeline(luigi.Task):
         self.year = str(self.data_start_date)[0:4]
         data_months = str(self.data_months).split(",")
         if not os.path.exists(self.data_out):
-            os.makedirs(self.data_out)
+            src, dirs, files = next(os.walk(self.data_out))
+            src_path = "/".join(src.split("/")[:-2])
+            dirs = [src_path + i for i in ["/output/","/parity/","/times/","/rates/"]]
+            for folder in dirs:
+                os.makedirs(folder)
+            os.makedirs(src)
+        else:
+            continue
         for month in data_months:
             if not os.path.exists(self.data_out + self.year + "/" + month):
                 os.makedirs(self.data_out + self.year + "/" + month)

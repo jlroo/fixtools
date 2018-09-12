@@ -16,7 +16,7 @@ def book_table( path=None ,
                 file_name=None ,
                 product=None ,
                 num_orders=1 ,
-                chunksize=38000 ,
+                chunksize=25600 ,
                 read_ram=True ):
     if product is None:
         raise ValueError("Product cant be None. Types: futures or options")
@@ -111,7 +111,7 @@ def search_csv( path=None ,
                 timestamp = str(times_dict['futures'][date][hour][-1])
                 result = put_call_parity(futures, options, df_rates, timestamp)
                 if not result == {}:
-                    search_out(result , timestamp , path_out , ordered=columns)
+                    search_out(result , timestamp , path_out , col_order=columns)
                     print("[DONE] -- FUT -- " + fut_file + " -- " + timestamp)
     if df_futures and df_options:
         times = time_table(df_futures , df_options , chunksize=chunksize)
@@ -120,7 +120,7 @@ def search_csv( path=None ,
                 timestamp = str(times['futures'][date][hour][-1])
                 parity_result = put_call_parity(df_futures , df_options , df_rates , timestamp)
                 if not parity_result == {}:
-                    search_out(parity_result , timestamp , path_out , ordered=columns)
+                    search_out(parity_result , timestamp , path_out , col_order=columns)
 
 
 def search_fix( path=None ,
@@ -130,7 +130,7 @@ def search_fix( path=None ,
                 df_rates=None ,
                 columns=None ,
                 num_orders=1 ,
-                chunksize=48000 ,
+                chunksize=25600 ,
                 read_ram=True ,
                 parity_check=False ):
     fixfiles = files_tree(path)
@@ -160,7 +160,7 @@ def search_fix( path=None ,
                 times = time_table(futures , options , chunksize=chunksize)
                 filename = path_times + str(key).zfill(3) + " -- " + fut_file[0] + '.pickle'
                 with open( filename, 'wb') as handle:
-                    pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                    pickle.dump(times, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 search_csv(path_out=path_parity ,
                            df_rates=df_rates ,
                            df_futures=futures ,
@@ -171,9 +171,9 @@ def search_fix( path=None ,
                 print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + " -- PARITY CHECK")
 
 
-def search_out( result=None , timestamp=None , path_out=None , ordered=None ):
-    if ordered is None:
-        ordered = ['share_strike' , 'put_call' ,
+def search_out( result=None , timestamp=None , path_out=None , col_order=None ):
+    if col_order is None:
+        col_order = ['share_strike' , 'put_call' ,
                    'share_pv_strike' , 'put_call_diff' ,
                    'strike_price' , 'trade_date' ,
                    'exp_date' , 'exp_days' , 'fut_bid_price' ,
@@ -203,12 +203,12 @@ def search_out( result=None , timestamp=None , path_out=None , ordered=None ):
     df['opt_p_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_p_sending_time']]
     df['opt_c_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['opt_c_sending_time']]
     df['fut_sending_time'] = [str(i) if str(i) != 'nan' else i for i in df['fut_sending_time']]
-    if ordered:
-        df = df[ordered]
+    if col_order:
+        df = df[col_order]
     df.to_csv(file_name , index=False , quotechar='"')
 
 
-def __order_dict__( item , codes ):
+def __orderdict__( item , codes ):
     sec_desc = str(item['security_desc'])
     strike_price = int(sec_desc.split(" ")[1][1:])
     order_type = sec_desc.split(" ")[1][0]
@@ -239,7 +239,10 @@ def __order_dict__( item , codes ):
     return dd
 
 
-def put_call_table( item , codes ):
+def pc_table( item , codes ):
+    """
+    Put Call Table
+    """
     sec_desc = str(item['security_desc'])
     trade_day = str(item['trade_date'])
     year , month , day = int(trade_day[0:4]) , int(trade_day[4:6]) , int(trade_day[6:])
@@ -265,7 +268,10 @@ def put_call_table( item , codes ):
     return dd
 
 
-def put_call_query( futures=None , options=None , timestamp=None , month_codes=None , level_limit=1 ):
+def pc_query( futures=None , options=None , timestamp=None , month_codes=None , level_limit=1 ):
+    """
+    Put Call Query
+    """
     if month_codes is None:
         month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z"
     month_codes = month_codes.lower()
@@ -279,7 +285,7 @@ def put_call_query( futures=None , options=None , timestamp=None , month_codes=N
     del query['index']
     fut_dict = query.tail(level_limit).to_dict(orient="records")
     for item in fut_dict:
-        dd = put_call_table(item , codes)
+        dd = pc_table(item , codes)
         table["fut"].append(dd.copy())
     query = options[(options['bid_level'] <= level_limit)]
     query = query[__pd__.notnull(query['security_desc'])]
@@ -295,19 +301,19 @@ def put_call_query( futures=None , options=None , timestamp=None , month_codes=N
         price = int(sec_desc.split(" ")[1][1:])
         if price not in table.keys():
             table[price] = {i: {} for i in range(level_limit)}
-            dd = __order_dict__(item , codes)
+            dd = __orderdict__(item , codes)
             table_dd = table["fut"][level_limit - 1].copy()
             table_dd.update(dd)
             table[price][level_limit - 1] = table_dd.copy()
         else:
-            dd = __order_dict__(item , codes)
+            dd = __orderdict__(item , codes)
             table[price][level_limit - 1].update(dd)
     del table["fut"]
     return table
 
 
 def put_call_parity( futures=None , options=None , rates_table=None , timestamp=None , month_codes=None , level_limit=1 ):
-    table = put_call_query(futures=futures , options=options , timestamp=timestamp , month_codes=month_codes , level_limit=level_limit)
+    table = pc_query(futures=futures , options=options , timestamp=timestamp , month_codes=month_codes , level_limit=level_limit)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
     date = __datetime__.datetime(int(timestamp[0:4]) , int(timestamp[4:6]) , int(timestamp[6:8]))

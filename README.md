@@ -63,8 +63,8 @@ Build Books
 Pipelines
 
     > python -m luigi --module pipelines CMEPipeline --local-scheduler --data-in "/Users/jlroo/cme/data/2010" --data-out "/Users/jlroo/cme/pipeline" --data-start-date 20100101 --data-months 'H,M,U,Z'
-    > python -m luigi --module pipelines OrderBooks --local-scheduler --data-pipe "/home/cme/2010/pipeline" --compression --chunksize 24000 --processes 40 --data-year 2010 --year-code 0
-    > python -m luigi --module pipelines OrderBooks --local-scheduler --data-pipe "/Users/jlroo/cme/pipeline" --chunksize 31 --processes 12 --data-year 2010 --year-code 0
+    > python -m luigi --module pipelines OrderBooks --local-scheduler --data-pipe "/home/cme/2010/pipeline" --compression --chunksize-filter 25600 --processes 40 --data-year 2010 --year-code 0
+
 
 See Also
 ------------
