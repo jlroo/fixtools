@@ -69,8 +69,14 @@ def __timemap__(item):
 
 
 def time_table(futures, options, chunksize=25600):
+    if float(__pd__.__version__[2:]) >= 23.0:
+        futures = futures.values
+        options = options.values
+    else:
+        fututes = futures.as_matrix()
+        options = options.as_matrix()
     with __mp__.Pool() as pool:
-        fut_times = pool.map(__timemap__, futures.as_matrix(), chunksize=chunksize)
+        fut_times = pool.map(__timemap__, futures, chunksize=chunksize)
     grouped = {"futures": {}, "options": {}}
     for item in fut_times:
         ymd = item[0]
@@ -80,7 +86,7 @@ def time_table(futures, options, chunksize=25600):
         else:
             grouped["futures"][ymd][item[1]].append(item[2])
     with __mp__.Pool() as pool:
-        opt_times = pool.map(__timemap__, options.as_matrix())
+        opt_times = pool.map(__timemap__, options)
     for item in opt_times:
         ymd = item[0]
         if ymd not in grouped["options"].keys():
