@@ -27,6 +27,7 @@ def main():
     parser.add_argument('--chunksize_book' , dest='chunksize_book' , help='data chunksize')
     parser.set_defaults(compression=True)
     args = parser.parse_args()
+
     fixdata = fx.open_fix(path=args.file_path , compression=args.compression)
     data_lines = []
     for n,line in enumerate(fixdata.data):
@@ -40,8 +41,11 @@ def main():
     desc_path = args.data_out + fut_code[2] + "/"
     filename = str(0).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
     path_out = desc_path + filename
-    fx.data_book(data=fixdata.data, securities=liquid_secs, path=path_out, processes=args.processes, 
-                    chunksize_filter=args.chunksize_filter, chunksize_book=args.chunksize_book)
+
+    fx.data_book(   data=fixdata.data, securities=liquid_secs, 
+                    path=path_out, processes=args.processes, 
+                    chunksize_filter=args.chunksize_filter, 
+                    chunksize_book=args.chunksize_book)
 
 if __name__ == '__main__':
     main()

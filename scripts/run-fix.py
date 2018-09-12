@@ -14,6 +14,7 @@ import fixtools as fx
 import pandas as pd
 
 if __name__ == "__main__":
+    
     path = "/home/cme/2010/pipeline/2010/H/"
     path_out = "/home/cme/2010/output/"
     path_times = "/home/cme/2010/times/"
