@@ -23,8 +23,7 @@ def book_table( path=None ,
         raise ValueError("Product cant be None. Types: futures or options")
     elif product not in "opt|options" and product not in "fut|futures":
         raise ValueError("Product Types: futures or options")
-    if path[-1] != "/":
-        path = path + "/"
+    path = str([item + "/" if item[-1] != "/" else item for item in [path]][0])
     dfs = []
     for item in iter(file_name):
         file_path = path + item
@@ -51,8 +50,7 @@ def book_table( path=None ,
     except ValueError:
         contract_book = __pd__.DataFrame()
     if path_out:
-        if path_out[-1] != "/":
-            path_out = path_out + "/"
+        path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
         if product in "opt|options":
             file_name = path_out + file_name[0][:-5] + "OPTIONS.csv"
         elif product in "fut|futures":
@@ -143,6 +141,8 @@ def search_fix( path=None ,
     fixfiles = files_tree(path)
     if path_times is None:
         path_times = ""
+    else:
+        path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
     for key in fixfiles.keys():
         opt_files = fixfiles[key]['options']
         options = book_table(path=path, path_out=path_out, file_name=opt_files , product="options",
@@ -184,8 +184,7 @@ def search_out( result=None , timestamp=None , path_out=None , col_order=None ):
                    'opt_p_sec_id' , 'opt_c_sec_id' ,
                    'fut_sec_desc' , 'opt_p_desc' ,
                    'opt_c_desc']
-    if path_out[-1] != "/":
-        path_out = path_out + "/"
+    path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
     file_name = path_out + str(timestamp) + ".csv"
     df = []
     for k in result.keys():
