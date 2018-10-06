@@ -84,8 +84,8 @@ def files_tree(path):
     for f in files_list:
         key = int(f.split("-")[0])
         if key not in files.keys():
-            files[key] = {"options": [], "futures":[]}
-        if "C" in f or "P" in f:
+            files[key] = {"options": [] , "futures": []}
+        if "opt" in f.lower() or "options" in f.lower():
             files[key]["options"].append(f)
         else:
             files[key]["futures"].append(f)
@@ -115,10 +115,12 @@ def to_csv(line, top_order=3):
 
 # TODO: Should add more tags/default tags to the FixDict class
 
+
 class FixDict:
 
     def __init__(self, num_orders):
         self.num_orders = num_orders
+
     # Add more tags here 
     def to_dict(self, line):
         dd = {}

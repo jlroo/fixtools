@@ -1,12 +1,23 @@
 <component name="ProjectDictionaryState">
   <dictionary name="jlroo">
     <words>
+      <w>bookdict</w>
       <w>chunksize</w>
+      <w>dataframe</w>
+      <w>ddict</w>
       <w>fixdata</w>
       <w>fixfile</w>
+      <w>fixfiles</w>
       <w>fixtools</w>
       <w>initialbook</w>
+      <w>jlroo</w>
+      <w>msec</w>
+      <w>orderdict</w>
+      <w>secdesc</w>
       <w>secfilter</w>
+      <w>tbill</w>
+      <w>timefiles</w>
+      <w>timemap</w>
     </words>
   </dictionary>
 </component>
