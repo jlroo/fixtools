@@ -1,7 +1,7 @@
 __docformat__ = 'restructuredtext'
 
 # Let users know if they're missing any of our hard dependencies
-hard_dependencies = ("gzip" , "bz2" , "pandas" , "multiprocessing")
+hard_dependencies = ("gzip" , "bz2" , "pandas" , "multiprocessing" , "numpy")
 missing_dependencies = []
 
 for dependency in hard_dependencies:
