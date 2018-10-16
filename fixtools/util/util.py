@@ -11,7 +11,7 @@ import multiprocessing as __mp__
 import gzip as __gzip__
 import numpy as __np__
 from fixtools.io.fixfast import FixData , FixStruct
-from fixtools.util.search import timetable
+from fixtools.algos.search import timetable
 from os.path import getsize
 
 

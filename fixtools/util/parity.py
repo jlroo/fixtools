@@ -4,7 +4,7 @@ import datetime as __datetime__
 import numpy as __np__
 from pandas import Timestamp
 from fixtools.util.util import expiration_date
-from fixtools.util.search import timetable
+from fixtools.algos.search import timetable
 
 
 def __depth__( depth_func="min" , size=None ):
