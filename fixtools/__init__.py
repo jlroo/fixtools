@@ -16,6 +16,7 @@ del hard_dependencies, dependency, missing_dependencies
 
 from fixtools.core.book import *
 from fixtools.util.util import *
+from fixtools.util.search import *
 from fixtools.util.parity import *
 from fixtools.io.fixfast import *
 

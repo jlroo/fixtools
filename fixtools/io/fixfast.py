@@ -10,29 +10,34 @@ import datetime as __datetime__
 import bz2 as __bz2__
 import re as __re__
 from dateutil import tz as __tz__
-import os as __os__
 
 
-__fixDate__ = None
-
-
-def from_time(timestamp,
-              stamp_date,
-              stamp_time,
-              time_format='%Y%m%d%H%M%S%f',
-              from_zone='UTC',
-              to_zone='America/Chicago'):
-
-    if not timestamp:
-        timestamp = stamp_date + stamp_time
+def other_timezone( timestamp=None ,
+                    from_date=None ,
+                    from_time=None ,
+                    time_format='%Y%m%d%H%M%S%f' ,
+                    from_zone='UTC' ,
+                    to_zone='America/Chicago' ):
+    """
+    Other_timezone allows to change timezones of the fixdata
+   :param timestamp:
+   :param from_date:
+   :param from_time:
+   :param time_format:
+   :param from_zone:
+   :param to_zone:
+   :return: dictionary with date,time and timestamp
+    """
+    if from_date and from_time:
+        timestamp = from_date + from_time
     from_zone = __tz__.gettz(from_zone)
     to_zone = __tz__.gettz(to_zone)
-    stamp = __datetime__.datetime.strptime(timestamp, time_format)
-    stamp = stamp.replace(tzinfo=from_zone)
-    stamp = stamp.astimezone(to_zone)
-    date = stamp.strftime("%Y%m%d")
-    time = stamp.strftime("%H%M%S%f")[:-3]
-    return {"date": date, "time": time, "timestamp": date+time}
+    timestamp = __datetime__.datetime.strptime(timestamp , time_format)
+    timestamp = timestamp.replace(tzinfo=from_zone)
+    timestamp = timestamp.astimezone(to_zone)
+    date = timestamp.strftime("%Y%m%d")
+    time = timestamp.strftime("%H%M%S%f")
+    return {"date": date , "time": time , "timestamp": timestamp}
 
 
 class DayFilter:
@@ -78,20 +83,6 @@ def __secdesc__(data, group="ES", group_code="EZ", max_lines=10000):
     return lines
 
 
-def files_tree(path):
-    files_list = list(__os__.walk(path))[0][2]
-    files = __defaultdict__(dict)
-    for f in files_list:
-        key = int(f.split("-")[0])
-        if key not in files.keys():
-            files[key] = {"options": [] , "futures": []}
-        if "opt" in f.lower() or "options" in f.lower():
-            files[key]["options"].append(f)
-        else:
-            files[key]["futures"].append(f)
-    return files
-
-
 def to_csv(line, top_order=3):
     for item in [line]:
         tag34 = item.split(b"\x0134=")[1].split(b"\x01")[0]
@@ -113,12 +104,11 @@ def to_csv(line, top_order=3):
                                   tag270s, tag271s, str(1+i).encode()]) + b"\n")
         return b" ".join([e for e in row])
 
+
 # TODO: Should add more tags/default tags to the FixDict class
+class FixStruct:
 
-
-class FixDict:
-
-    def __init__(self, num_orders):
+    def __init__( self , num_orders=None ):
         self.num_orders = num_orders
 
     # Add more tags here 
@@ -156,15 +146,53 @@ class FixDict:
                 dd["offer_level"] = self.num_orders
             return dd
 
+    # TODO: Add more tags here
+    def limit_orderbook( self , item=None ):
+        msg_seq_num = int(item.split(b"\x0134=")[1].split(b"\x01")[0].decode())
+        security_id = item.split(b"\x0148=")[1].split(b"\x01")[0].decode()
+        sending_time = int(item.split(b"\x0152=")[1].split(b"\x01")[0].decode())
+        trade_date = item.split(b"\x0175=")[1].split(b"\x01")[0].decode()
+        security_desc = item.split(b"\x01107=")[1].split(b"\x01")[0].decode()
+        body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
+        bids = body[:len(body) // 2]
+        offers = body[len(body) // 2:]
+        bid_price = bids[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+        bid_size = bids[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+        bid_level = self.num_orders
+        offer_price = offers[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+        offer_size = offers[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+        offer_level = self.num_orders
+        top = (msg_seq_num , security_id , security_desc , sending_time , trade_date ,
+               bid_price , bid_size , bid_level , offer_price , offer_size , offer_level)
+        return top
+
+    # TODO: Add more tags here
+    def orderbook( self , item=None ):
+        security_id = item.split(b"\x0148=")[1].split(b"\x01")[0].decode()
+        trade_date = item.split(b"\x0175=")[1].split(b"\x01")[0].decode()
+        security_desc = item.split(b"\x01107=")[1].split(b"\x01")[0].decode()
+        msg_seq_num = int(item.split(b"\x0134=")[1].split(b"\x01")[0].decode())
+        sending_time = int(item.split(b"\x0152=")[1].split(b"\x01")[0].decode())
+        body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
+        bids = body[:len(body) // 2]
+        offers = body[len(body) // 2:]
+        bid_price = bids[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+        bid_size = bids[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+        offer_price = offers[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
+        offer_size = offers[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
+        top = (msg_seq_num , security_id , sending_time , trade_date , bid_price , bid_size , offer_price , offer_size)
+        return security_desc , top
+
 
 class FixData:
     dates = []
     stats = {}
     contracts = {}
 
-    def __init__(self, fixfile, src):
+    def __init__( self , fixfile=None , src=None , num_orders=None ):
         self.data = fixfile
         self.path = src["path"]
+        self.num_orders = num_orders
         first_line = self.data.readline()
         self.data.seek(0)
         if b'\x0152=' in first_line:

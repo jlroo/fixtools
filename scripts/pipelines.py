@@ -92,7 +92,7 @@ class CMEPipeline(luigi.Task):
 
 
 class FixFiles(luigi.Task):
-    data_path = luigi.Parameter()
+    data_path = str(luigi.Parameter())
 
     def output(self):
         return luigi.LocalTarget(self.data_path)
@@ -100,13 +100,13 @@ class FixFiles(luigi.Task):
 
 class OrderBooks(luigi.Task):
     data_pipe = luigi.Parameter()
-    data_year = luigi.Parameter()
+    data_year = str(luigi.Parameter())
     year_code = luigi.Parameter()
     processes = luigi.IntParameter()
     compression = luigi.BoolParameter(default=True)
     chunksize_filter = luigi.IntParameter(default=25600)
     chunksize_book = luigi.IntParameter(default=10)
-    src_name = luigi.Parameter(default="files.txt")
+    src_name = str(luigi.Parameter(default="files.txt"))
     filename = luigi.Parameter(default="books.txt")
     data_out = luigi.Parameter(default="")
 
@@ -116,7 +116,7 @@ class OrderBooks(luigi.Task):
         return [FixFiles(self.data_pipe + files)]
 
     def run(self):
-        if self.data_out=="":
+        if self.data_out == "":
             self.data_out = self.data_pipe + self.data_year + "/"
         with self.input()[0].open('r') as data_files:
             files = sorted(data_files.read().splitlines())
@@ -124,20 +124,25 @@ class OrderBooks(luigi.Task):
         for k, infile in enumerate(files):
             fixdata = fx.open_fix(path=infile.strip() , compression=self.compression)
             data_lines = []
-            for n,line in enumerate(fixdata.data):
-                if n >=10000:
+            for n , line in enumerate(fixdata.data):
+                if n >= 10000:
                     break
                 data_lines.append(line)
             fixdata.data.seek(0)
-            opt_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="OPT", code_year=self.year_code)
-            fut_code = fx.most_liquid(data_line=data_lines[0], instrument="ES", product="FUT", code_year=self.year_code)
+            opt_code = fx.most_liquid(data_line=data_lines[0] , product="ES" , instrument="OPT" ,
+                                      code_year=self.year_code)
+            fut_code = fx.most_liquid(data_line=data_lines[0] , product="ES" , instrument="FUT" ,
+                                      code_year=self.year_code)
             liquid_secs = fx.liquid_securities(data_lines, code_year=self.year_code)
             desc_path = self.data_out + fut_code[2] + "/"
             filename = str(k).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
             path_out = desc_path + filename
-            fx.data_book(   data=fixdata.data, securities=liquid_secs, 
-                            path=path_out, processes=self.processes, 
-                            chunksize_filter=self.chunksize_filter, chunksize_book=self.chunksize_book)
+            fx.data_book(data=fixdata.data ,
+                         securities=liquid_secs ,
+                         path=path_out ,
+                         processes=self.processes ,
+                         chunksize_filter=self.chunksize_filter ,
+                         chunksize_book=self.chunksize_book)
             for secid in liquid_secs.keys():
                 name = path_out + liquid_secs[secid].replace(" ", "-")
                 contracts.write("[DONE] " + infile.strip() + " -- CONTRACT -- " + name + "\n")

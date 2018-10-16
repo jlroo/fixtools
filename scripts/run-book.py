@@ -32,7 +32,7 @@ def main():
     fixdata = fx.open_fix(path=args.file_path , compression=args.compression)
     data_lines = []
     for n,line in enumerate(fixdata.data):
-        if n >=10000:
+        if n >= 10000:
             break
         data_lines.append(line)
     fixdata.data.seek(0)
@@ -43,10 +43,11 @@ def main():
     filename = str(0).zfill(3) + "-" + fut_code[2] + opt_code[2] + "-"
     path_out = desc_path + filename
 
-    fx.data_book(   data=fixdata.data, securities=liquid_secs, 
-                    path=path_out, processes=args.processes, 
-                    chunksize_filter=args.chunksize_filter, 
-                    chunksize_book=args.chunksize_book)
+    fx.data_book(data=fixdata.data , securities=liquid_secs ,
+                 path=path_out , processes=args.processes ,
+                 chunksize_filter=args.chunksize_filter ,
+                 chunksize_book=args.chunksize_book)
+
 
 if __name__ == '__main__':
     main()

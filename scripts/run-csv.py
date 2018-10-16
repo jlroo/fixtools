@@ -41,4 +41,6 @@ if __name__ == "__main__":
                'opt_p_offer_size' ,
                'opt_c_offer_size']
 
-    fx.search_csv(path=path , path_out=path_out , df_rates=rates_table , columns=columns , chunksize=25600)
+    fx.weekly_liquidity(path=path , path_out=path_out ,
+                        df_rates=rates_table , columns=columns ,
+                        method='minute' , chunksize=25600)
