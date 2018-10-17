@@ -408,6 +408,7 @@ def weekly_orderbooks( path_files=None ,
                        path_times=None ,
                        num_orders=1 ,
                        chunksize=25600 ,
+                       dtype=None ,
                        read_ram=True ):
     path_files = str([item + "/" if item[-1] != "/" else item for item in [path_files]][0])
     path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
@@ -421,10 +422,10 @@ def weekly_orderbooks( path_files=None ,
         opt_files = fixfiles['options'][key]
         options = booktable(path_file=path_files ,
                             file_name=opt_files ,
-                            product="options" ,
                             num_orders=num_orders ,
                             chunksize=chunksize ,
-                            read_ram=read_ram)
+                            read_ram=read_ram ,
+                            dtype=dtype)
         opt_name = path_out + opt_files[0][:-5] + "OPTIONS"
         opt_times = options['sending_time']
         __np__.save(file=opt_name , arr=options)
@@ -433,10 +434,10 @@ def weekly_orderbooks( path_files=None ,
         fut_file = fixfiles['futures'][key]
         futures = booktable(path_file=path_files ,
                             file_name=fut_file ,
-                            product="futures" ,
                             num_orders=num_orders ,
                             chunksize=chunksize ,
-                            read_ram=read_ram)
+                            read_ram=read_ram ,
+                            dtype=dtype)
         fut_name = path_out + fut_file[0]
         fut_times = futures['sending_time']
         __np__.save(file=fut_name , arr=futures)
@@ -458,6 +459,7 @@ def booktable( path_file=None ,
                dtype=None ):
     """
     Function to convert fix books to pandas dataframe
+    :param dtype:
     :param path_file: Location of FIX order books
     :param file_name: Location for the pandas order books
     :param file_name: File or files names to be process
