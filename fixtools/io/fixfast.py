@@ -10,6 +10,7 @@ import datetime as __datetime__
 import bz2 as __bz2__
 import re as __re__
 from dateutil import tz as __tz__
+import numpy as __np__
 
 
 def other_timezone( timestamp=None ,
@@ -164,6 +165,7 @@ class FixStruct:
         offer_level = self.num_orders
         top = (msg_seq_num , security_id , security_desc , sending_time , trade_date ,
                bid_price , bid_size , bid_level , offer_price , offer_size , offer_level)
+        top = tuple(item if item != 'NA' else __np__.nan for item in top)
         return top
 
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified weekly_orderbooks function">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="added dtype to weekly_options function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/util/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fixtools/io/fixfast.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/io/fixfast.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,7 +46,7 @@
           <entry key="LICENSE" value="1" />
           <entry key="Makefile" value="1" />
           <entry key="md" value="5" />
-          <entry key="py" value="110" />
+          <entry key="py" value="111" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
@@ -54,7 +54,7 @@
         <counts>
           <entry key="Markdown" value="5" />
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="108" />
+          <entry key="Python" value="109" />
           <entry key="Scratch" value="2" />
         </counts>
       </usages-collector>
@@ -63,16 +63,16 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="25" />
           <entry key="md" value="132" />
-          <entry key="py" value="19487" />
-          <entry key="txt" value="1443" />
+          <entry key="py" value="19587" />
+          <entry key="txt" value="1517" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="1468" />
-          <entry key="Python" value="19581" />
+          <entry key="PLAIN_TEXT" value="1542" />
+          <entry key="Python" value="19681" />
           <entry key="Scratch" value="62" />
         </counts>
       </usages-collector>
@@ -84,11 +84,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="838">
-              <caret line="500" lean-forward="true" selection-start-line="500" selection-end-line="500" />
+            <state relative-caret-position="1262">
+              <caret line="485" column="59" selection-start-line="485" selection-start-column="44" selection-end-line="485" selection-end-column="59" />
               <folding>
                 <element signature="e#60#79#0" expanded="true" />
               </folding>
@@ -96,11 +96,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="782">
-              <caret line="164" selection-start-line="164" selection-end-line="165" selection-end-column="89" />
+            <state relative-caret-position="-2334">
+              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+              <folding>
+                <element signature="e#61#93#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -108,8 +111,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+            <state relative-caret-position="418">
+              <caret line="22" selection-start-line="22" selection-end-line="22" />
             </state>
           </provider>
         </entry>
@@ -216,15 +219,15 @@
         <option value="$PROJECT_DIR$/scripts/run-csv.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/scripts/pipelines.py" />
-        <option value="$PROJECT_DIR$/scripts/run-fix.py" />
         <option value="$PROJECT_DIR$/fixtools/util/search.py" />
         <option value="$PROJECT_DIR$/fixtools/algos/search.py" />
         <option value="$PROJECT_DIR$/fixtools/util/parity.py" />
         <option value="$PROJECT_DIR$/fixtools/__init__.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
         <option value="$PROJECT_DIR$/fixtools/algos/liquidity.py" />
-        <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
         <option value="$PROJECT_DIR$/fixtools/util/util.py" />
+        <option value="$PROJECT_DIR$/scripts/run-fix.py" />
+        <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
       </list>
     </option>
   </component>
@@ -453,20 +456,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00065" summary="Added Array() and yield iterator">
-      <created>1523330599350</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1523330599350</updated>
-    </task>
-    <task id="LOCAL-00066" summary="Added initializer and global variables">
-      <created>1523369151598</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1523369151598</updated>
     </task>
     <task id="LOCAL-00067" summary="Added initializer and global variables">
       <created>1523369495007</created>
@@ -797,7 +786,21 @@
       <option name="project" value="LOCAL" />
       <updated>1539801818408</updated>
     </task>
-    <option name="localTasksCounter" value="114" />
+    <task id="LOCAL-00114" summary="fixed data types for numpy array">
+      <created>1539808543378</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1539808543378</updated>
+    </task>
+    <task id="LOCAL-00115" summary="added dtype to weekly_options function">
+      <created>1539808805438</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1539808805438</updated>
+    </task>
+    <option name="localTasksCounter" value="116" />
     <servers />
   </component>
   <component name="TodoView">
@@ -899,8 +902,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="update debug file" />
-    <MESSAGE value="update debug file for" />
     <MESSAGE value="added iter to opening book function. Also to functions in debug file" />
     <MESSAGE value="changed book.py file for python 2.7 multiprocessing" />
     <MESSAGE value="modified debug.py file" />
@@ -924,7 +925,9 @@
     <MESSAGE value="modified files_tree function" />
     <MESSAGE value="modified the how files_tree function index works" />
     <MESSAGE value="modified weekly_orderbooks function" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified weekly_orderbooks function" />
+    <MESSAGE value="fixed data types for numpy array" />
+    <MESSAGE value="added dtype to weekly_options function" />
+    <option name="LAST_COMMIT_MESSAGE" value="added dtype to weekly_options function" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1130,24 +1133,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="782">
-          <caret line="164" selection-start-line="164" selection-end-line="165" selection-end-column="89" />
+        <state relative-caret-position="418">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="838">
-          <caret line="500" lean-forward="true" selection-start-line="500" selection-end-line="500" />
+        <state relative-caret-position="1262">
+          <caret line="485" column="59" selection-start-line="485" selection-start-column="44" selection-end-line="485" selection-end-column="59" />
           <folding>
             <element signature="e#60#79#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2334">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+          <folding>
+            <element signature="e#61#93#0" expanded="true" />
           </folding>
         </state>
       </provider>
