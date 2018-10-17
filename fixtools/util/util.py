@@ -413,7 +413,11 @@ def weekly_orderbooks( path_files=None ,
     path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
     path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
     fixfiles = files_tree(path_files)
-    for key in fixfiles.keys():
+    if len(fixfiles['futures'].keys()) != len(fixfiles['options'].keys()):
+        raise ValueError("Number of files per week is different between futures and options")
+    else:
+        num_weeks = len(fixfiles['futures'].keys())
+    for key in range(num_weeks):
         opt_files = fixfiles['options'][key]
         options = booktable(path_file=path_files ,
                             file_name=opt_files ,

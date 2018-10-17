@@ -18,7 +18,11 @@ def weekly_liquidity( path_month=None ,
     fixfiles = files_tree(path_month)
     path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
     timefiles = files_tree(path_times)
-    for key in fixfiles.keys():
+    if len(fixfiles['futures'].keys()) != len(fixfiles['options'].keys()):
+        raise ValueError("Number of files per week is different between futures and options")
+    else:
+        num_weeks = len(fixfiles['futures'].keys())
+    for key in range(num_weeks):
         opt_file = fixfiles['options'][key][0]
         options = __np__.load(file=path_month + opt_file)
         fut_file = fixfiles['futures'][key][0]
