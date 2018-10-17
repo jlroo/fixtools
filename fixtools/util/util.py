@@ -426,7 +426,9 @@ def weekly_orderbooks( path_files=None ,
                             chunksize=chunksize ,
                             read_ram=read_ram)
         opt_name = path_out + opt_files[0][:-5] + "OPTIONS"
+        opt_times = options['sending_time']
         __np__.save(file=opt_name , arr=options)
+        del options
         print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
         fut_file = fixfiles['futures'][key]
         futures = booktable(path_file=path_files ,
@@ -436,10 +438,12 @@ def weekly_orderbooks( path_files=None ,
                             chunksize=chunksize ,
                             read_ram=read_ram)
         fut_name = path_out + fut_file[0]
+        fut_times = futures['sending_time']
         __np__.save(file=fut_name , arr=futures)
+        del futures
         print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
         time_file = path_times + fut_file[0]
-        times = timetable(fut_times=futures['sending_time'] , opt_times=options['sending_time'] , chunksize=chunksize)
+        times = timetable(fut_times=fut_times , opt_times=opt_times , chunksize=chunksize)
         __np__.save(file=time_file , arr=times)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + time_file + "-TIMES")
 
@@ -467,10 +471,10 @@ def booktable( path_file=None ,
         raise ValueError("Product cant be None. Types: futures or options")
     elif product not in "opt|options" and product not in "fut|futures":
         raise ValueError("Product Types: futures or options")
-    path = str([item + "/" if item[-1] != "/" else item for item in [path_file]][0])
+    path_file = [item + "/" if item[-1] != "/" else item for item in [path_file]][0]
     dfs = []
     for item in iter(file_name):
-        file_path = path + item
+        file_path = path_file + item
         if getsize(file_path) == 0:
             continue
         else:

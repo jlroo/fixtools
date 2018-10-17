@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified fixtools API added new liquidity.py file">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified the how files_tree function index works">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/util/util.py" afterDir="false" />
     </list>
@@ -46,7 +46,7 @@
           <entry key="LICENSE" value="1" />
           <entry key="Makefile" value="1" />
           <entry key="md" value="5" />
-          <entry key="py" value="104" />
+          <entry key="py" value="109" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
@@ -54,7 +54,7 @@
         <counts>
           <entry key="Markdown" value="5" />
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="102" />
+          <entry key="Python" value="107" />
           <entry key="Scratch" value="2" />
         </counts>
       </usages-collector>
@@ -63,16 +63,16 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="25" />
           <entry key="md" value="132" />
-          <entry key="py" value="19077" />
-          <entry key="txt" value="1341" />
+          <entry key="py" value="19407" />
+          <entry key="txt" value="1414" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="1366" />
-          <entry key="Python" value="19171" />
+          <entry key="PLAIN_TEXT" value="1439" />
+          <entry key="Python" value="19501" />
           <entry key="Scratch" value="62" />
         </counts>
       </usages-collector>
@@ -84,27 +84,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="13" column="37" selection-start-line="13" selection-start-column="37" selection-end-line="13" selection-end-column="37" />
+            <state relative-caret-position="691">
+              <caret line="445" column="58" selection-start-line="445" selection-start-column="58" selection-end-line="445" selection-end-column="58" />
               <folding>
-                <element signature="e#25#48#0" expanded="true" />
-                <marker date="1539796655072" expanded="true" signature="2067:2068" ph="..." />
+                <element signature="e#60#79#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="413" column="21" lean-forward="true" selection-start-line="413" selection-start-column="21" selection-end-line="413" selection-end-column="21" />
-              <folding>
-                <element signature="e#60#79#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="361">
+              <caret line="19" column="46" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -255,6 +251,35 @@
               <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
               <item name="fixtools" type="462c0819:PsiDirectoryNode" />
               <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="algos" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="io" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="scripts" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -419,20 +444,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00061" summary="Version Update v2.0 - Modified API - New data_book function">
-      <created>1522100230568</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1522100230568</updated>
-    </task>
-    <task id="LOCAL-00062" summary="Version Update v2.0 - Modified API - New data_book function">
-      <created>1522100240921</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1522100240921</updated>
     </task>
     <task id="LOCAL-00063" summary="Added Array() and yield iterator">
       <created>1523044078795</created>
@@ -763,7 +774,21 @@
       <option name="project" value="LOCAL" />
       <updated>1539796673312</updated>
     </task>
-    <option name="localTasksCounter" value="110" />
+    <task id="LOCAL-00110" summary="modified files_tree function">
+      <created>1539799242691</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1539799242691</updated>
+    </task>
+    <task id="LOCAL-00111" summary="modified the how files_tree function index works">
+      <created>1539800115832</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1539800115832</updated>
+    </task>
+    <option name="localTasksCounter" value="112" />
     <servers />
   </component>
   <component name="TodoView">
@@ -865,8 +890,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="added pool.closed(), pool.join() and terminate" />
-    <MESSAGE value="changed globals book.py" />
     <MESSAGE value="added debug file" />
     <MESSAGE value="update debug file" />
     <MESSAGE value="update debug file for" />
@@ -890,7 +913,9 @@
     <MESSAGE value="created a new directory for search and algorithms" />
     <MESSAGE value="moved files_tree function from util to search" />
     <MESSAGE value="modified fixtools API added new liquidity.py file" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified fixtools API added new liquidity.py file" />
+    <MESSAGE value="modified files_tree function" />
+    <MESSAGE value="modified the how files_tree function index works" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified the how files_tree function index works" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1047,13 +1072,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1082,14 +1100,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4482">
+        <state relative-caret-position="-9">
           <caret line="84" lean-forward="true" selection-start-line="84" selection-end-line="84" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2432">
+        <state relative-caret-position="1234">
           <caret line="128" lean-forward="true" selection-start-line="128" selection-end-line="128" />
           <folding>
             <element signature="e#108#118#0" expanded="true" />
@@ -1097,21 +1115,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" column="46" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="37" selection-start-line="13" selection-start-column="37" selection-end-line="13" selection-end-column="37" />
+        <state relative-caret-position="475">
+          <caret line="25" column="45" lean-forward="true" selection-start-line="25" selection-start-column="45" selection-end-line="25" selection-end-column="45" />
           <folding>
             <element signature="e#25#48#0" expanded="true" />
-            <marker date="1539796655072" expanded="true" signature="2067:2068" ph="..." />
+            <marker date="1539800038691" expanded="true" signature="2299:2300" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="413" column="21" lean-forward="true" selection-start-line="413" selection-start-column="21" selection-end-line="413" selection-end-column="21" />
+        <state relative-caret-position="691">
+          <caret line="445" column="58" selection-start-line="445" selection-start-column="58" selection-end-line="445" selection-end-column="58" />
           <folding>
             <element signature="e#60#79#0" expanded="true" />
           </folding>
