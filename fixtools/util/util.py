@@ -10,6 +10,7 @@ import datetime as __datetime__
 import multiprocessing as __mp__
 import gzip as __gzip__
 import numpy as __np__
+from collections import defaultdict
 from fixtools.io.fixfast import FixData , FixStruct
 from os.path import getsize
 
@@ -44,16 +45,13 @@ def open_fix( path , period="weekly" , compression=True ):
 
 def files_tree( path ):
     files_list = list(__os__.walk(path))[0][2]
-    files = {}
+    files = {'futures': defaultdict(list) , 'options': defaultdict(list)}
     for file in files_list:
         key = int(file.split("-")[0])
-        if key not in files.keys():
-            files[key] = {"options": [] , "futures": []}
+        if "c" in file.lower() or "p" in file.lower():
+            files["options"][key].append(file)
         else:
-            if "c" in file.lower() or "p" in file.lower():
-                files[key]["options"].append(file)
-            else:
-                files[key]["futures"].append(file)
+            files["futures"][key].append(file)
     return files
 
 
@@ -411,21 +409,22 @@ def weekly_orderbooks( path_files=None ,
                        num_orders=1 ,
                        chunksize=25600 ,
                        read_ram=True ):
-    fixfiles = files_tree(path_files)
+    path_files = str([item + "/" if item[-1] != "/" else item for item in [path_files]][0])
     path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
+    path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
+    fixfiles = files_tree(path_files)
     for key in fixfiles.keys():
-        opt_files = fixfiles[key]['options']
+        opt_files = fixfiles['options'][key]
         options = booktable(path_file=path_files ,
                             file_name=opt_files ,
                             product="options" ,
                             num_orders=num_orders ,
                             chunksize=chunksize ,
                             read_ram=read_ram)
-        path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
         opt_name = path_out + opt_files[0][:-5] + "OPTIONS"
         __np__.save(file=opt_name , arr=options)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
-        fut_file = fixfiles[key]['futures']
+        fut_file = fixfiles['futures'][key]
         futures = booktable(path_file=path_files ,
                             file_name=fut_file ,
                             product="futures" ,
@@ -436,9 +435,7 @@ def weekly_orderbooks( path_files=None ,
         __np__.save(file=fut_name , arr=futures)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
         time_file = path_times + fut_file[0]
-        times = timetable(fut_times=futures['sending_time'] ,
-                          opt_times=options['sending_time'] ,
-                          chunksize=chunksize)
+        times = timetable(fut_times=futures['sending_time'] , opt_times=options['sending_time'] , chunksize=chunksize)
         __np__.save(file=time_file , arr=times)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + time_file + "-TIMES")
 

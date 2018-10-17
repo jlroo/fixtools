@@ -19,11 +19,11 @@ def weekly_liquidity( path_month=None ,
     path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
     timefiles = files_tree(path_times)
     for key in fixfiles.keys():
-        opt_file = fixfiles[key]['options'][0]
+        opt_file = fixfiles['options'][key][0]
         options = __np__.load(file=path_month + opt_file)
-        fut_file = fixfiles[key]['futures'][0]
+        fut_file = fixfiles['futures'][key][0]
         futures = __np__.load(file=path_month + fut_file)
-        time_file = timefiles[key]['futures'][0]
+        time_file = timefiles['futures'][key][0]
         times = __np__.load(file=time_file)
         results = rolling_liquidity(futures=futures ,
                                     options=options ,
