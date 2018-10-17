@@ -446,6 +446,7 @@ def weekly_orderbooks( path_files=None ,
         times = timetable(fut_times=fut_times , opt_times=opt_times , chunksize=chunksize)
         __np__.save(file=time_file , arr=times)
         print("[DONE] -- " + str(key).zfill(3) + " -- " + time_file + "-TIMES")
+        del times
 
 
 # TODO: look into FixDict class on fixfast.py make it more robust

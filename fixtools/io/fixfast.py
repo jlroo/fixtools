@@ -166,23 +166,6 @@ class FixStruct:
                bid_price , bid_size , bid_level , offer_price , offer_size , offer_level)
         return top
 
-    # TODO: Add more tags here
-    def orderbook( self , item=None ):
-        security_id = item.split(b"\x0148=")[1].split(b"\x01")[0].decode()
-        trade_date = item.split(b"\x0175=")[1].split(b"\x01")[0].decode()
-        security_desc = item.split(b"\x01107=")[1].split(b"\x01")[0].decode()
-        msg_seq_num = int(item.split(b"\x0134=")[1].split(b"\x01")[0].decode())
-        sending_time = int(item.split(b"\x0152=")[1].split(b"\x01")[0].decode())
-        body = item.split(b'\x0110=')[0].split(b'\x01279')[1:]
-        bids = body[:len(body) // 2]
-        offers = body[len(body) // 2:]
-        bid_price = bids[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
-        bid_size = bids[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
-        offer_price = offers[0].split(b'\x01270=')[1].split(b'\x01')[0].decode()
-        offer_size = offers[0].split(b'\x01271=')[1].split(b'\x01')[0].decode()
-        top = (msg_seq_num , security_id , sending_time , trade_date , bid_price , bid_size , offer_price , offer_size)
-        return security_desc , top
-
 
 class FixData:
     dates = []
