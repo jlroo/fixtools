@@ -5,7 +5,7 @@ import datetime as __datetime__
 import pandas as __pd__
 import numpy as __np__
 import multiprocessing as __mp__
-from fixtools.util.util import files_tree , contract_code
+from fixtools.util.util import contract_code
 from fixtools.util.parity import rolling_liquidity , search_liquidity
 
 
@@ -25,6 +25,21 @@ def timetable( fut_times=None , opt_times=None , chunksize=25600 ):
                                           ('hours' , '>i2') , ('minutes' , '>i2') , ('seconds' , '>i2') ,
                                           ('milliseconds' , '>i4') , ('microsecond' , '>i4') , ('timestamp' , '>i8')])
     return times
+
+
+def files_tree( path ):
+    files_list = list(__os__.walk(path))[0][2]
+    files = {}
+    for file in files_list:
+        key = int(file.split("-")[0])
+        if key not in files.keys():
+            files[key] = {"options": [] , "futures": []}
+        else:
+            if "c" in file.lower() or "p" in file.lower():
+                files[key]["options"].append(file)
+            else:
+                files[key]["futures"].append(file)
+    return files
 
 
 def books_locator( exchange=None ,

@@ -3,7 +3,6 @@ Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
 """
 
-import os as __os__
 import bz2 as __bz2__
 import calendar as __calendar__
 import datetime as __datetime__
@@ -11,7 +10,7 @@ import multiprocessing as __mp__
 import gzip as __gzip__
 import numpy as __np__
 from fixtools.io.fixfast import FixData , FixStruct
-from fixtools.algos.search import timetable
+from fixtools.algos.search import timetable , files_tree
 from os.path import getsize
 
 
@@ -41,21 +40,6 @@ def open_fix( path , period="weekly" , compression=True ):
             raise ValueError("Supported files gzip,bz2, uncompress bytes file. \
             For uncompressed files change compression flag to False.")
     return FixData(fixfile , src)
-
-
-def files_tree( path ):
-    files_list = list(__os__.walk(path))[0][2]
-    files = {}
-    for file in files_list:
-        key = int(file.split("-")[0])
-        if key not in files.keys():
-            files[key] = {"options": [] , "futures": []}
-        else:
-            if "c" in file.lower() or "p" in file.lower():
-                files[key]["options"].append(file)
-            else:
-                files[key]["futures"].append(file)
-    return files
 
 
 def data_dates( data_line , period="weekly" ):
