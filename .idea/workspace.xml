@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified the how files_tree function index works">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified weekly_orderbooks function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/util/util.py" afterDir="false" />
     </list>
@@ -46,7 +46,7 @@
           <entry key="LICENSE" value="1" />
           <entry key="Makefile" value="1" />
           <entry key="md" value="5" />
-          <entry key="py" value="109" />
+          <entry key="py" value="110" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
@@ -54,7 +54,7 @@
         <counts>
           <entry key="Markdown" value="5" />
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="107" />
+          <entry key="Python" value="108" />
           <entry key="Scratch" value="2" />
         </counts>
       </usages-collector>
@@ -63,16 +63,16 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="25" />
           <entry key="md" value="132" />
-          <entry key="py" value="19407" />
-          <entry key="txt" value="1414" />
+          <entry key="py" value="19487" />
+          <entry key="txt" value="1443" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="1439" />
-          <entry key="Python" value="19501" />
+          <entry key="PLAIN_TEXT" value="1468" />
+          <entry key="Python" value="19581" />
           <entry key="Scratch" value="62" />
         </counts>
       </usages-collector>
@@ -87,8 +87,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="691">
-              <caret line="445" column="58" selection-start-line="445" selection-start-column="58" selection-end-line="445" selection-end-column="58" />
+            <state relative-caret-position="838">
+              <caret line="500" lean-forward="true" selection-start-line="500" selection-end-line="500" />
               <folding>
                 <element signature="e#60#79#0" expanded="true" />
               </folding>
@@ -97,10 +97,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="782">
+              <caret line="164" selection-start-line="164" selection-end-line="165" selection-end-column="89" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="19" column="46" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="46" />
+            <state relative-caret-position="399">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
             </state>
           </provider>
         </entry>
@@ -204,7 +213,6 @@
         <option value="$USER_HOME$/space/09-RESEARCH/cme/code/tacc_utils.py" />
         <option value="$PROJECT_DIR$/scripts/run-book.py" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
         <option value="$PROJECT_DIR$/scripts/run-csv.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/scripts/pipelines.py" />
@@ -215,6 +223,7 @@
         <option value="$PROJECT_DIR$/fixtools/__init__.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
         <option value="$PROJECT_DIR$/fixtools/algos/liquidity.py" />
+        <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
         <option value="$PROJECT_DIR$/fixtools/util/util.py" />
       </list>
     </option>
@@ -444,20 +453,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00063" summary="Added Array() and yield iterator">
-      <created>1523044078795</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1523044078795</updated>
-    </task>
-    <task id="LOCAL-00064" summary="Added Array() and yield iterator">
-      <created>1523302925253</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1523302925253</updated>
     </task>
     <task id="LOCAL-00065" summary="Added Array() and yield iterator">
       <created>1523330599350</created>
@@ -788,7 +783,21 @@
       <option name="project" value="LOCAL" />
       <updated>1539800115832</updated>
     </task>
-    <option name="localTasksCounter" value="112" />
+    <task id="LOCAL-00112" summary="modified weekly_orderbooks function">
+      <created>1539801458426</created>
+      <option name="number" value="00112" />
+      <option name="presentableId" value="LOCAL-00112" />
+      <option name="project" value="LOCAL" />
+      <updated>1539801458426</updated>
+    </task>
+    <task id="LOCAL-00113" summary="modified weekly_orderbooks function">
+      <created>1539801818408</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1539801818408</updated>
+    </task>
+    <option name="localTasksCounter" value="114" />
     <servers />
   </component>
   <component name="TodoView">
@@ -890,7 +899,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="added debug file" />
     <MESSAGE value="update debug file" />
     <MESSAGE value="update debug file for" />
     <MESSAGE value="added iter to opening book function. Also to functions in debug file" />
@@ -915,7 +923,8 @@
     <MESSAGE value="modified fixtools API added new liquidity.py file" />
     <MESSAGE value="modified files_tree function" />
     <MESSAGE value="modified the how files_tree function index works" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified the how files_tree function index works" />
+    <MESSAGE value="modified weekly_orderbooks function" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified weekly_orderbooks function" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1098,13 +1107,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="84" lean-forward="true" selection-start-line="84" selection-end-line="84" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1234">
@@ -1112,13 +1114,6 @@
           <folding>
             <element signature="e#108#118#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="19" column="46" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="46" />
         </state>
       </provider>
     </entry>
@@ -1133,10 +1128,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="782">
+          <caret line="164" selection-start-line="164" selection-end-line="165" selection-end-column="89" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="691">
-          <caret line="445" column="58" selection-start-line="445" selection-start-column="58" selection-end-line="445" selection-end-column="58" />
+        <state relative-caret-position="838">
+          <caret line="500" lean-forward="true" selection-start-line="500" selection-end-line="500" />
           <folding>
             <element signature="e#60#79#0" expanded="true" />
           </folding>

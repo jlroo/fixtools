@@ -445,14 +445,13 @@ def weekly_orderbooks( path_files=None ,
         time_file = path_times + fut_file[0]
         times = timetable(fut_times=fut_times , opt_times=opt_times , chunksize=chunksize)
         __np__.save(file=time_file , arr=times)
-        print("[DONE] -- " + str(key).zfill(3) + " -- " + time_file + "-TIMES")
+        print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-TIMES")
         del times
 
 
 # TODO: look into FixDict class on fixfast.py make it more robust
 def booktable( path_file=None ,
                file_name=None ,
-               product=None ,
                num_orders=1 ,
                chunksize=25600 ,
                read_ram=True ,
@@ -462,16 +461,11 @@ def booktable( path_file=None ,
     :param path_file: Location of FIX order books
     :param file_name: Location for the pandas order books
     :param file_name: File or files names to be process
-    :param product: Type of product to be process futures/options
     :param num_orders: Order depth, number of book orders
     :param chunksize: Number of lines to process
     :param read_ram: If true will read all the data to ram
     :return: Pandas dataframe FIX Book order
     """
-    if product is None:
-        raise ValueError("Product cant be None. Types: futures or options")
-    elif product not in "opt|options" and product not in "fut|futures":
-        raise ValueError("Product Types: futures or options")
     path_file = [item + "/" if item[-1] != "/" else item for item in [path_file]][0]
     dfs = []
     for item in iter(file_name):
@@ -495,75 +489,12 @@ def booktable( path_file=None ,
                 pass
     try:
         if dtype is None:
-            dtype = {'names': ['bid_level' , 'bid_price' , 'bid_size' , 'msg_seq_num' , 'offer_level' , 'offer_price' ,
-                               'offer_size' , 'security_desc' , 'security_id' , 'sending_time' , 'trade_date'] ,
-                     'formats': ['>i2' , '>f4' , '>f4' , '>i4' , '>i2' , '>f4' , '>f4' , '|U25' , '|U25' , '>i8' ,
-                                 '>i4']}
+            dtype = {'names': ['msg_seq_num' , 'security_id' , 'security_desc' , 'sending_time' , 'trade_date ' ,
+                               'bid_price' , 'bid_size' , 'bid_level' , 'offer_price' , 'offer_size' , 'offer_level'] ,
+                     'formats': ['>i4' , '<U25' , '<U25' , '>i8' , '>i4' , '>f4' ,
+                                 '>f4' , '>i2' , '>f4' , '>f4' , '>i2']}
         book = __np__.array(dfs , dtype=dtype)
     except ValueError:
         book = __np__.array([] , dtype=dtype)
     return book
 
-
-"""
-# TODO: look into FixDict class on fixfast.py make it more robust
-def booktable( path=None ,
-               path_out=None ,
-               file_name=None ,
-               product=None ,
-               num_orders=1 ,
-               chunksize=25600 ,
-               read_ram=True ,
-               dtype=None ):
-    if product is None:
-        raise ValueError("Product cant be None. Types: futures or options")
-    elif product not in "opt|options" and product not in "fut|futures":
-        raise ValueError("Product Types: futures or options")
-    path = str([item + "/" if item[-1] != "/" else item for item in [path]][0])
-    dfs = []
-    for item in iter(file_name):
-        file_path = path + item
-        if getsize(file_path) == 0:
-            continue
-        else:
-            # FixStruct class from FIX to dictionary
-            book_struct = FixStruct(num_orders=num_orders)
-            fixdata = open_fix(file_path , compression=False)
-            if read_ram:
-                data = fixdata.data.readlines()
-            else:
-                data = fixdata.data
-            with __mp__.Pool() as pool:
-                rows = pool.map(book_struct.limit_orderbook , data , chunksize=chunksize)
-                dfs.extend(rows)
-            try:
-                data.close()
-            except AttributeError:
-                pass
-    try:
-        if dtype is None:
-            dtype = {'names': ['bid_level' , 'bid_price' , 'bid_size' , 'msg_seq_num' , 'offer_level' , 'offer_price' ,
-                               'offer_size' , 'security_desc' , 'security_id' , 'sending_time' , 'trade_date'] ,
-                     'formats': ['>i2' , '>f4' , '>f4' , '>i4' , '>i2' , '>f4' , '>f4' , '|U25' , '|U25' , '>i8' ,
-                                 '>i4']}
-        book = __np__.array(dfs, dtype=dtype)
-        #book = __pd__.DataFrame(dfs ,
-        #                        columns=['security_id' , 'security_desc' , 'bid_level' , 'bid_price' , 'bid_size' ,
-        #                                 'offer_level' , 'offer_price' , 'offer_size' , 'msg_seq_num' , 'trade_date' ,
-        #                                 'sending_time'])
-        #book = book.replace('NA' , __pd__.np.nan)
-        #book = book.replace('' , __pd__.np.nan)
-    except ValueError:
-        #book = __pd__.DataFrame()
-        book = __np__.array([], dtype=dtype)
-    if path_out:
-        path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
-        if product in "opt|options":
-            file_name = path_out + file_name[0][:-5] + "OPTIONS"
-        elif product in "fut|futures":
-            file_name = path_out + file_name[0]
-        __np__.save(file=file_name, arr=book)
-        #book.to_csv(file_name , index=False)
-    return book
-
-"""
