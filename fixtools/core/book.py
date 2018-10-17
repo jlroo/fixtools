@@ -6,9 +6,13 @@ Created on Wed Apr  5 10:17:23 2017
 @author: jlroo
 """
 
+import sys
+import numpy as __np__
+from pandas import Timestamp
+import datetime as __datetime__
 import multiprocessing as __mp__
 from collections import defaultdict
-import sys
+from fixtools.util.util import expiration_date , timetable
 
 
 def __build__( security_id ):
@@ -122,6 +126,165 @@ def data_book(data=None, securities=None, path=None, processes=None, chunksize_f
                 books = pool.map(__build__ , contract_ids , chunksize_book)
             pool.close()
         return books
+
+
+def __orderdict__( item , codes ):
+    sec_desc = str(item['security_desc'])
+    strike_price = int(sec_desc.split(" ")[1][1:])
+    order_type = sec_desc.split(" ")[1][0]
+    trade_day = str(item['trade_date'])
+    year = int(trade_day[0:4])
+    month = int(trade_day[4:6])
+    day = int(trade_day[6:])
+    trade_date = __datetime__.datetime(year , month , day)
+    month_exp = codes[sec_desc[2].lower()]
+    if month == 12:
+        year += 1
+    exp_date = expiration_date(year , month_exp , 3 , day='friday')
+    delta = exp_date - trade_date
+    if "c" in order_type.lower():
+        dd = {"strike_price": strike_price ,
+              "trade_date": trade_date ,
+              "exp_date": exp_date ,
+              "exp_days": delta.days ,
+              "opt_c_sec_id": item['security_id'] ,
+              "opt_c_desc": sec_desc ,
+              "opt_c_msg_seq_num": item['msg_seq_num'] ,
+              "opt_c_sending_time": str(item['sending_time']) ,
+              "opt_c_bid_price": item['bid_price'] ,
+              "opt_c_bid_size": item['bid_size'] ,
+              "opt_c_bid_level": item['bid_level'] ,
+              "opt_c_offer_price": item['offer_price'] ,
+              "opt_c_offer_size": item['offer_size'] ,
+              "opt_c_offer_level": item['offer_level']}
+    else:
+        dd = {"strike_price": strike_price ,
+              "trade_date": trade_date ,
+              "exp_date": exp_date ,
+              "exp_days": delta.days ,
+              "opt_p_sec_id": item['security_id'] ,
+              "opt_p_desc": sec_desc ,
+              "opt_p_msg_seq_num": item['msg_seq_num'] ,
+              "opt_p_sending_time": str(item['sending_time']) ,
+              "opt_p_bid_price": item['bid_price'] ,
+              "opt_p_bid_size": item['bid_size'] ,
+              "opt_p_bid_level": item['bid_level'] ,
+              "opt_p_offer_price": item['offer_price'] ,
+              "opt_p_offer_size": item['offer_size'] ,
+              "opt_p_offer_level": item['offer_level']}
+    return dd
+
+
+def __bookdict__( item , codes ):
+    """
+    Creates a dictionary from the FIX order book
+    :param item:
+    :param codes:
+    :return: Return python dictionary with the time to expiration
+    """
+    sec_desc = str(item['security_desc'])
+    trade_day = str(item['trade_date'])
+    year , month , day = int(trade_day[0:4]) , int(trade_day[4:6]) , int(trade_day[6:])
+    trade_date = __datetime__.datetime(year , month , day)
+    month_exp = codes[sec_desc[2].lower()]
+    if month == 12:
+        year = year + 1
+    exp_date = expiration_date(year , month_exp , 3 , day='friday')
+    delta = exp_date - trade_date
+    dd = {"trade_date": trade_date ,
+          "exp_days": delta.days ,
+          "fut_sec_id": item['security_id'] ,
+          "fut_sec_desc": item['security_desc'] ,
+          "fut_msg_seq_num": item['msg_seq_num'] ,
+          "fut_sending_time": str(item['sending_time']) ,
+          "fut_bid_price": item['bid_price'] ,
+          "fut_bid_size": item['bid_size'] ,
+          "fut_bid_level": item['bid_level'] ,
+          "fut_offer_price": item['offer_price'] ,
+          "fut_offer_size": item['offer_size'] ,
+          "fut_offer_level": item['offer_level']}
+    columns = ["opt_p_sec_id" , "opt_p_desc" ,
+               "opt_p_msg_seq_num" , "opt_p_sending_time" ,
+               "opt_p_bid_price" , "opt_p_bid_size" ,
+               "opt_p_bid_level" , "opt_p_offer_price" ,
+               "opt_p_offer_size" , "opt_p_offer_level" ,
+               "opt_c_sec_id" , "opt_c_desc" ,
+               "opt_c_msg_seq_num" , "opt_c_sending_time" ,
+               "opt_c_bid_price" , "opt_c_bid_size" ,
+               "opt_c_bid_level" , "opt_c_offer_price" ,
+               "opt_c_offer_size" , "opt_c_offer_level"]
+    for col in columns:
+        dd[col] = __np__.nan
+    return dd
+
+
+def top_book( futures=None , options=None , timestamp=None , month_codes=None ):
+    """
+    Search pandas dataframe for specific timestamp
+    :param futures: Order book dataframe for futures contracts
+    :param options: Order book for all options contracts
+    :param timestamp: Timestamp to search in the order books
+    :param month_codes: The codes to corresponding months. CME default "F,G,H,J,K,M,N,Q,U,V,X,Z"
+    :return: Dictionary with the result of the timestamp search
+    """
+    book_level = 1
+    if month_codes is None:
+        month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z"
+    month_codes = month_codes.lower()
+    table = {"fut": []}
+    codes = {k[1]: k[0] for k in enumerate(month_codes.rsplit(",") , 1)}
+    query = futures[__np__.where((futures['bid_level'] == book_level) & (futures['sending_time'] <= timestamp))]
+    query = query[~__np__.isnan(query['bid_price'])]
+    query = query[~__np__.isnan(query['offer_price'])]
+    query.sort(order='sending_time')
+    item = query[-1]
+    fut_dict = {n: item[i] for i , n in enumerate(item.dtype.names)}
+    for item in [fut_dict]:
+        dd = __bookdict__(item , codes)
+        table["fut"].append(dd.copy())
+    query = options[__np__.where((options['bid_level'] == book_level) & (options['sending_time'] <= timestamp))]
+    query = query[~__np__.isnan(query['bid_price'])]
+    query = query[~__np__.isnan(query['offer_price'])]
+    query.sort(order='sending_time')
+    opts = __np__.unique(query['security_id'])
+    for sec in opts:
+        sec_query = query[__np__.where(query['security_id'] == sec)]
+        sec_query.sort(order='sending_time')
+        item = sec_query[-1]
+        item = {n: item[i] for i , n in enumerate(item.dtype.names)}
+        sec_desc = item['security_desc']
+        price = int(sec_desc.split(" ")[1][1:])
+        if price not in table.keys():
+            table[price] = {i: {} for i in range(book_level)}
+            dd = __orderdict__(item , codes)
+            table_dd = table["fut"][book_level - 1].copy()
+            table_dd.update(dd)
+            table[price][book_level - 1] = table_dd.copy()
+        else:
+            dd = __orderdict__(item , codes)
+            table[price][book_level - 1].update(dd)
+    del table["fut"]
+    timestamp = str(timestamp)
+    timestamp = Timestamp(year=int(timestamp[0:4]) , month=int(timestamp[4:6]) , day=int(timestamp[6:8]) ,
+                          hour=int(timestamp[8:10]) , minute=int(timestamp[10:12]) , second=int(timestamp[12:14]) ,
+                          microsecond=int(timestamp[14:]) * 1000 , unit="ms").ceil("H")
+    for key in table.keys():
+        opt_p_sending_time = table[key][book_level - 1]['opt_p_sending_time']
+        opt_p_sending_time = [str(i) if str(i) != 'nan' else i for i in [opt_p_sending_time]][0]
+        table[key][book_level - 1]['opt_p_sending_time'] = opt_p_sending_time
+        opt_c_sending_time = table[key][book_level - 1]['opt_c_sending_time']
+        opt_c_sending_time = [str(i) if str(i) != 'nan' else i for i in [opt_c_sending_time]][0]
+        table[key][book_level - 1]['opt_c_sending_time'] = opt_c_sending_time
+        fut_sending_time = table[key][book_level - 1]['fut_sending_time']
+        fut_sending_time = [str(i) if str(i) != 'nan' else i for i in [fut_sending_time]][0]
+        table[key][book_level - 1]['fut_sending_time'] = fut_sending_time
+        table[key][book_level - 1]['timestamp'] = timestamp
+        table[key][book_level - 1]['date'] = timestamp.date()
+        table[key][book_level - 1]['year'] = timestamp.year
+        table[key][book_level - 1]['month'] = timestamp.month_name()
+        table[key][book_level - 1]['day'] = timestamp.day_name()
+        table[key][book_level - 1]['hour'] = timestamp.hour
+    return table
 
 
 class OrderBook:

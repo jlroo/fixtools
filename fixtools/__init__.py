@@ -17,8 +17,6 @@ del hard_dependencies, dependency, missing_dependencies
 from fixtools.io.fixfast import *
 from fixtools.core.book import *
 from fixtools.util.util import *
-from fixtools.util.parity import *
-from fixtools.algos.search import *
 
 # module level doc-string
 __doc__ = """

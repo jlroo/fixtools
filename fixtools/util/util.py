@@ -3,6 +3,7 @@ Created on Fri Jul 22 17:33:13 2016
 @author: jlroo
 """
 
+import os as __os__
 import bz2 as __bz2__
 import calendar as __calendar__
 import datetime as __datetime__
@@ -10,7 +11,6 @@ import multiprocessing as __mp__
 import gzip as __gzip__
 import numpy as __np__
 from fixtools.io.fixfast import FixData , FixStruct
-from fixtools.algos.search import timetable , files_tree
 from os.path import getsize
 
 
@@ -40,6 +40,21 @@ def open_fix( path , period="weekly" , compression=True ):
             raise ValueError("Supported files gzip,bz2, uncompress bytes file. \
             For uncompressed files change compression flag to False.")
     return FixData(fixfile , src)
+
+
+def files_tree( path ):
+    files_list = list(__os__.walk(path))[0][2]
+    files = {}
+    for file in files_list:
+        key = int(file.split("-")[0])
+        if key not in files.keys():
+            files[key] = {"options": [] , "futures": []}
+        else:
+            if "c" in file.lower() or "p" in file.lower():
+                files[key]["options"].append(file)
+            else:
+                files[key]["futures"].append(file)
+    return files
 
 
 def data_dates( data_line , period="weekly" ):
@@ -117,6 +132,87 @@ def market_calendar( year=None , firstweekday=6 ):
                 mrktyear['calendar'][quarter][mnt][n] = wk
             mnt += 1
     return mrktyear
+
+
+def __time__( timestamp ):
+    date = __datetime__.datetime.strptime(str(timestamp) , "%Y%m%d%H%M%S%f")
+    dd = (date.year , date.month , date.day , date.hour , date.minute ,
+          date.second , date.microsecond * 0.001 , date.microsecond , int(timestamp))
+    return dd
+
+
+def timetable( fut_times=None , opt_times=None , chunksize=25600 ):
+    sending_time = __np__.concatenate([fut_times , opt_times])
+    sending_time = __np__.unique(sending_time)
+    with __mp__.Pool() as pool:
+        timemap = pool.map(__time__ , sending_time , chunksize=chunksize)
+    times = __np__.array(timemap , dtype=[('year' , '>i2') , ('month' , '>i2') , ('day' , '>i2') ,
+                                          ('hours' , '>i2') , ('minutes' , '>i2') , ('seconds' , '>i2') ,
+                                          ('milliseconds' , '>i4') , ('microsecond' , '>i4') , ('timestamp' , '>i8')])
+    return times
+
+
+def books_locator( exchange=None ,
+                   year=None ,
+                   asset=None ,
+                   product=None ,
+                   month=None ,
+                   instrument=None ,
+                   local_path=None ,
+                   top_books=True ):
+    """
+    locates where the order books are in the local or cloud database
+    :param exchange:
+    :param year:
+    :param asset:
+    :param product:
+    :param month:
+    :param instrument:
+    :param local_path:
+    :param top_books:
+    :return:
+    """
+    files = {}
+    year = str(year)
+    exchange = exchange.upper()
+    asset = asset.upper()
+    product = product.upper()
+    instrument = instrument.upper()
+    if type(month) == str:
+        months = {'january': 1 , 'february': 2 , 'march': 3 , 'april': 4 , 'may': 5 , 'june': 6 ,
+                  'july': 7 , 'august': 8 , 'september': 9 , 'october': 10 , 'november': 11 , 'december': 12}
+        month = {'n': months[k] for k in months.keys() if month.lower() in k}
+        if month == {}:
+            raise ValueError("Enter a correct month")
+    elif type(month) == int:
+        if month not in range(1 , 13):
+            raise ValueError("Month should be an integer between 1 to 12")
+        month = {'n': month}
+    exchange = "exchange_" + exchange
+    year = "/year_" + year
+    asset = "/asset_" + asset
+    product = "/product_" + product
+    instrument = "/instrument_" + instrument
+    month = "/month_" + contract_code(month=month['n'] , path_code=True)[0]
+    if top_books:
+        md_path = "/md_BOOKS_TOP" + month
+    else:
+        md_path = "/md_BOOKS" + month
+    if local_path:
+        local_path = str([item + "/" if item[-1] != "/" else item for item in [local_path]][0])
+        path = local_path + exchange + year + asset + product + md_path + instrument + "/"
+        src_files = list(__os__.walk(path))[0][2]
+        for file in src_files:
+            key = int(file.split("-")[0])
+            if key not in files.keys():
+                files[key] = []
+                files[key].append(path + file)
+            else:
+                files[key].append(path + file)
+    else:
+        # TODO: Implement cloud-DB version to pull data from sbecipher could
+        print("need cloud implementation")
+    return files
 
 
 def contract_code( month=None , codes=None , path_code=False , return_table=False ):
