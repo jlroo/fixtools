@@ -426,8 +426,8 @@ def weekly_orderbooks( path_files=None ,
                             chunksize=chunksize ,
                             read_ram=read_ram ,
                             dtype=dtype)
-        opt_name = path_out + opt_files[0][:-5] + "OPTIONS"
         opt_times = options['sending_time']
+        opt_name = path_out + "instrument_OPT/" + opt_files[0][:-5] + "OPTIONS"
         __np__.save(file=opt_name , arr=options)
         del options
         print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
@@ -438,8 +438,8 @@ def weekly_orderbooks( path_files=None ,
                             chunksize=chunksize ,
                             read_ram=read_ram ,
                             dtype=dtype)
-        fut_name = path_out + fut_file[0]
         fut_times = futures['sending_time']
+        fut_name = path_out + "instrument_FUT/" + fut_file[0]
         __np__.save(file=fut_name , arr=futures)
         del futures
         print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")

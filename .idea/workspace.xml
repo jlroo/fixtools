@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="added dtype to weekly_options function">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="fixed issue with NAs on FixStruct class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/io/fixfast.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/io/fixfast.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/util/util.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,16 +29,16 @@
     <session id="801451633">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="12" />
+          <entry key="project.closed" value="13" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.5" value="2" />
           <entry key="project.open.time.6" value="2" />
           <entry key="project.open.time.7" value="2" />
-          <entry key="project.open.time.8" value="4" />
+          <entry key="project.open.time.8" value="5" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="14" />
+          <entry key="project.opened" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -63,16 +63,16 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="25" />
           <entry key="md" value="132" />
-          <entry key="py" value="19587" />
-          <entry key="txt" value="1517" />
+          <entry key="py" value="19617" />
+          <entry key="txt" value="1566" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="1542" />
-          <entry key="Python" value="19681" />
+          <entry key="PLAIN_TEXT" value="1591" />
+          <entry key="Python" value="19711" />
           <entry key="Scratch" value="62" />
         </counts>
       </usages-collector>
@@ -87,8 +87,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1262">
-              <caret line="485" column="59" selection-start-line="485" selection-start-column="44" selection-end-line="485" selection-end-column="59" />
+            <state relative-caret-position="1205">
+              <caret line="448" column="27" selection-start-line="448" selection-start-column="27" selection-end-line="448" selection-end-column="27" />
               <folding>
                 <element signature="e#60#79#0" expanded="true" />
               </folding>
@@ -99,8 +99,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2334">
-              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+            <state relative-caret-position="-2997">
+              <caret line="13" selection-start-line="13" selection-end-line="13" />
               <folding>
                 <element signature="e#61#93#0" expanded="true" />
               </folding>
@@ -225,9 +225,9 @@
         <option value="$PROJECT_DIR$/fixtools/__init__.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
         <option value="$PROJECT_DIR$/fixtools/algos/liquidity.py" />
-        <option value="$PROJECT_DIR$/fixtools/util/util.py" />
         <option value="$PROJECT_DIR$/scripts/run-fix.py" />
         <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
+        <option value="$PROJECT_DIR$/fixtools/util/util.py" />
       </list>
     </option>
   </component>
@@ -252,6 +252,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -297,7 +298,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -456,13 +456,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00067" summary="Added initializer and global variables">
-      <created>1523369495007</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1523369495007</updated>
     </task>
     <task id="LOCAL-00068" summary="Added initializer and global variables">
       <created>1523369586609</created>
@@ -800,7 +793,14 @@
       <option name="project" value="LOCAL" />
       <updated>1539808805438</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="fixed issue with NAs on FixStruct class">
+      <created>1539814620175</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1539814620175</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="TodoView">
@@ -816,7 +816,7 @@
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1941392" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1965812" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="Query Editor" order="3" />
@@ -902,7 +902,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="added iter to opening book function. Also to functions in debug file" />
     <MESSAGE value="changed book.py file for python 2.7 multiprocessing" />
     <MESSAGE value="modified debug.py file" />
     <MESSAGE value="modified pipeline and book.py mp" />
@@ -927,7 +926,8 @@
     <MESSAGE value="modified weekly_orderbooks function" />
     <MESSAGE value="fixed data types for numpy array" />
     <MESSAGE value="added dtype to weekly_options function" />
-    <option name="LAST_COMMIT_MESSAGE" value="added dtype to weekly_options function" />
+    <MESSAGE value="fixed issue with NAs on FixStruct class" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed issue with NAs on FixStruct class" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1090,23 +1090,11 @@
     <entry file="file://$PROJECT_DIR$/fixtools/algos/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/util/parity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/util/parity.py" />
     <entry file="file://$PROJECT_DIR$/fixtools/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="361">
           <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#531#564#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1114,9 +1102,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1234">
           <caret line="128" lean-forward="true" selection-start-line="128" selection-end-line="128" />
-          <folding>
-            <element signature="e#108#118#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1124,10 +1109,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="475">
           <caret line="25" column="45" lean-forward="true" selection-start-line="25" selection-start-column="45" selection-end-line="25" selection-end-column="45" />
-          <folding>
-            <element signature="e#25#48#0" expanded="true" />
-            <marker date="1539800038691" expanded="true" signature="2299:2300" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1140,8 +1121,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1262">
-          <caret line="485" column="59" selection-start-line="485" selection-start-column="44" selection-end-line="485" selection-end-column="59" />
+        <state relative-caret-position="1205">
+          <caret line="448" column="27" selection-start-line="448" selection-start-column="27" selection-end-line="448" selection-end-column="27" />
           <folding>
             <element signature="e#60#79#0" expanded="true" />
           </folding>
@@ -1150,8 +1131,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/io/fixfast.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2334">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        <state relative-caret-position="-2997">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
           <folding>
             <element signature="e#61#93#0" expanded="true" />
           </folding>
