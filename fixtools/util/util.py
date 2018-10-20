@@ -417,8 +417,8 @@ def weekly_orderbooks( path_files=None ,
     if len(fixfiles['futures'].keys()) != len(fixfiles['options'].keys()):
         raise ValueError("Number of files per week is different between futures and options")
     else:
-        num_weeks = len(fixfiles['futures'].keys())
-    for key in range(num_weeks):
+        weeks = fixfiles['futures'].keys()
+    for key in weeks:
         opt_files = fixfiles['options'][key]
         options = booktable(path_file=path_files ,
                             file_name=opt_files ,
