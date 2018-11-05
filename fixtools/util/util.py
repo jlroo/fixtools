@@ -520,8 +520,10 @@ def booktable( path_file=None ,
                 pass
     try:
         if dtype is None:
-            dtype = {'names': ['msg_seq_num' , 'security_id' , 'security_desc' , 'sending_time' , 'trade_date ' ,
-                               'bid_price' , 'bid_size' , 'bid_level' , 'offer_price' , 'offer_size' , 'offer_level'] ,
+            dtype = {'names': ['msg_seq_num' , 'security_id' ,
+                               'security_desc' , 'sending_time' , 'trade_date' ,
+                               'bid_price' , 'bid_size' , 'bid_level' ,
+                               'offer_price' , 'offer_size' , 'offer_level'] ,
                      'formats': ['>i4' , '<U25' , '<U25' , '>i8' , '>i4' , '>f4' ,
                                  '>f4' , '>i2' , '>f4' , '>f4' , '>i2']}
         book = __np__.array(dfs , dtype=dtype)

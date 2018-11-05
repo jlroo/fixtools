@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="fixed issue with finding the files using the files_tree function">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="fixed issue files_tree returning list, correct str file name to open top book files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fixtools/algos/liquidity.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/algos/liquidity.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/util/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run-fix.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run-fix.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,7 +48,7 @@
           <entry key="LICENSE" value="1" />
           <entry key="Makefile" value="1" />
           <entry key="md" value="5" />
-          <entry key="py" value="117" />
+          <entry key="py" value="118" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
@@ -54,7 +56,7 @@
         <counts>
           <entry key="Markdown" value="5" />
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="115" />
+          <entry key="Python" value="116" />
           <entry key="Scratch" value="2" />
         </counts>
       </usages-collector>
@@ -63,16 +65,16 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="34" />
           <entry key="md" value="132" />
-          <entry key="py" value="20049" />
-          <entry key="txt" value="2026" />
+          <entry key="py" value="20132" />
+          <entry key="txt" value="2363" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="2060" />
-          <entry key="Python" value="20143" />
+          <entry key="PLAIN_TEXT" value="2397" />
+          <entry key="Python" value="20226" />
           <entry key="Scratch" value="62" />
         </counts>
       </usages-collector>
@@ -84,11 +86,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="36" />
+            <state relative-caret-position="488">
+              <caret line="34" column="35" selection-start-line="34" selection-start-column="35" selection-end-line="34" selection-end-column="35" />
               <folding>
                 <element signature="e#25#48#0" expanded="true" />
               </folding>
@@ -96,14 +98,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="42" column="25" lean-forward="true" selection-start-line="42" selection-start-column="25" selection-end-line="42" selection-end-column="25" />
+            <state relative-caret-position="553">
+              <caret line="517" column="24" lean-forward="true" selection-start-line="517" selection-start-column="24" selection-end-line="517" selection-end-column="24" />
               <folding>
                 <element signature="e#60#79#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="361">
+              <caret line="19" column="101" selection-start-line="19" selection-start-column="101" selection-end-line="19" selection-end-column="101" />
             </state>
           </provider>
         </entry>
@@ -227,12 +238,12 @@
         <option value="$PROJECT_DIR$/fixtools/util/parity.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
         <option value="$PROJECT_DIR$/fixtools/io/fixfast.py" />
-        <option value="$PROJECT_DIR$/scripts/run-fix.py" />
         <option value="$PROJECT_DIR$/fixtools/__init__.py" />
         <option value="$PROJECT_DIR$/scripts/run-csv.py" />
         <option value="$PROJECT_DIR$/scripts/run-liquidity.py" />
-        <option value="$PROJECT_DIR$/fixtools/algos/liquidity.py" />
         <option value="$PROJECT_DIR$/fixtools/util/util.py" />
+        <option value="$PROJECT_DIR$/scripts/run-fix.py" />
+        <option value="$PROJECT_DIR$/fixtools/algos/liquidity.py" />
       </list>
     </option>
   </component>
@@ -574,20 +585,6 @@
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
     </task>
-    <task id="LOCAL-00075" summary="added run-book.py run single book">
-      <created>1533262332976</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
-      <option name="project" value="LOCAL" />
-      <updated>1533262332977</updated>
-    </task>
-    <task id="LOCAL-00076" summary="update utils file from fixdata to data_line">
-      <created>1533264716586</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
-      <option name="project" value="LOCAL" />
-      <updated>1533264716586</updated>
-    </task>
     <task id="LOCAL-00077" summary="update utils file from fixdata to data_line">
       <created>1533264912929</created>
       <option name="number" value="00077" />
@@ -917,7 +914,21 @@
       <option name="project" value="LOCAL" />
       <updated>1541452971446</updated>
     </task>
-    <option name="localTasksCounter" value="124" />
+    <task id="LOCAL-00124" summary="modified files_tree to choose between futures and options files by the file name">
+      <created>1541453639272</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1541453639272</updated>
+    </task>
+    <task id="LOCAL-00125" summary="fixed issue files_tree returning list, correct str file name to open top book files">
+      <created>1541453964106</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1541453964106</updated>
+    </task>
+    <option name="localTasksCounter" value="126" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1019,8 +1030,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="added mp manager" />
-    <MESSAGE value="added int to chunksize" />
     <MESSAGE value="modified book data_filter from default dict to dict" />
     <MESSAGE value="added Manager from mp to book.py data_filter" />
     <MESSAGE value="modified debug file" />
@@ -1044,7 +1053,9 @@
     <MESSAGE value="change path from run-liquidity.py file and minor changes to weekly_liquidity function" />
     <MESSAGE value="modified missing instrument in weekly_liquidity" />
     <MESSAGE value="fixed issue with finding the files using the files_tree function" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed issue with finding the files using the files_tree function" />
+    <MESSAGE value="modified files_tree to choose between futures and options files by the file name" />
+    <MESSAGE value="fixed issue files_tree returning list, correct str file name to open top book files" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed issue files_tree returning list, correct str file name to open top book files" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1235,13 +1246,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
@@ -1252,22 +1256,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
+    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="361">
-          <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="36" />
-          <folding>
-            <element signature="e#25#48#0" expanded="true" />
-          </folding>
+          <caret line="19" column="101" selection-start-line="19" selection-start-column="101" selection-end-line="19" selection-end-column="101" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="42" column="25" lean-forward="true" selection-start-line="42" selection-start-column="25" selection-end-line="42" selection-end-column="25" />
+        <state relative-caret-position="553">
+          <caret line="517" column="24" lean-forward="true" selection-start-line="517" selection-start-column="24" selection-end-line="517" selection-end-column="24" />
           <folding>
             <element signature="e#60#79#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="488">
+          <caret line="34" column="35" selection-start-line="34" selection-start-column="35" selection-end-line="34" selection-end-column="35" />
+          <folding>
+            <element signature="e#25#48#0" expanded="true" />
           </folding>
         </state>
       </provider>

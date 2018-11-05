@@ -19,6 +19,8 @@ def weekly_liquidity( path_files=None ,
     fut_path = path_files + "instrument_FUT/"
     fut_files = files_tree(fut_path)
     opt_files = files_tree(opt_path)
+    names = ['msg_seq_num' , 'security_id' , 'security_desc' , 'sending_time' , 'trade_date' ,
+             'bid_price' , 'bid_size' , 'bid_level' , 'offer_price' , 'offer_size' , 'offer_level']
     if len(fut_files['futures'].keys()) != len(opt_files['options'].keys()):
         print("Number of files per week is different between futures and options")
         weeks = fut_files['futures'].keys()
@@ -27,8 +29,10 @@ def weekly_liquidity( path_files=None ,
     for key in weeks:
         opt_file = opt_files['options'][key][0]
         options = __np__.load(file=opt_path + opt_file)
+        options.dtype.names = names
         fut_file = fut_files['futures'][key][0]
         futures = __np__.load(file=fut_path + fut_file)
+        futures.dtype.names = names
         times = __np__.load(file=path_times + fut_file)
         results = rolling_liquidity(futures=futures ,
                                     options=options ,
