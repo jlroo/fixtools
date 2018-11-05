@@ -48,7 +48,7 @@ def files_tree( path ):
     files = {'futures': defaultdict(list) , 'options': defaultdict(list)}
     for file in files_list:
         key = int(file.split("-")[0])
-        if "c" in file.lower() or "p" in file.lower():
+        if "c" in file.lower()[:-4] or "p" in file.lower()[:-4] or "options" in file.lower()[:-4]:
             files["options"][key].append(file)
         else:
             files["futures"][key].append(file)
