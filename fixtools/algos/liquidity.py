@@ -8,27 +8,28 @@ from fixtools.core.book import top_book
 from fixtools.util.util import files_tree , timetable
 
 
-def weekly_liquidity( path_month=None ,
+def weekly_liquidity( path_files=None ,
                       path_out=None ,
                       path_times=None ,
                       df_rates=None ,
                       frequency='hour' ,
                       chunksize=25600 ):
-    path_month = str([item + "/" if item[-1] != "/" else item for item in [path_month]][0])
-    fixfiles = files_tree(path_month)
+    path_files = str([item + "/" if item[-1] != "/" else item for item in [path_files]][0])
+    fixfiles = files_tree(path_files)
     path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
     timefiles = files_tree(path_times)
     if len(fixfiles['futures'].keys()) != len(fixfiles['options'].keys()):
-        raise ValueError("Number of files per week is different between futures and options")
+        print("Number of files per week is different between futures and options")
+        weeks = fixfiles['futures'].keys()
     else:
-        num_weeks = len(fixfiles['futures'].keys())
-    for key in range(num_weeks):
+        weeks = len(fixfiles['futures'].keys())
+    for key in range(weeks):
         opt_file = fixfiles['options'][key][0]
-        options = __np__.load(file=path_month + opt_file)
+        options = __np__.load(file=path_files + opt_file)
         fut_file = fixfiles['futures'][key][0]
-        futures = __np__.load(file=path_month + fut_file)
+        futures = __np__.load(file=path_files + fut_file)
         time_file = timefiles['futures'][key][0]
-        times = __np__.load(file=time_file)
+        times = __np__.load(file=path_times + time_file)
         results = rolling_liquidity(futures=futures ,
                                     options=options ,
                                     times=times ,
@@ -45,11 +46,13 @@ def weekly_liquidity( path_month=None ,
                     dict_list.append(df)
         data = __pd__.concat(dict_list)
         data.reset_index()
-        path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
-        file_name = path_out + fut_file + "-liquidity" + ".csv"
-        data.to_csv(file_name , index=False , quotechar='"')
-        print("[DONE] -- LIQUIDITY -- " + fut_file)
-        return data
+        if path_out is not None:
+            path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
+            file_name = path_out + fut_file + "-liquidity" + ".csv"
+            data.to_csv(file_name , index=False , quotechar='"')
+            print("[DONE] -- LIQUIDITY -- " + fut_file)
+        else:
+            return data
 
 
 def timestamp_liquidity( futures=None ,
@@ -57,7 +60,10 @@ def timestamp_liquidity( futures=None ,
                          timestamp=None ,
                          df_rates=None ,
                          path_out=None ):
-    query = search_liquidity(futures=futures , options=options , rates_table=df_rates , timestamp=timestamp ,
+    query = search_liquidity(futures=futures ,
+                             options=options ,
+                             rates_table=df_rates ,
+                             timestamp=timestamp ,
                              book_level=1)
     dict_list = []
     for item in query:

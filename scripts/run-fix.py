@@ -21,10 +21,10 @@ if __name__ == "__main__":
                        'bid_price' , 'bid_size' , 'bid_level' , 'offer_price' , 'offer_size' , 'offer_level'] ,
              'formats': ['>i4' , '<U25' , '<U25' , '>i8' , '>i4' , '>f4' , '>f4' , '>i2' , '>f4' , '>f4' , '>i2']}
 
-    fx.weekly_orderbooks(path_files=path_files,
-			path_out=path_out,
-			path_times=path_times,
-			num_orders=1,
-			chunksize=25600,
-			read_ram=False,
-			dtype=dtype)
+    fx.weekly_orderbooks(path_files=path_files ,
+                         path_out=path_out ,
+                         path_times=path_times ,
+                         num_orders=1 ,
+                         chunksize=25600 ,
+                         read_ram=False ,
+                         dtype=dtype)
