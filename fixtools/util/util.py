@@ -409,45 +409,75 @@ def weekly_orderbooks( path_files=None ,
                        num_orders=1 ,
                        chunksize=25600 ,
                        dtype=None ,
+                       product=None,
                        read_ram=True ):
     path_files = str([item + "/" if item[-1] != "/" else item for item in [path_files]][0])
     path_times = str([item + "/" if item[-1] != "/" else item for item in [path_times]][0])
     path_out = str([item + "/" if item[-1] != "/" else item for item in [path_out]][0])
     fixfiles = files_tree(path_files)
     if len(fixfiles['futures'].keys()) != len(fixfiles['options'].keys()):
-        raise ValueError("Number of files per week is different between futures and options")
+        print("Number of files per week is different between futures and options")
+        weeks = fixfiles['futures'].keys()
     else:
         weeks = fixfiles['futures'].keys()
     for key in weeks:
-        opt_files = fixfiles['options'][key]
-        options = booktable(path_file=path_files ,
-                            file_name=opt_files ,
-                            num_orders=num_orders ,
-                            chunksize=chunksize ,
-                            read_ram=read_ram ,
-                            dtype=dtype)
-        opt_times = options['sending_time']
-        opt_name = path_out + "instrument_OPT/" + opt_files[0][:-5] + "OPTIONS"
-        __np__.save(file=opt_name , arr=options)
-        del options
-        print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
-        fut_file = fixfiles['futures'][key]
-        futures = booktable(path_file=path_files ,
-                            file_name=fut_file ,
-                            num_orders=num_orders ,
-                            chunksize=chunksize ,
-                            read_ram=read_ram ,
-                            dtype=dtype)
-        fut_times = futures['sending_time']
-        fut_name = path_out + "instrument_FUT/" + fut_file[0]
-        __np__.save(file=fut_name , arr=futures)
-        del futures
-        print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
-        time_file = path_times + fut_file[0]
-        times = timetable(fut_times=fut_times , opt_times=opt_times , chunksize=chunksize)
-        __np__.save(file=time_file , arr=times)
-        print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-TIMES")
-        del times
+        if product==None:
+            opt_files = fixfiles['options'][key]
+            options = booktable(path_file=path_files ,
+                                file_name=opt_files ,
+                                num_orders=num_orders ,
+                                chunksize=chunksize ,
+                                read_ram=read_ram ,
+                                dtype=dtype)
+            opt_times = options['sending_time']
+            opt_name = path_out + "instrument_OPT/" + opt_files[0][:-5] + "OPTIONS"
+            __np__.save(file=opt_name , arr=options)
+            del options
+            print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
+            fut_file = fixfiles['futures'][key]
+            futures = booktable(path_file=path_files ,
+                                file_name=fut_file ,
+                                num_orders=num_orders ,
+                                chunksize=chunksize ,
+                                read_ram=read_ram ,
+                                dtype=dtype)
+            fut_times = futures['sending_time']
+            fut_name = path_out + "instrument_FUT/" + fut_file[0]
+            __np__.save(file=fut_name , arr=futures)
+            del futures
+            print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")                
+            time_file = path_times + fut_file[0]
+            times = timetable(fut_times=fut_times , opt_times=opt_times , chunksize=chunksize)
+            __np__.save(file=time_file , arr=times)
+            print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-TIMES")
+            del times
+        else:
+            if product.lower()=="options" :
+                opt_files = fixfiles['options'][key]
+                options = booktable(path_file=path_files ,
+                                    file_name=opt_files ,
+                                    num_orders=num_orders ,
+                                    chunksize=chunksize ,
+                                    read_ram=read_ram ,
+                                    dtype=dtype)
+                opt_times = options['sending_time']
+                opt_name = path_out + "instrument_OPT/" + opt_files[0][:-5] + "OPTIONS"
+                __np__.save(file=opt_name , arr=options)
+                del options
+                print("[DONE] -- " + str(key).zfill(3) + " -- " + opt_files[0][:-5] + "OPTIONS")
+            if product.lower()=="futures" :
+                fut_file = fixfiles['futures'][key]
+                futures = booktable(path_file=path_files ,
+                                    file_name=fut_file ,
+                                    num_orders=num_orders ,
+                                    chunksize=chunksize ,
+                                    read_ram=read_ram ,
+                                    dtype=dtype)
+                fut_times = futures['sending_time']
+                fut_name = path_out + "instrument_FUT/" + fut_file[0]
+                __np__.save(file=fut_name , arr=futures)
+                del futures
+                print("[DONE] -- " + str(key).zfill(3) + " -- " + fut_file[0] + "-FUTURES")
 
 
 # TODO: look into FixDict class on fixfast.py make it more robust
@@ -486,7 +516,8 @@ def booktable( path_file=None ,
                 rows = pool.map(book_struct.limit_orderbook , data , chunksize=chunksize)
                 dfs.extend(rows)
             try:
-                data.close()
+                del data
+                del rows
             except AttributeError:
                 pass
     try:
@@ -496,6 +527,7 @@ def booktable( path_file=None ,
                      'formats': ['>i4' , '<U25' , '<U25' , '>i8' , '>i4' , '>f4' ,
                                  '>f4' , '>i2' , '>f4' , '>f4' , '>i2']}
         book = __np__.array(dfs , dtype=dtype)
+        del dfs
     except ValueError:
         book = __np__.array([] , dtype=dtype)
     return book
