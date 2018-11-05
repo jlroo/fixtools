@@ -15,17 +15,20 @@ def weekly_liquidity( path_files=None ,
                       frequency='hour' ,
                       chunksize=25600 ):
     path_files = str([item + "/" if item[-1] != "/" else item for item in [path_files]][0])
-    fixfiles = files_tree(path_files)
-    if len(fixfiles['futures'].keys()) != len(fixfiles['options'].keys()):
+    opt_path = path_files + "instrument_OPT/"
+    fut_path = path_files + "instrument_FUT/"
+    fut_files = files_tree(fut_path)
+    opt_files = files_tree(opt_path)
+    if len(fut_files['futures'].keys()) != len(opt_files['options'].keys()):
         print("Number of files per week is different between futures and options")
-        weeks = fixfiles['futures'].keys()
+        weeks = fut_files['futures'].keys()
     else:
-        weeks = fixfiles['futures'].keys()
+        weeks = fut_files['futures'].keys()
     for key in weeks:
-        opt_file = fixfiles['options'][key]
-        options = __np__.load(file=path_files + "instrument_OPT/" + opt_file)
-        fut_file = fixfiles['futures'][key]
-        futures = __np__.load(file=path_files + "instrument_FUT/" + fut_file)
+        opt_file = opt_files['options'][key]
+        options = __np__.load(file=opt_path + opt_file)
+        fut_file = fut_files['futures'][key]
+        futures = __np__.load(file=fut_path + fut_file)
         times = __np__.load(file=path_times + fut_file)
         results = rolling_liquidity(futures=futures ,
                                     options=options ,
