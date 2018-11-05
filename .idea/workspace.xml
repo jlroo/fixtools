@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="loop to iter over fixfiles keys">
-      <change afterPath="$PROJECT_DIR$/scripts/run-liquidity.py" afterDir="false" />
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified weekly_liquidity function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/algos/liquidity.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/algos/liquidity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/util/util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/run-csv.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/run-fix.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run-fix.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -68,16 +63,16 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="34" />
           <entry key="md" value="132" />
-          <entry key="py" value="19860" />
-          <entry key="txt" value="1689" />
+          <entry key="py" value="19865" />
+          <entry key="txt" value="1732" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="1723" />
-          <entry key="Python" value="19954" />
+          <entry key="PLAIN_TEXT" value="1766" />
+          <entry key="Python" value="19959" />
           <entry key="Scratch" value="62" />
         </counts>
       </usages-collector>
@@ -89,23 +84,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="418" selection-start-line="418" selection-end-line="419" selection-end-column="42" />
-              <folding>
-                <element signature="e#60#79#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="588">
-              <caret line="31" column="46" selection-start-line="31" selection-start-column="46" selection-end-line="31" selection-end-column="46" />
+            <state relative-caret-position="528">
+              <caret line="28" column="55" lean-forward="true" selection-start-line="28" selection-start-column="55" selection-end-line="28" selection-end-column="55" />
               <folding>
                 <element signature="e#25#48#0" expanded="true" />
               </folding>
@@ -114,10 +97,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="396">
+              <caret line="424" column="48" selection-start-line="424" selection-start-column="47" selection-end-line="424" selection-end-column="48" />
+              <folding>
+                <element signature="e#60#79#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/run-liquidity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+            <state relative-caret-position="209">
+              <caret line="11" selection-start-line="11" selection-end-line="11" />
               <folding>
                 <element signature="e#194#215#0" expanded="true" />
               </folding>
@@ -128,8 +123,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="15" selection-start-line="15" selection-end-line="17" selection-end-column="104" />
+            <state relative-caret-position="209">
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
             </state>
           </provider>
         </entry>
@@ -588,13 +583,6 @@
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
     </task>
-    <task id="LOCAL-00070" summary="modified data_book">
-      <created>1523371363769</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1523371363769</updated>
-    </task>
     <task id="LOCAL-00071" summary="data_filter write filtered data out">
       <created>1523387359229</created>
       <option name="number" value="00071" />
@@ -931,7 +919,14 @@
       <option name="project" value="LOCAL" />
       <updated>1540065257589</updated>
     </task>
-    <option name="localTasksCounter" value="119" />
+    <task id="LOCAL-00119" summary="modified weekly_liquidity function">
+      <created>1541450800704</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1541450800705</updated>
+    </task>
+    <option name="localTasksCounter" value="120" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1033,7 +1028,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="modified pipeline and book.py mp" />
     <MESSAGE value="modified README" />
     <MESSAGE value="fixed luigi parameter" />
     <MESSAGE value="changed luigi parameter to integer" />
@@ -1058,7 +1052,8 @@
     <MESSAGE value="fixed issue with NAs on FixStruct class" />
     <MESSAGE value="added &quot;instrument_PATH&quot; to weekly_orderbooks function" />
     <MESSAGE value="loop to iter over fixfiles keys" />
-    <option name="LAST_COMMIT_MESSAGE" value="loop to iter over fixfiles keys" />
+    <MESSAGE value="modified weekly_liquidity function" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified weekly_liquidity function" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1251,35 +1246,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="15" selection-start-line="15" selection-end-line="17" selection-end-column="104" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="418" selection-start-line="418" selection-end-line="419" selection-end-column="42" />
-          <folding>
-            <element signature="e#60#79#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="209">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+        <state relative-caret-position="209">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
           <folding>
             <element signature="e#194#215#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="424" column="48" selection-start-line="424" selection-start-column="47" selection-end-line="424" selection-end-column="48" />
+          <folding>
+            <element signature="e#60#79#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="588">
-          <caret line="31" column="46" selection-start-line="31" selection-start-column="46" selection-end-line="31" selection-end-column="46" />
+        <state relative-caret-position="528">
+          <caret line="28" column="55" lean-forward="true" selection-start-line="28" selection-start-column="55" selection-end-line="28" selection-end-column="55" />
           <folding>
             <element signature="e#25#48#0" expanded="true" />
           </folding>
