@@ -14,9 +14,10 @@ import fixtools as fx
 import pandas as pd
 
 if __name__ == "__main__":
+
     src = "/home/cme/exchange_XCME/year_2010/asset_EQUITY/product_ES/"
-    path_files = src + "md_BOOKS/month_M/"
-    path_out = src + "md_BOOKS_TOP/month_M/"
+    path_files = src + "md_BOOKS_TOP/month_M/"
+    path_out = src + "algorithms/liquidity/minute/"
     path_times = src + "md_BOOKS_TIMESTAMP/month_M/"
     path_rates = src + "algorithms/liquidity/data/tbill_rates.csv"
     rates_table = pd.read_csv(path_rates)

@@ -20,8 +20,8 @@ def weekly_liquidity( path_files=None ,
         print("Number of files per week is different between futures and options")
         weeks = fixfiles['futures'].keys()
     else:
-        weeks = len(fixfiles['futures'].keys())
-    for key in range(weeks):
+        weeks = fixfiles['futures'].keys()
+    for key in weeks:
         opt_file = fixfiles['options'][key]
         options = __np__.load(file=path_files + opt_file)
         fut_file = fixfiles['futures'][key]
