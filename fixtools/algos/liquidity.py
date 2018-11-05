@@ -23,9 +23,9 @@ def weekly_liquidity( path_files=None ,
         weeks = fixfiles['futures'].keys()
     for key in weeks:
         opt_file = fixfiles['options'][key]
-        options = __np__.load(file=path_files + opt_file)
+        options = __np__.load(file=path_files + "instrument_OPT/" + opt_file)
         fut_file = fixfiles['futures'][key]
-        futures = __np__.load(file=path_files + fut_file)
+        futures = __np__.load(file=path_files + "instrument_FUT/" + fut_file)
         times = __np__.load(file=path_times + fut_file)
         results = rolling_liquidity(futures=futures ,
                                     options=options ,
