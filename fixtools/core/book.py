@@ -12,7 +12,7 @@ from pandas import Timestamp
 import datetime as __datetime__
 import multiprocessing as __mp__
 from collections import defaultdict
-from fixtools.util.util import expiration_date , timetable
+from fixtools.util.util import expiration_date
 
 
 def __build__( security_id ):
@@ -218,16 +218,16 @@ def __bookdict__( item , codes ):
     return dd
 
 
-def top_book( futures=None , options=None , timestamp=None , month_codes=None ):
+def search_topbook( futures=None , options=None , timestamp=None , month_codes=None , book_level=1 ):
     """
     Search pandas dataframe for specific timestamp
+    :param book_level: level of books to search
     :param futures: Order book dataframe for futures contracts
     :param options: Order book for all options contracts
     :param timestamp: Timestamp to search in the order books
     :param month_codes: The codes to corresponding months. CME default "F,G,H,J,K,M,N,Q,U,V,X,Z"
     :return: Dictionary with the result of the timestamp search
     """
-    book_level = 1
     if month_codes is None:
         month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z"
     month_codes = month_codes.lower()
@@ -264,10 +264,10 @@ def top_book( futures=None , options=None , timestamp=None , month_codes=None ):
             dd = __orderdict__(item , codes)
             table[price][book_level - 1].update(dd)
     del table["fut"]
-    timestamp = str(timestamp)
-    timestamp = Timestamp(year=int(timestamp[0:4]) , month=int(timestamp[4:6]) , day=int(timestamp[6:8]) ,
-                          hour=int(timestamp[8:10]) , minute=int(timestamp[10:12]) , second=int(timestamp[12:14]) ,
-                          microsecond=int(timestamp[14:]) * 1000 , unit="ms").ceil("H")
+    time_str = str(timestamp)
+    datetime = Timestamp(year=int(time_str[0:4]) , month=int(time_str[4:6]) , day=int(time_str[6:8]) ,
+                         hour=int(time_str[8:10]) , minute=int(time_str[10:12]) , second=int(time_str[12:14]) ,
+                         microsecond=int(time_str[14:]) * 1000 , unit="ms").ceil("H")
     for key in table.keys():
         opt_p_sending_time = table[key][book_level - 1]['opt_p_sending_time']
         opt_p_sending_time = [str(i) if str(i) != 'nan' else i for i in [opt_p_sending_time]][0]
@@ -278,12 +278,13 @@ def top_book( futures=None , options=None , timestamp=None , month_codes=None ):
         fut_sending_time = table[key][book_level - 1]['fut_sending_time']
         fut_sending_time = [str(i) if str(i) != 'nan' else i for i in [fut_sending_time]][0]
         table[key][book_level - 1]['fut_sending_time'] = fut_sending_time
-        table[key][book_level - 1]['timestamp'] = timestamp
-        table[key][book_level - 1]['date'] = timestamp.date()
-        table[key][book_level - 1]['year'] = timestamp.year
-        table[key][book_level - 1]['month'] = timestamp.month_name()
-        table[key][book_level - 1]['day'] = timestamp.day_name()
-        table[key][book_level - 1]['hour'] = timestamp.hour
+        table[key][book_level - 1]['timestamp'] = time_str
+        table[key][book_level - 1]['datetime'] = datetime
+        table[key][book_level - 1]['date'] = datetime.date()
+        table[key][book_level - 1]['year'] = datetime.year
+        table[key][book_level - 1]['month'] = datetime.month_name()
+        table[key][book_level - 1]['day'] = datetime.day_name()
+        table[key][book_level - 1]['hour'] = datetime.hour
     return table
 
 

@@ -3,8 +3,7 @@
 import pandas as __pd__
 import numpy as __np__
 import datetime as __datetime__
-
-from fixtools.core.book import top_book
+from fixtools.core.book import search_topbook
 from fixtools.util.util import files_tree , timetable
 
 
@@ -56,6 +55,7 @@ def timestamp_liquidity( futures=None ,
                          timestamp=None ,
                          df_rates=None ,
                          path_out=None ):
+
     query = search_liquidity(futures=futures ,
                              options=options ,
                              rates_table=df_rates ,
@@ -89,7 +89,7 @@ def rolling_liquidity( futures=None ,
         opt_times = options['sending_time']
         times = timetable(fut_times=fut_times , opt_times=opt_times , chunksize=chunksize)
     trade_days = __np__.unique(times['day'])
-    df_list = []
+    data = __pd__.DataFrame()
     if method == "hour":
         for day in trade_days:
             msg_day = times[__np__.where(times['day'] == day)]
@@ -107,9 +107,9 @@ def rolling_liquidity( futures=None ,
                     if not result == {}:
                         for k in result.keys():
                             df = __pd__.DataFrame.from_dict(result[k] , orient='index')
-                            df_list.append(df)
-        data = __pd__.concat(df_list)
-        data.reset_index()
+                            data = __pd__.concat([data , df])
+        data = data.reset_index()
+        del data['index']
         return data
     if method == "minute":
         for day in trade_days:
@@ -117,7 +117,7 @@ def rolling_liquidity( futures=None ,
             trade_hours = __np__.unique(msg_day['hours'])
             for hour in trade_hours:
                 msg_hour = msg_day[__np__.where(msg_day['hours'] == hour)]
-                trade_minutes = __np__.unique(msg_day['minutes'])
+                trade_minutes = __np__.unique(msg_hour['minutes'])
                 if msg_hour.size != 0:
                     for minute in trade_minutes:
                         msg_minute = msg_day[__np__.where(msg_hour['minutes'] == minute)]
@@ -131,10 +131,11 @@ def rolling_liquidity( futures=None ,
                                                       book_level=book_level)
                             if not result == {}:
                                 for k in result.keys():
+                                    result[k][book_level - 1]['minute'] = minute
                                     df = __pd__.DataFrame.from_dict(result[k] , orient='index')
-                                    df_list.append(df)
-        data = __pd__.concat(df_list)
-        data.reset_index()
+                                    data = __pd__.concat([data , df])
+        data = data.reset_index()
+        del data['index']
         return data
     if method == "second":
         for day in trade_days:
@@ -145,7 +146,7 @@ def rolling_liquidity( futures=None ,
                 if msg_hour.size != 0:
                     trade_minutes = __np__.unique(msg_day['minutes'])
                     for minute in trade_minutes:
-                        msg_minute = msg_day[__np__.where(msg_hour['minutes'] == minute)]
+                        msg_minute = msg_hour[__np__.where(msg_hour['minutes'] == minute)]
                         if msg_minute.size != 0:
                             trade_sec = __np__.unique(msg_minute['seconds'])
                             for second in trade_sec:
@@ -160,10 +161,12 @@ def rolling_liquidity( futures=None ,
                                                               book_level=book_level)
                                     if not result == {}:
                                         for k in result.keys():
+                                            result[k][book_level - 1]['minute'] = minute
+                                            result[k][book_level - 1]['second'] = second
                                             df = __pd__.DataFrame.from_dict(result[k] , orient='index')
-                                            df_list.append(df)
-        data = __pd__.concat(df_list)
-        data.reset_index()
+                                            data = __pd__.concat([data , df])
+        data = data.reset_index()
+        del data['index']
         return data
     if method == "millisecond":
         for day in trade_days:
@@ -174,7 +177,7 @@ def rolling_liquidity( futures=None ,
                 if msg_hour.size != 0:
                     trade_minutes = __np__.unique(msg_day['minutes'])
                     for minute in trade_minutes:
-                        msg_minute = msg_day[__np__.where(msg_hour['minutes'] == minute)]
+                        msg_minute = msg_hour[__np__.where(msg_hour['minutes'] == minute)]
                         if msg_minute.size != 0:
                             trade_sec = __np__.unique(msg_minute['seconds'])
                             for second in trade_sec:
@@ -193,10 +196,13 @@ def rolling_liquidity( futures=None ,
                                                                       book_level=book_level)
                                             if not result == {}:
                                                 for k in result.keys():
+                                                    result[k][book_level - 1]['minute'] = minute
+                                                    result[k][book_level - 1]['second'] = second
+                                                    result[k][book_level - 1]['millisecond'] = msecond
                                                     df = __pd__.DataFrame.from_dict(result[k] , orient='index')
-                                                    df_list.append(df)
-        data = __pd__.concat(df_list)
-        data.reset_index()
+                                                    data = __pd__.concat([data , df])
+        data = data.reset_index()
+        del data['index']
         return data
 
 
@@ -205,8 +211,8 @@ def search_liquidity( futures=None ,
                       month_codes=None ,
                       rates_table=None ,
                       timestamp=None ,
-                      book_level=None ):
-    table = top_book(futures=futures , options=options , timestamp=timestamp , month_codes=month_codes)
+                      book_level=1 ):
+    table = search_topbook(futures=futures , options=options , timestamp=timestamp , month_codes=month_codes)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
     date = __datetime__.datetime(int(str(timestamp)[0:4]) , int(str(timestamp)[4:6]) , int(str(timestamp)[6:8]))
