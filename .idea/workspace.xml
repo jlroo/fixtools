@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="updates for core.book and liquidity functions">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modify search_topbook function to cover NaN cases">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/algos/liquidity.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/algos/liquidity.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -64,17 +63,17 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="34" />
           <entry key="md" value="132" />
-          <entry key="py" value="21067" />
-          <entry key="txt" value="2594" />
+          <entry key="py" value="21145" />
+          <entry key="txt" value="2701" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="2628" />
-          <entry key="Python" value="20752" />
-          <entry key="Scratch" value="471" />
+          <entry key="PLAIN_TEXT" value="2735" />
+          <entry key="Python" value="20800" />
+          <entry key="Scratch" value="501" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -100,8 +99,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" column="45" selection-start-line="5" selection-start-column="31" selection-end-line="5" selection-end-column="45" />
+            <state relative-caret-position="4123">
+              <caret line="217" column="25" selection-start-line="217" selection-start-column="25" selection-end-line="217" selection-end-column="25" />
+              <folding>
+                <element signature="e#25#48#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -109,8 +111,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="611">
-              <caret line="276" column="92" selection-start-line="276" selection-start-column="92" selection-end-line="276" selection-end-column="92" />
+            <state relative-caret-position="757">
+              <caret line="266" column="13" lean-forward="true" selection-start-line="266" selection-start-column="13" selection-end-line="266" selection-end-column="13" />
               <folding>
                 <element signature="e#108#118#0" expanded="true" />
               </folding>
@@ -130,8 +132,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="245" column="36" selection-start-line="245" selection-start-column="36" selection-end-line="245" selection-end-column="36" />
+            <state relative-caret-position="520">
+              <caret line="244" column="31" lean-forward="true" selection-start-line="244" selection-start-column="31" selection-end-line="244" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -606,20 +608,6 @@
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
     </task>
-    <task id="LOCAL-00080" summary="modified book.py added support for python &lt; 3.3 for multiprocessing library">
-      <created>1533266303515</created>
-      <option name="number" value="00080" />
-      <option name="presentableId" value="LOCAL-00080" />
-      <option name="project" value="LOCAL" />
-      <updated>1533266303515</updated>
-    </task>
-    <task id="LOCAL-00081" summary="added pool.closed() to mp">
-      <created>1533266706217</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1533266706217</updated>
-    </task>
     <task id="LOCAL-00082" summary="added pool.closed(), pool.join() and terminate">
       <created>1533267060388</created>
       <option name="number" value="00082" />
@@ -949,7 +937,21 @@
       <option name="project" value="LOCAL" />
       <updated>1541536722211</updated>
     </task>
-    <option name="localTasksCounter" value="129" />
+    <task id="LOCAL-00129" summary="modify numpy operations on liquidity and search_topbook functions">
+      <created>1541618457615</created>
+      <option name="number" value="00129" />
+      <option name="presentableId" value="LOCAL-00129" />
+      <option name="project" value="LOCAL" />
+      <updated>1541618457615</updated>
+    </task>
+    <task id="LOCAL-00130" summary="modify search_topbook function to cover NaN cases">
+      <created>1541619848029</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1541619848029</updated>
+    </task>
+    <option name="localTasksCounter" value="131" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1051,8 +1053,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="added globaldict function using Manager dict" />
-    <MESSAGE value="prototype timetable function on pairty.py" />
     <MESSAGE value="milestone changed API to use numpy for performance" />
     <MESSAGE value="modified files_trees import function" />
     <MESSAGE value="created a new directory for search and algorithms" />
@@ -1076,7 +1076,9 @@
     <MESSAGE value="fixed bug on the top orderbooks numpy dtype (space at the end of the name)" />
     <MESSAGE value="modified rolling liquidity function. Added millisecond liquidity calculation." />
     <MESSAGE value="updates for core.book and liquidity functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="updates for core.book and liquidity functions" />
+    <MESSAGE value="modify numpy operations on liquidity and search_topbook functions" />
+    <MESSAGE value="modify search_topbook function to cover NaN cases" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify search_topbook function to cover NaN cases" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1280,24 +1282,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="45" selection-start-line="5" selection-start-column="31" selection-end-line="5" selection-end-column="45" />
+        <state relative-caret-position="520">
+          <caret line="244" column="31" lean-forward="true" selection-start-line="244" selection-start-column="31" selection-end-line="244" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
+    <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="245" column="36" selection-start-line="245" selection-start-column="36" selection-end-line="245" selection-end-column="36" />
+        <state relative-caret-position="4123">
+          <caret line="217" column="25" selection-start-line="217" selection-start-column="25" selection-end-line="217" selection-end-column="25" />
+          <folding>
+            <element signature="e#25#48#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="611">
-          <caret line="276" column="92" selection-start-line="276" selection-start-column="92" selection-end-line="276" selection-end-column="92" />
+        <state relative-caret-position="757">
+          <caret line="266" column="13" lean-forward="true" selection-start-line="266" selection-start-column="13" selection-end-line="266" selection-end-column="13" />
           <folding>
             <element signature="e#108#118#0" expanded="true" />
           </folding>

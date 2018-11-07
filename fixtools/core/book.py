@@ -241,7 +241,7 @@ def search_topbook( futures=None , options=None , timestamp=None , month_codes=N
     query = query[query['security_desc'] != 'nan']
     query = query[~__np__.isnan(query['bid_price'])]
     query = query[~__np__.isnan(query['offer_price'])]
-    item = query[query['sending_time'] == __np__.max(query['sending_time'])]
+    item = query[query['sending_time'] == __np__.max(query['sending_time'])][-1]
     fut_dict = {k: item[k].item() for k in item.dtype.names}
     for item in [fut_dict]:
         dd = __bookdict__(item , codes)
@@ -254,7 +254,7 @@ def search_topbook( futures=None , options=None , timestamp=None , month_codes=N
     opts = set(query['security_id'])
     for sec in opts:
         sec_query = query[query['security_id'] == sec]
-        item = sec_query[sec_query['sending_time'] == __np__.max(sec_query['sending_time'])]
+        item = sec_query[sec_query['sending_time'] == __np__.max(sec_query['sending_time'])][-1]
         item = {k: item[k].item() for k in item.dtype.names}
         sec_desc = item['security_desc']
         price = int(sec_desc.split(" ")[1][1:])
