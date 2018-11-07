@@ -175,13 +175,16 @@ def __orderdict__( item , codes ):
     return dd
 
 
-def __bookdict__( item , codes ):
+def __bookdict__( item=None , codes=None ):
     """
     Creates a dictionary from the FIX order book
     :param item:
     :param codes:
     :return: Return python dictionary with the time to expiration
     """
+    if codes is None:
+        month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z".lower()
+        codes = {k[1]: k[0] for k in enumerate(month_codes.rsplit(",") , 1)}
     sec_desc = str(item['security_desc'])
     trade_day = str(item['trade_date'])
     year , month , day = int(trade_day[0:4]) , int(trade_day[4:6]) , int(trade_day[6:])
@@ -233,25 +236,20 @@ def search_topbook( futures=None , options=None , timestamp=None , month_codes=N
     month_codes = month_codes.lower()
     table = {"fut": []}
     codes = {k[1]: k[0] for k in enumerate(month_codes.rsplit(",") , 1)}
-    query = futures[__np__.where((futures['bid_level'] == book_level) & (futures['sending_time'] <= timestamp))]
-    query = query[~__np__.isnan(query['bid_price'])]
-    query = query[~__np__.isnan(query['offer_price'])]
-    query.sort(order='sending_time')
-    item = query[-1]
-    fut_dict = {n: item[i] for i , n in enumerate(item.dtype.names)}
+    query = futures[futures['bid_level'] == book_level]
+    query = query[query['sending_time'] <= timestamp]
+    item = query[query['sending_time'] == __np__.max(query['sending_time'])]
+    fut_dict = {k: item[k].item() for k in item.dtype.names}
     for item in [fut_dict]:
         dd = __bookdict__(item , codes)
         table["fut"].append(dd.copy())
-    query = options[__np__.where((options['bid_level'] == book_level) & (options['sending_time'] <= timestamp))]
-    query = query[~__np__.isnan(query['bid_price'])]
-    query = query[~__np__.isnan(query['offer_price'])]
-    query.sort(order='sending_time')
-    opts = __np__.unique(query['security_id'])
+    query = options[options['bid_level'] == book_level]
+    query = query[query['sending_time'] <= timestamp]
+    opts = set(query['security_id'])
     for sec in opts:
-        sec_query = query[__np__.where(query['security_id'] == sec)]
-        sec_query.sort(order='sending_time')
-        item = sec_query[-1]
-        item = {n: item[i] for i , n in enumerate(item.dtype.names)}
+        sec_query = query[query['security_id'] == sec]
+        item = sec_query[sec_query['sending_time'] == __np__.max(sec_query['sending_time'])]
+        item = {k: item[k].item() for k in item.dtype.names}
         sec_desc = item['security_desc']
         price = int(sec_desc.split(" ")[1][1:])
         if price not in table.keys():

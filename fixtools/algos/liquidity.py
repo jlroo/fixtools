@@ -300,7 +300,7 @@ def search_liquidity( futures=None ,
                 liquid_diff = 0
             else:
                 liquid_diff = (bid_offer_diff * spread_depth) / spread_total
-            liquid_diff = [liquid_diff if liquid_diff > 0 else 0.0][0]
+                liquid_diff = [liquid_diff if liquid_diff > 0 else 0.0][0]
             dd = {'liquid': liquid ,
                   'liquid_abs': liquid_abs ,
                   'liquid_spread': liquid_diff ,

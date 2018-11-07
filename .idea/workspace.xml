@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modified rolling liquidity function. Added millisecond liquidity calculation.">
+    <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="updates for core.book and liquidity functions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/algos/liquidity.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/algos/liquidity.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
@@ -47,7 +47,7 @@
           <entry key="LICENSE" value="1" />
           <entry key="Makefile" value="1" />
           <entry key="md" value="5" />
-          <entry key="py" value="120" />
+          <entry key="py" value="121" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
@@ -55,7 +55,7 @@
         <counts>
           <entry key="Markdown" value="5" />
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="117" />
+          <entry key="Python" value="118" />
           <entry key="Scratch" value="3" />
         </counts>
       </usages-collector>
@@ -64,17 +64,17 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="34" />
           <entry key="md" value="132" />
-          <entry key="py" value="20843" />
-          <entry key="txt" value="2541" />
+          <entry key="py" value="21067" />
+          <entry key="txt" value="2594" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="132" />
-          <entry key="PLAIN_TEXT" value="2575" />
-          <entry key="Python" value="20664" />
-          <entry key="Scratch" value="335" />
+          <entry key="PLAIN_TEXT" value="2628" />
+          <entry key="Python" value="20752" />
+          <entry key="Scratch" value="471" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -85,44 +85,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="9" column="39" lean-forward="true" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
-              <folding>
-                <element signature="e#25#48#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="903">
-              <caret line="281" column="57" selection-start-line="281" selection-start-column="57" selection-end-line="281" selection-end-column="57" />
-              <folding>
-                <element signature="e#108#118#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="875">
-              <caret line="231" selection-start-line="231" selection-end-line="231" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="553">
-              <caret line="517" column="24" lean-forward="true" selection-start-line="517" selection-start-column="24" selection-end-line="517" selection-end-column="24" />
+            <state relative-caret-position="2412">
+              <caret line="516" column="24" lean-forward="true" selection-start-line="516" selection-start-column="24" selection-end-line="516" selection-end-column="24" />
               <folding>
                 <element signature="e#60#79#0" expanded="true" />
               </folding>
@@ -131,22 +98,40 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
+        <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="19" column="101" selection-start-line="19" selection-start-column="101" selection-end-line="19" selection-end-column="101" />
+            <state relative-caret-position="95">
+              <caret line="5" column="45" selection-start-line="5" selection-start-column="31" selection-end-line="5" selection-end-column="45" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="611">
+              <caret line="276" column="92" selection-start-line="276" selection-start-column="92" selection-end-line="276" selection-end-column="92" />
+              <folding>
+                <element signature="e#108#118#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/run-liquidity.py">
+        <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" selection-start-line="17" selection-end-line="22" selection-end-column="41" />
-              <folding>
-                <element signature="e#194#215#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="57">
+              <caret line="3" column="36" lean-forward="true" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="555">
+              <caret line="245" column="36" selection-start-line="245" selection-start-column="36" selection-end-line="245" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -185,12 +170,13 @@
       <find>:</find>
       <find>timetable</find>
       <find>top_book</find>
-      <find>__bookdict__</find>
       <find>expiration_date</find>
       <find>opt_p_sending_time</find>
       <find>booktable</find>
       <find>contract_code</find>
       <find>files_tree</find>
+      <find>search_topbook</find>
+      <find>__bookdict__</find>
     </findStrings>
     <replaceStrings>
       <replace>(</replace>
@@ -261,9 +247,9 @@
         <option value="$PROJECT_DIR$/scripts/run-liquidity.py" />
         <option value="$PROJECT_DIR$/fixtools/util/util.py" />
         <option value="$PROJECT_DIR$/scripts/run-fix.py" />
+        <option value="$PROJECT_DIR$/fixtools/algos/liquidity.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/fixtools/core/book.py" />
-        <option value="$PROJECT_DIR$/fixtools/algos/liquidity.py" />
       </list>
     </option>
   </component>
@@ -324,6 +310,12 @@
               <item name="fixtools" type="462c0819:PsiDirectoryNode" />
               <item name="fixtools" type="462c0819:PsiDirectoryNode" />
               <item name="types" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="fixtools" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="fixtools" type="b2602c69:ProjectViewProjectNode" />
@@ -613,13 +605,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
-    </task>
-    <task id="LOCAL-00079" summary="modified fixfast FixData class from peek to readline">
-      <created>1533265483161</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
-      <option name="project" value="LOCAL" />
-      <updated>1533265483162</updated>
     </task>
     <task id="LOCAL-00080" summary="modified book.py added support for python &lt; 3.3 for multiprocessing library">
       <created>1533266303515</created>
@@ -957,7 +942,14 @@
       <option name="project" value="LOCAL" />
       <updated>1541519139733</updated>
     </task>
-    <option name="localTasksCounter" value="128" />
+    <task id="LOCAL-00128" summary="updates for core.book and liquidity functions">
+      <created>1541536722211</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1541536722211</updated>
+    </task>
+    <option name="localTasksCounter" value="129" />
     <servers />
   </component>
   <component name="TodoView">
@@ -973,7 +965,7 @@
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23321123" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23321123" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="Query Editor" order="3" />
@@ -1059,7 +1051,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="modified debug file" />
     <MESSAGE value="added globaldict function using Manager dict" />
     <MESSAGE value="prototype timetable function on pairty.py" />
     <MESSAGE value="milestone changed API to use numpy for performance" />
@@ -1084,7 +1075,8 @@
     <MESSAGE value="fixed issue files_tree returning list, correct str file name to open top book files" />
     <MESSAGE value="fixed bug on the top orderbooks numpy dtype (space at the end of the name)" />
     <MESSAGE value="modified rolling liquidity function. Added millisecond liquidity calculation." />
-    <option name="LAST_COMMIT_MESSAGE" value="modified rolling liquidity function. Added millisecond liquidity calculation." />
+    <MESSAGE value="updates for core.book and liquidity functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="updates for core.book and liquidity functions" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1261,56 +1253,53 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="553">
-          <caret line="517" column="24" lean-forward="true" selection-start-line="517" selection-start-column="24" selection-end-line="517" selection-end-column="24" />
-          <folding>
-            <element signature="e#60#79#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="19" column="101" selection-start-line="19" selection-start-column="101" selection-end-line="19" selection-end-column="101" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run-liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" selection-start-line="17" selection-end-line="22" selection-end-column="41" />
+        <state relative-caret-position="171">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
           <folding>
             <element signature="e#194#215#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
+    <entry file="file://$PROJECT_DIR$/scripts/run-fix.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="875">
-          <caret line="231" selection-start-line="231" selection-end-line="231" />
+        <state relative-caret-position="57">
+          <caret line="3" column="36" lean-forward="true" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+    <entry file="file://$PROJECT_DIR$/fixtools/util/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="903">
-          <caret line="281" column="57" selection-start-line="281" selection-start-column="57" selection-end-line="281" selection-end-column="57" />
+        <state relative-caret-position="2412">
+          <caret line="516" column="24" lean-forward="true" selection-start-line="516" selection-start-column="24" selection-end-line="516" selection-end-column="24" />
           <folding>
-            <element signature="e#108#118#0" expanded="true" />
+            <element signature="e#60#79#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="9" column="39" lean-forward="true" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
+        <state relative-caret-position="95">
+          <caret line="5" column="45" selection-start-line="5" selection-start-column="31" selection-end-line="5" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="245" column="36" selection-start-line="245" selection-start-column="36" selection-end-line="245" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="611">
+          <caret line="276" column="92" selection-start-line="276" selection-start-column="92" selection-end-line="276" selection-end-column="92" />
           <folding>
-            <element signature="e#25#48#0" expanded="true" />
+            <element signature="e#108#118#0" expanded="true" />
           </folding>
         </state>
       </provider>
