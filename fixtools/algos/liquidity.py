@@ -101,18 +101,18 @@ def rolling_liquidity( futures=None ,
     contract_ids = set(options['security_id'])
     if method == "hour":
         for day in trade_days:
-            msg_day = times[__np__.where(times['day'] == day)]
+            msg_day = times[times['day'] == day]
             msg_last = __np__.max(msg_day['timestamp'])
             msg_day_fut = futures[futures['sending_time'] <= msg_last]
             msg_day_opt = options[options['sending_time'] <= msg_last]
             trade_hours = __np__.unique(msg_day['hours'])
             for hour in trade_hours:
-                msg_hour = msg_day[__np__.where(msg_day['hours'] == hour)]
+                msg_hour = msg_day[msg_day['hours'] == hour]
                 if msg_hour.size != 0:
                     timestamp = __np__.max(msg_hour['timestamp'])
-                    fut_query = msg_day_fut[msg_day_fut['sending_time'] <= timestamp][-1]
+                    fut_query = msg_day_fut[msg_day_fut['sending_time'] <= timestamp]
                     opt_query = msg_day_opt[msg_day_opt['sending_time'] <= timestamp]
-                    result = search_liquidity(futures=fut_query ,
+                    result = search_liquidity(futures=fut_query[-1] ,
                                               options=opt_query ,
                                               month_codes=month_codes ,
                                               rates_table=rates ,
@@ -122,24 +122,39 @@ def rolling_liquidity( futures=None ,
                         for k in result.keys():
                             df = __pd__.DataFrame.from_dict(result[k] , orient='index')
                             data = __pd__.concat([data , df])
+                    msg_day_fut = __np__.setdiff1d(msg_day_fut , fut_query)
+                    msg_day_opt = __np__.setdiff1d(msg_day_opt , opt_query)
+                msg_day = __np__.setdiff1d(msg_day , msg_hour)
+            futures = __np__.setdiff1d(futures , msg_day_fut)
+            options = __np__.setdiff1d(options , msg_day_opt)
+            times = __np__.setdiff1d(times , msg_day)
         data = data.reset_index()
         del data['index']
         return data
     if method == "minute":
         for day in trade_days:
-            msg_day = times[__np__.where(times['day'] == day)]
+            msg_day = times[times['day'] == day]
+            msg_last = __np__.max(msg_day['timestamp'])
+            msg_day_fut = futures[futures['sending_time'] <= msg_last]
+            msg_day_opt = options[options['sending_time'] <= msg_last]
             trade_hours = __np__.unique(msg_day['hours'])
             for hour in trade_hours:
-                msg_hour = msg_day[__np__.where(msg_day['hours'] == hour)]
+                msg_hour = msg_day[msg_day['hours'] == hour]
+                msg_last = __np__.max(msg_hour['timestamp'])
+                msg_hour_fut = msg_day_fut[msg_day_fut['sending_time'] <= msg_last]
+                msg_hour_opt = msg_day_opt[msg_day_opt['sending_time'] <= msg_last]
                 trade_minutes = __np__.unique(msg_hour['minutes'])
                 if msg_hour.size != 0:
                     for minute in trade_minutes:
-                        msg_minute = msg_day[__np__.where(msg_hour['minutes'] == minute)]
+                        msg_minute = msg_hour[msg_hour['minutes'] == minute]
+                        msg_last = __np__.max(msg_minute['timestamp'])
+                        msg_min_fut = msg_hour_fut[msg_hour_fut['sending_time'] <= msg_last]
+                        msg_min_opt = msg_hour_opt[msg_hour_opt['sending_time'] <= msg_last]
                         if msg_minute.size != 0:
-                            timestamp = max(msg_minute['timestamp'])
-                            fut_query = futures[futures['sending_time'] <= timestamp][-1]
-                            opt_query = options[options['sending_time'] <= timestamp]
-                            result = search_liquidity(futures=fut_query ,
+                            timestamp = __np__.max(msg_minute['timestamp'])
+                            fut_query = msg_min_fut[msg_min_fut['sending_time'] <= timestamp]
+                            opt_query = msg_min_opt[msg_min_opt['sending_time'] <= timestamp]
+                            result = search_liquidity(futures=fut_query[-1] ,
                                                       options=opt_query ,
                                                       month_codes=month_codes ,
                                                       rates_table=rates ,
@@ -147,28 +162,36 @@ def rolling_liquidity( futures=None ,
                                                       contract_ids=contract_ids)
                             if not result == {}:
                                 for k in result.keys():
-                                    result[k][book_level - 1]['minute'] = minute
                                     df = __pd__.DataFrame.from_dict(result[k] , orient='index')
                                     data = __pd__.concat([data , df])
+                            msg_hour_fut = __np__.setdiff1d(msg_hour_fut , fut_query)
+                            msg_hour_opt = __np__.setdiff1d(msg_hour_fut , opt_query)
+                        msg_hour = __np__.setdiff1d(msg_hour , msg_minute)
+                msg_day_fut = __np__.setdiff1d(msg_day_fut , msg_hour_fut)
+                msg_day_opt = __np__.setdiff1d(msg_day_opt , msg_hour_opt)
+                msg_day = __np__.setdiff1d(msg_day , msg_hour)
+            futures = __np__.setdiff1d(futures , msg_day_fut)
+            options = __np__.setdiff1d(options , msg_day_opt)
+            times = __np__.setdiff1d(times , msg_day)
         data = data.reset_index()
         del data['index']
         return data
     if method == "second":
         for day in trade_days:
-            msg_day = times[__np__.where(times['day'] == day)]
+            msg_day = times[times['day'] == day]
             trade_hours = __np__.unique(msg_day['hours'])
             for hour in trade_hours:
-                msg_hour = msg_day[__np__.where(msg_day['hours'] == hour)]
+                msg_hour = msg_day[msg_day['hours'] == hour]
                 if msg_hour.size != 0:
                     trade_minutes = __np__.unique(msg_day['minutes'])
                     for minute in trade_minutes:
-                        msg_minute = msg_hour[__np__.where(msg_hour['minutes'] == minute)]
+                        msg_minute = msg_hour[msg_hour['minutes'] == minute]
                         if msg_minute.size != 0:
                             trade_sec = __np__.unique(msg_minute['seconds'])
                             for second in trade_sec:
-                                msg_sec = msg_minute[__np__.where(msg_minute['seconds'] == second)]
+                                msg_sec = msg_minute[msg_minute['seconds'] == second]
                                 if msg_sec.size != 0:
-                                    timestamp = max(msg_sec['timestamp'])
+                                    timestamp = __np__.max(msg_sec['timestamp'])
                                     fut_query = futures[futures['sending_time'] <= timestamp][-1]
                                     opt_query = options[options['sending_time'] <= timestamp]
                                     result = search_liquidity(futures=fut_query ,
@@ -188,24 +211,24 @@ def rolling_liquidity( futures=None ,
         return data
     if method == "millisecond":
         for day in trade_days:
-            msg_day = times[__np__.where(times['day'] == day)]
+            msg_day = times[times['day'] == day]
             trade_hours = __np__.unique(msg_day['hours'])
             for hour in trade_hours:
                 msg_hour = msg_day[__np__.where(msg_day['hours'] == hour)]
                 if msg_hour.size != 0:
                     trade_minutes = __np__.unique(msg_day['minutes'])
                     for minute in trade_minutes:
-                        msg_minute = msg_hour[__np__.where(msg_hour['minutes'] == minute)]
+                        msg_minute = msg_hour[msg_hour['minutes'] == minute]
                         if msg_minute.size != 0:
                             trade_sec = __np__.unique(msg_minute['seconds'])
                             for second in trade_sec:
-                                msg_sec = msg_minute[__np__.where(msg_minute['seconds'] == second)]
+                                msg_sec = msg_minute[msg_minute['seconds'] == second]
                                 if msg_sec.size != 0:
                                     trade_msec = __np__.unique(msg_minute['milliseconds'])
                                     for msecond in trade_msec:
-                                        msg_msec = msg_sec[__np__.where(msg_sec['milliseconds'] == msecond)]
+                                        msg_msec = msg_sec[msg_sec['milliseconds'] == msecond]
                                         if msg_msec.size != 0:
-                                            timestamp = max(msg_msec['timestamp'])
+                                            timestamp = __np__.max(msg_msec['timestamp'])
                                             fut_query = futures[futures['sending_time'] <= timestamp][-1]
                                             opt_query = options[options['sending_time'] <= timestamp]
                                             result = search_liquidity(futures=fut_query ,
@@ -236,13 +259,13 @@ def search_liquidity( futures=None ,
                       standalone=False ):
     if standalone:
         futures = futures[futures['bid_level'] == book_level]
-        futures = futures[~__np__.isnan(futures['security_desc'])]
+        futures = futures[futures['security_desc'] != 'nan']
         futures = futures[~__np__.isnan(futures['bid_price'])]
         futures = futures[~__np__.isnan(futures['offer_price'])]
         options = options[options['bid_level'] == book_level]
         options = options[~__np__.isnan(options['bid_price'])]
         options = options[~__np__.isnan(options['offer_price'])]
-        options = options[~__np__.isnan(options['security_desc'])]
+        options = options[options['security_desc'] != 'nan']
         contract_ids = set(options['security_id'])
 
     table = search_topbook(futures=futures ,
@@ -351,8 +374,10 @@ def search_liquidity( futures=None ,
         liquid_total += liquid
         liquid_abs_total += liquid_abs
         liquid_spread_total += liquid_diff
+
     for k in table.keys():
         table[k][0]['liquid_total'] = liquid_total
         table[k][0]['liquid_abs_total'] = liquid_abs_total
         table[k][0]['liquid_spread_total'] = liquid_spread_total
+
     return table

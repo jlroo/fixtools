@@ -230,6 +230,7 @@ def search_topbook( futures=None ,
                     standalone=False ):
     """
     Search pandas dataframe for specific timestamp
+    :param contract_ids:
     :type month_codes: object
     :param standalone:
     :param book_level: level of books to search
@@ -248,6 +249,8 @@ def search_topbook( futures=None ,
         options = options[~__np__.isnan(options['bid_price'])]
         options = options[~__np__.isnan(options['offer_price'])]
         options = options[options['security_desc'] != 'nan']
+        contract_ids = set(options['security_id'])
+
     if month_codes is None:
         month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z"
     month_codes = month_codes.lower()
@@ -258,8 +261,8 @@ def search_topbook( futures=None ,
         dd = __bookdict__(item , codes)
         table["fut"].append(dd.copy())
     for sec in contract_ids:
-        item = options[options['security_id'] == sec][-1]
-        item = {k: item[k].item() for k in item.dtype.names}
+        items = options[options['security_id'] == sec]
+        item = {k: items[-1][k].item() for k in items[-1].dtype.names}
         sec_desc = item['security_desc']
         price = int(sec_desc.split(" ")[1][1:])
         if price not in table.keys():
@@ -271,6 +274,7 @@ def search_topbook( futures=None ,
         else:
             dd = __orderdict__(item , codes)
             table[price][book_level - 1].update(dd)
+        options = __np__.setdiff1d(options , items)
     del table["fut"]
     time_str = str(timestamp)
     datetime = Timestamp(year=int(time_str[0:4]) , month=int(time_str[4:6]) , day=int(time_str[6:8]) ,
