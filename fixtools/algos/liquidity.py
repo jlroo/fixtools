@@ -3,7 +3,7 @@
 import pandas as __pd__
 import numpy as __np__
 import datetime as __datetime__
-from fixtools.core.book import search_topbook
+from fixtools.core.book import __searchbook__
 from fixtools.util.util import files_tree , timetable
 
 
@@ -222,8 +222,22 @@ def search_liquidity( futures=None ,
                       options=None ,
                       month_codes=None ,
                       rates_table=None ,
-                      timestamp=None ):
-    table = search_topbook(futures=futures , options=options , timestamp=timestamp , month_codes=month_codes)
+                      timestamp=None ,
+                      book_level=1 ,
+                      standalone=False ):
+    if standalone:
+        futures = futures[futures['bid_level'] == book_level]
+        futures = futures[futures['security_desc'] != 'nan']
+        futures = futures[~__np__.isnan(futures['bid_price'])]
+        futures = futures[~__np__.isnan(futures['offer_price'])]
+        options = options[options['bid_level'] == book_level]
+        options = options[~__np__.isnan(options['bid_price'])]
+        options = options[~__np__.isnan(options['offer_price'])]
+        options = options[options['security_desc'] != 'nan']
+    table = __searchbook__(futures=futures ,
+                           options=options ,
+                           timestamp=timestamp ,
+                           month_codes=month_codes)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
     date = __datetime__.datetime(int(str(timestamp)[0:4]) , int(str(timestamp)[4:6]) , int(str(timestamp)[6:8]))

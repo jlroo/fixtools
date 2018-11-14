@@ -221,9 +221,15 @@ def __bookdict__( item=None , codes=None ):
     return dd
 
 
-def search_topbook( futures=None , options=None , timestamp=None , month_codes=None , book_level=1 ):
+def search_topbook( futures=None ,
+                    options=None ,
+                    timestamp=None ,
+                    month_codes=None ,
+                    book_level=1 ,
+                    standalone=False ):
     """
     Search pandas dataframe for specific timestamp
+    :param standalone:
     :param book_level: level of books to search
     :param futures: Order book dataframe for futures contracts
     :param options: Order book for all options contracts
@@ -231,6 +237,15 @@ def search_topbook( futures=None , options=None , timestamp=None , month_codes=N
     :param month_codes: The codes to corresponding months. CME default "F,G,H,J,K,M,N,Q,U,V,X,Z"
     :return: Dictionary with the result of the timestamp search
     """
+    if standalone:
+        futures = futures[futures['bid_level'] == book_level]
+        futures = futures[futures['security_desc'] != 'nan']
+        futures = futures[~__np__.isnan(futures['bid_price'])]
+        futures = futures[~__np__.isnan(futures['offer_price'])]
+        options = options[options['bid_level'] == book_level]
+        options = options[~__np__.isnan(options['bid_price'])]
+        options = options[~__np__.isnan(options['offer_price'])]
+        options = options[options['security_desc'] != 'nan']
     if month_codes is None:
         month_codes = "F,G,H,J,K,M,N,Q,U,V,X,Z"
     month_codes = month_codes.lower()
