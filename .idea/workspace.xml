@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="424b0241-03bb-4449-8fae-e33a4c8150c7" name="Default" comment="modify rolling_liquidity and search_topbook functions">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fixtools/algos/liquidity.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/algos/liquidity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fixtools/core/book.py" beforeDir="false" afterPath="$PROJECT_DIR$/fixtools/core/book.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -64,7 +62,7 @@
           <entry key="Python Console" value="156" />
           <entry key="dummy" value="34" />
           <entry key="md" value="132" />
-          <entry key="py" value="21535" />
+          <entry key="py" value="21588" />
           <entry key="txt" value="2768" />
         </counts>
       </usages-collector>
@@ -73,7 +71,7 @@
         <counts>
           <entry key="Markdown" value="132" />
           <entry key="PLAIN_TEXT" value="2802" />
-          <entry key="Python" value="21074" />
+          <entry key="Python" value="21127" />
           <entry key="Scratch" value="617" />
         </counts>
       </usages-collector>
@@ -100,8 +98,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="401">
-              <caret line="225" column="35" lean-forward="true" selection-start-line="225" selection-start-column="35" selection-end-line="225" selection-end-column="35" />
+            <state relative-caret-position="495">
+              <caret line="238" column="48" lean-forward="true" selection-start-line="238" selection-start-column="48" selection-end-line="238" selection-end-column="48" />
               <folding>
                 <element signature="e#25#48#0" expanded="true" />
               </folding>
@@ -112,7 +110,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
+            <state relative-caret-position="41">
               <caret line="223" column="18" selection-start-line="223" selection-start-column="4" selection-end-line="223" selection-end-column="18" />
               <folding>
                 <element signature="e#108#118#0" expanded="true" />
@@ -601,13 +599,6 @@
       <option name="presentableId" value="Default" />
       <updated>1491936584296</updated>
     </task>
-    <task id="LOCAL-00084" summary="added debug file">
-      <created>1533273078908</created>
-      <option name="number" value="00084" />
-      <option name="presentableId" value="LOCAL-00084" />
-      <option name="project" value="LOCAL" />
-      <updated>1533273078908</updated>
-    </task>
     <task id="LOCAL-00085" summary="update debug file">
       <created>1533275237518</created>
       <option name="number" value="00085" />
@@ -944,7 +935,14 @@
       <option name="project" value="LOCAL" />
       <updated>1542174336759</updated>
     </task>
-    <option name="localTasksCounter" value="133" />
+    <task id="LOCAL-00133" summary="modify rolling_liquidity and search_topbook functions">
+      <created>1542174923295</created>
+      <option name="number" value="00133" />
+      <option name="presentableId" value="LOCAL-00133" />
+      <option name="project" value="LOCAL" />
+      <updated>1542174923295</updated>
+    </task>
+    <option name="localTasksCounter" value="134" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1310,7 +1308,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/core/book.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
+        <state relative-caret-position="41">
           <caret line="223" column="18" selection-start-line="223" selection-start-column="4" selection-end-line="223" selection-end-column="18" />
           <folding>
             <element signature="e#108#118#0" expanded="true" />
@@ -1320,8 +1318,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fixtools/algos/liquidity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="225" column="35" lean-forward="true" selection-start-line="225" selection-start-column="35" selection-end-line="225" selection-end-column="35" />
+        <state relative-caret-position="495">
+          <caret line="238" column="48" lean-forward="true" selection-start-line="238" selection-start-column="48" selection-end-line="238" selection-end-column="48" />
           <folding>
             <element signature="e#25#48#0" expanded="true" />
           </folding>
