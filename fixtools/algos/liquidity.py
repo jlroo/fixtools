@@ -3,7 +3,7 @@
 import pandas as __pd__
 import numpy as __np__
 import datetime as __datetime__
-from fixtools.core.book import __searchbook__
+from fixtools.core.book import search_topbook
 from fixtools.util.util import files_tree , timetable
 
 
@@ -234,7 +234,7 @@ def search_liquidity( futures=None ,
         options = options[~__np__.isnan(options['bid_price'])]
         options = options[~__np__.isnan(options['offer_price'])]
         options = options[options['security_desc'] != 'nan']
-    table = __searchbook__(futures=futures ,
+    table = search_topbook(futures=futures ,
                            options=options ,
                            timestamp=timestamp ,
                            month_codes=month_codes)
