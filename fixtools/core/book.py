@@ -236,25 +236,13 @@ def search_topbook( futures=None , options=None , timestamp=None , month_codes=N
     month_codes = month_codes.lower()
     table = {"fut": []}
     codes = {k[1]: k[0] for k in enumerate(month_codes.rsplit(",") , 1)}
-    query = futures[futures['bid_level'] == book_level]
-    query = query[query['sending_time'] <= timestamp]
-    query = query[query['security_desc'] != 'nan']
-    query = query[~__np__.isnan(query['bid_price'])]
-    query = query[~__np__.isnan(query['offer_price'])]
-    item = query[query['sending_time'] == __np__.max(query['sending_time'])][-1]
-    fut_dict = {k: item[k].item() for k in item.dtype.names}
+    fut_dict = {k: futures[k].item() for k in futures.dtype.names}
     for item in [fut_dict]:
         dd = __bookdict__(item , codes)
         table["fut"].append(dd.copy())
-    query = options[options['bid_level'] == book_level]
-    query = query[query['sending_time'] <= timestamp]
-    query = query[~__np__.isnan(query['bid_price'])]
-    query = query[~__np__.isnan(query['offer_price'])]
-    query = query[query['security_desc'] != 'nan']
-    opts = set(query['security_id'])
+    opts = set(options['security_id'])
     for sec in opts:
-        sec_query = query[query['security_id'] == sec]
-        item = sec_query[sec_query['sending_time'] == __np__.max(sec_query['sending_time'])][-1]
+        item = options[options['security_id'] == sec][-1]
         item = {k: item[k].item() for k in item.dtype.names}
         sec_desc = item['security_desc']
         price = int(sec_desc.split(" ")[1][1:])
@@ -268,7 +256,6 @@ def search_topbook( futures=None , options=None , timestamp=None , month_codes=N
             dd = __orderdict__(item , codes)
             table[price][book_level - 1].update(dd)
     del table["fut"]
-    del query
     time_str = str(timestamp)
     datetime = Timestamp(year=int(time_str[0:4]) , month=int(time_str[4:6]) , day=int(time_str[6:8]) ,
                          hour=int(time_str[8:10]) , minute=int(time_str[10:12]) , second=int(time_str[12:14]) ,
