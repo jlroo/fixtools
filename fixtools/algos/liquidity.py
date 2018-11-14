@@ -95,24 +95,29 @@ def rolling_liquidity( futures=None ,
     futures = futures[~__np__.isnan(futures['bid_price'])]
     futures = futures[~__np__.isnan(futures['offer_price'])]
     options = options[options['bid_level'] == book_level]
+    options = options[options['security_desc'] != 'nan']
     options = options[~__np__.isnan(options['bid_price'])]
     options = options[~__np__.isnan(options['offer_price'])]
-    options = options[options['security_desc'] != 'nan']
+    contract_ids = set(options['security_id'])
     if method == "hour":
         for day in trade_days:
             msg_day = times[__np__.where(times['day'] == day)]
+            msg_last = __np__.max(msg_day['timestamp'])
+            msg_day_fut = futures[futures['sending_time'] <= msg_last]
+            msg_day_opt = options[options['sending_time'] <= msg_last]
             trade_hours = __np__.unique(msg_day['hours'])
             for hour in trade_hours:
                 msg_hour = msg_day[__np__.where(msg_day['hours'] == hour)]
                 if msg_hour.size != 0:
-                    timestamp = max(msg_hour['timestamp'])
-                    fut_query = futures[futures['sending_time'] <= timestamp][-1]
-                    opt_query = options[options['sending_time'] <= timestamp]
+                    timestamp = __np__.max(msg_hour['timestamp'])
+                    fut_query = msg_day_fut[msg_day_fut['sending_time'] <= timestamp][-1]
+                    opt_query = msg_day_opt[msg_day_opt['sending_time'] <= timestamp]
                     result = search_liquidity(futures=fut_query ,
                                               options=opt_query ,
                                               month_codes=month_codes ,
                                               rates_table=rates ,
-                                              timestamp=timestamp)
+                                              timestamp=timestamp ,
+                                              contract_ids=contract_ids)
                     if not result == {}:
                         for k in result.keys():
                             df = __pd__.DataFrame.from_dict(result[k] , orient='index')
@@ -138,7 +143,8 @@ def rolling_liquidity( futures=None ,
                                                       options=opt_query ,
                                                       month_codes=month_codes ,
                                                       rates_table=rates ,
-                                                      timestamp=timestamp)
+                                                      timestamp=timestamp ,
+                                                      contract_ids=contract_ids)
                             if not result == {}:
                                 for k in result.keys():
                                     result[k][book_level - 1]['minute'] = minute
@@ -169,7 +175,8 @@ def rolling_liquidity( futures=None ,
                                                               options=opt_query ,
                                                               month_codes=month_codes ,
                                                               rates_table=rates ,
-                                                              timestamp=timestamp)
+                                                              timestamp=timestamp ,
+                                                              contract_ids=contract_ids)
                                     if not result == {}:
                                         for k in result.keys():
                                             result[k][book_level - 1]['minute'] = minute
@@ -205,7 +212,8 @@ def rolling_liquidity( futures=None ,
                                                                       options=opt_query ,
                                                                       month_codes=month_codes ,
                                                                       rates_table=rates ,
-                                                                      timestamp=timestamp)
+                                                                      timestamp=timestamp ,
+                                                                      contract_ids=contract_ids)
                                             if not result == {}:
                                                 for k in result.keys():
                                                     result[k][book_level - 1]['minute'] = minute
@@ -223,21 +231,25 @@ def search_liquidity( futures=None ,
                       month_codes=None ,
                       rates_table=None ,
                       timestamp=None ,
+                      contract_ids=None ,
                       book_level=1 ,
                       standalone=False ):
     if standalone:
         futures = futures[futures['bid_level'] == book_level]
-        futures = futures[futures['security_desc'] != 'nan']
+        futures = futures[~__np__.isnan(futures['security_desc'])]
         futures = futures[~__np__.isnan(futures['bid_price'])]
         futures = futures[~__np__.isnan(futures['offer_price'])]
         options = options[options['bid_level'] == book_level]
         options = options[~__np__.isnan(options['bid_price'])]
         options = options[~__np__.isnan(options['offer_price'])]
-        options = options[options['security_desc'] != 'nan']
+        options = options[~__np__.isnan(options['security_desc'])]
+        contract_ids = set(options['security_id'])
+
     table = search_topbook(futures=futures ,
                            options=options ,
                            timestamp=timestamp ,
-                           month_codes=month_codes)
+                           month_codes=month_codes ,
+                           contract_ids=contract_ids)
     rate_dict = {}
     rates = rates_table.to_dict(orient='list')
     date = __datetime__.datetime(int(str(timestamp)[0:4]) , int(str(timestamp)[4:6]) , int(str(timestamp)[6:8]))

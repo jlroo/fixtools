@@ -225,10 +225,12 @@ def search_topbook( futures=None ,
                     options=None ,
                     timestamp=None ,
                     month_codes=None ,
+                    contract_ids=None ,
                     book_level=1 ,
                     standalone=False ):
     """
     Search pandas dataframe for specific timestamp
+    :type month_codes: object
     :param standalone:
     :param book_level: level of books to search
     :param futures: Order book dataframe for futures contracts
@@ -255,8 +257,7 @@ def search_topbook( futures=None ,
     for item in [fut_dict]:
         dd = __bookdict__(item , codes)
         table["fut"].append(dd.copy())
-    opts = set(options['security_id'])
-    for sec in opts:
+    for sec in contract_ids:
         item = options[options['security_id'] == sec][-1]
         item = {k: item[k].item() for k in item.dtype.names}
         sec_desc = item['security_desc']
