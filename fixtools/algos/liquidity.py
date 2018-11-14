@@ -106,10 +106,10 @@ def rolling_liquidity( futures=None ,
                 msg_hour = msg_day[__np__.where(msg_day['hours'] == hour)]
                 if msg_hour.size != 0:
                     timestamp = max(msg_hour['timestamp'])
-                    futures = futures[futures['sending_time'] <= timestamp][-1]
-                    options = options[options['sending_time'] <= timestamp]
-                    result = search_liquidity(futures=futures ,
-                                              options=options ,
+                    fut_query = futures[futures['sending_time'] <= timestamp][-1]
+                    opt_query = options[options['sending_time'] <= timestamp]
+                    result = search_liquidity(futures=fut_query ,
+                                              options=opt_query ,
                                               month_codes=month_codes ,
                                               rates_table=rates ,
                                               timestamp=timestamp)
@@ -132,10 +132,10 @@ def rolling_liquidity( futures=None ,
                         msg_minute = msg_day[__np__.where(msg_hour['minutes'] == minute)]
                         if msg_minute.size != 0:
                             timestamp = max(msg_minute['timestamp'])
-                            futures = futures[futures['sending_time'] <= timestamp][-1]
-                            options = options[options['sending_time'] <= timestamp]
-                            result = search_liquidity(futures=futures ,
-                                                      options=options ,
+                            fut_query = futures[futures['sending_time'] <= timestamp][-1]
+                            opt_query = options[options['sending_time'] <= timestamp]
+                            result = search_liquidity(futures=fut_query ,
+                                                      options=opt_query ,
                                                       month_codes=month_codes ,
                                                       rates_table=rates ,
                                                       timestamp=timestamp)
@@ -163,10 +163,10 @@ def rolling_liquidity( futures=None ,
                                 msg_sec = msg_minute[__np__.where(msg_minute['seconds'] == second)]
                                 if msg_sec.size != 0:
                                     timestamp = max(msg_sec['timestamp'])
-                                    futures = futures[futures['sending_time'] <= timestamp][-1]
-                                    options = options[options['sending_time'] <= timestamp]
-                                    result = search_liquidity(futures=futures ,
-                                                              options=options ,
+                                    fut_query = futures[futures['sending_time'] <= timestamp][-1]
+                                    opt_query = options[options['sending_time'] <= timestamp]
+                                    result = search_liquidity(futures=fut_query ,
+                                                              options=opt_query ,
                                                               month_codes=month_codes ,
                                                               rates_table=rates ,
                                                               timestamp=timestamp)
@@ -199,10 +199,10 @@ def rolling_liquidity( futures=None ,
                                         msg_msec = msg_sec[__np__.where(msg_sec['milliseconds'] == msecond)]
                                         if msg_msec.size != 0:
                                             timestamp = max(msg_msec['timestamp'])
-                                            futures = futures[futures['sending_time'] <= timestamp][-1]
-                                            options = options[options['sending_time'] <= timestamp]
-                                            result = search_liquidity(futures=futures ,
-                                                                      options=options ,
+                                            fut_query = futures[futures['sending_time'] <= timestamp][-1]
+                                            opt_query = options[options['sending_time'] <= timestamp]
+                                            result = search_liquidity(futures=fut_query ,
+                                                                      options=opt_query ,
                                                                       month_codes=month_codes ,
                                                                       rates_table=rates ,
                                                                       timestamp=timestamp)
