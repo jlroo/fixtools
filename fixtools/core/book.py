@@ -274,7 +274,8 @@ def search_topbook( futures=None ,
         else:
             dd = __orderdict__(item , codes)
             table[price][book_level - 1].update(dd)
-        options = __np__.setdiff1d(options , items)
+        mask = __np__.isin(options , items)
+        options = options[mask]
     del table["fut"]
     time_str = str(timestamp)
     datetime = Timestamp(year=int(time_str[0:4]) , month=int(time_str[4:6]) , day=int(time_str[6:8]) ,
