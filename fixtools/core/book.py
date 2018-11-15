@@ -262,20 +262,21 @@ def search_topbook( futures=None ,
         table["fut"].append(dd.copy())
     for sec in contract_ids:
         items = options[options['security_id'] == sec]
-        item = {k: items[-1][k].item() for k in items[-1].dtype.names}
-        sec_desc = item['security_desc']
-        price = int(sec_desc.split(" ")[1][1:])
-        if price not in table.keys():
-            table[price] = {i: {} for i in range(book_level)}
-            dd = __orderdict__(item , codes)
-            table_dd = table["fut"][book_level - 1].copy()
-            table_dd.update(dd)
-            table[price][book_level - 1] = table_dd.copy()
-        else:
-            dd = __orderdict__(item , codes)
-            table[price][book_level - 1].update(dd)
-        mask = __np__.isin(options , items)
-        options = options[mask]
+        if items.size != 0:
+            item = {k: items[-1][k].item() for k in items[-1].dtype.names}
+            sec_desc = item['security_desc']
+            price = int(sec_desc.split(" ")[1][1:])
+            if price not in table.keys():
+                table[price] = {i: {} for i in range(book_level)}
+                dd = __orderdict__(item , codes)
+                table_dd = table["fut"][book_level - 1].copy()
+                table_dd.update(dd)
+                table[price][book_level - 1] = table_dd.copy()
+            else:
+                dd = __orderdict__(item , codes)
+                table[price][book_level - 1].update(dd)
+            mask = __np__.isin(options , items)
+            options = options[mask]
     del table["fut"]
     time_str = str(timestamp)
     datetime = Timestamp(year=int(time_str[0:4]) , month=int(time_str[4:6]) , day=int(time_str[6:8]) ,
