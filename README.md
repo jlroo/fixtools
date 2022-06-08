@@ -6,7 +6,7 @@ This tool kit was created to make it easier to work and analyze FIX 5.0 SP2 fina
 
 Background
 ----------
-The Quinlan School of Business at Loyola University Chicago acquired a couple of years CME Market Depth FIX files - E-mini S&P 500. These files provide all market data messages required to recreate the order book. These files are an important part in a research that aims to determine mispricing in the [E-mini S&P 500](http://www.cmegroup.com/trading/equity-index/us-index/e-mini-sandp500.html). This tool kit was developed to help us work with the raw FIX data, analyze it and efficiently identify key components without having to spend too much time setting up FIX engines/applications to parse and analyze the data.
+This tool kit was developed to help us work with the raw FIX data, analyze it and efficiently identify key components without having to spend too much time setting up FIX engines/applications to parse and analyze the data. The data use on this project is CME Market Depth FIX files - E-mini S&P 500. These files provide all market data messages required to recreate the order book. These files are an important part in a research that aims to determine mispricing in the [E-mini S&P 500](http://www.cmegroup.com/trading/equity-index/us-index/e-mini-sandp500.html). 
 
 FIX data format layout
 --------------------------
@@ -84,19 +84,17 @@ See Also
 * [FixSpec.com Developer Tools](https://fixspec.com/developers)
 * [FIX on Wikipedia](http://en.wikipedia.org/wiki/Financial_Information_eXchange)
 * [fix2json](https://github.com/SunGard-Labs/fix2json)
-* [MongoDB](https://www.mongodb.com/community)
 * [CME DataMine](http://www.cmegroup.com/market-data/datamine-historical-data.html)
 
 License
 ----------
 
-**fixtools** © 2018, Chicago, Illinois.<br> 
+**fixtools** © 2022, St. Louis, Missouri.<br> 
 Released under the [MIT License].<br>
 Authored and maintained by Jose Luis Rodriguez.
 
-> LinkedIn [jlroo](https://www.linkedin.com/in/jlroo) &nbsp;&middot;&nbsp;
-> GitHub [@jlroo](https://github.com/jl_roo) &nbsp;&middot;&nbsp;
-> Twitter [@jl_roo](https://twitter.com/jl_roo)
+> LinkedIn [jlroo](https://www.linkedin.com/in/jlr) &nbsp;&middot;&nbsp;
+> GitHub [@jlroo](https://github.com/jlrop) &nbsp;&middot;&nbsp;
 
 [MIT License]: http://mit-license.org/
 [contributors]: http://github.com/jlroo

@@ -112,12 +112,12 @@ def rolling_liquidity( futures=None ,
                     timestamp = __np__.max(msg_hour['timestamp'])
                     fut_query = msg_day_fut[msg_day_fut['sending_time'] <= timestamp]
                     opt_query = msg_day_opt[msg_day_opt['sending_time'] <= timestamp]
-                    result = fx.search_liquidity(futures=fut_query[-1] ,
-                                                 options=opt_query ,
-                                                 month_codes=None ,
-                                                 rates_table=rates_table ,
-                                                 timestamp=timestamp ,
-                                                 contract_ids=contract_ids)
+                    result = search_liquidity(futures=fut_query[-1] ,
+                                              options=opt_query ,
+                                              month_codes=month_codes ,
+                                              rates_table=rates,
+                                              timestamp=timestamp ,
+                                              contract_ids=contract_ids)
                     if not result == {}:
                         for k in result.keys():
                             df = __pd__.DataFrame.from_dict(result[k] , orient='index')
@@ -126,15 +126,13 @@ def rolling_liquidity( futures=None ,
                     msg_day_fut = msg_day_fut[mask]
                     mask = __np__.isin(msg_day_opt , opt_query)
                     msg_day_opt = msg_day_opt[mask]
-                mask = __np__.isin(msg_day , msg_hour)
-                msg_day = msg_day[mask]
+                msg_day = msg_day[msg_day['hour'] != hour]
             mask_fut = __np__.isin(futures['msg_seq_num'] , msg_day_fut['msg_seq_num'])
             futures = futures[mask_fut]
-            mask_opt = __np__.isin(options , msg_day_opt['msg_seq_num'])
+            mask_opt = __np__.isin(options['msg_seq_num'] , msg_day_opt['msg_seq_num'])
             options = options[mask_opt]
-            mask_tm = __np__.isin(times , msg_day)
-            times = times[mask_tm]
-            data = data.reset_index()
+            times = times[times['day'] != day]
+        data = data.reset_index()
         del data['index']
         return data
     if method == "minute":

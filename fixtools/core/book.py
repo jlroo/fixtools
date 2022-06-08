@@ -275,7 +275,7 @@ def search_topbook( futures=None ,
             else:
                 dd = __orderdict__(item , codes)
                 table[price][book_level - 1].update(dd)
-            mask = __np__.isin(options , items)
+            mask = __np__.isin(options['msg_seq_num'], items['msg_seq_num'])
             options = options[mask]
     del table["fut"]
     time_str = str(timestamp)
